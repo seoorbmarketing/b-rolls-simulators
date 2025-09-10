@@ -56,12 +56,12 @@
 
                 <!-- Pie Chart -->
                 <div class="chart-area chart-pie" id="pieChart" style="display: none;">
-                    <canvas id="pieCanvas" width="500" height="500"></canvas>
+                    <canvas id="pieCanvas" width="700" height="700"></canvas>
                 </div>
 
                 <!-- Line Chart -->
                 <div class="chart-area chart-line" id="lineChart" style="display: none;">
-                    <canvas id="lineCanvas" width="700" height="500"></canvas>
+                    <canvas id="lineCanvas" width="800" height="550"></canvas>
                 </div>
             </div>
         </div>
@@ -103,11 +103,11 @@
                         <label>Subtitle:</label>
                         <input type="text" id="subtitleInput" value="" onchange="updateGraphText()">
                     </div>
-                    <div class="input-group">
+                    <div class="input-group axis-controls" id="yAxisControl">
                         <label>Y-Axis Label:</label>
                         <input type="text" id="yAxisLabel" value="Value" onchange="updateAxisLabels()">
                     </div>
-                    <div class="input-group">
+                    <div class="input-group axis-controls" id="xAxisControl">
                         <label>X-Axis Label:</label>
                         <input type="text" id="xAxisLabel" value="Categories" onchange="updateAxisLabels()">
                     </div>
@@ -181,31 +181,13 @@
                 <!-- Pie Chart Settings -->
                 <div class="control-section pie-controls" id="pieControls" style="display: none;">
                     <h3>Pie Chart Settings</h3>
-                    <div class="pie-settings">
-                        <div class="input-group">
-                            <label>Segment 1 Label:</label>
-                            <input type="text" id="pie1Label" value="Category A" onchange="updatePieChart()">
-                        </div>
-                        <div class="input-group">
-                            <label>Segment 1 Value:</label>
-                            <input type="number" id="pie1Value" value="35" min="0" max="100" onchange="updatePieChart()">
-                        </div>
-                        <div class="input-group">
-                            <label>Segment 2 Label:</label>
-                            <input type="text" id="pie2Label" value="Category B" onchange="updatePieChart()">
-                        </div>
-                        <div class="input-group">
-                            <label>Segment 2 Value:</label>
-                            <input type="number" id="pie2Value" value="25" min="0" max="100" onchange="updatePieChart()">
-                        </div>
-                        <div class="input-group">
-                            <label>Segment 3 Label:</label>
-                            <input type="text" id="pie3Label" value="Category C" onchange="updatePieChart()">
-                        </div>
-                        <div class="input-group">
-                            <label>Segment 3 Value:</label>
-                            <input type="number" id="pie3Value" value="40" min="0" max="100" onchange="updatePieChart()">
-                        </div>
+                    <div class="pie-segment-controls">
+                        <button onclick="addPieSegment()" class="add-segment-btn">
+                            <i class="fas fa-plus"></i> Add Segment
+                        </button>
+                    </div>
+                    <div class="pie-segments-list" id="pieSegmentsList">
+                        <!-- Segments will be dynamically added here -->
                     </div>
                 </div>
 

@@ -26,7 +26,7 @@ body {
     flex: 1;
     background: #1a1a1a;
     border-radius: 20px;
-    padding: 25px 30px 30px 30px;
+    padding: 30px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     transform: scale(0.85);
     transform-origin: center center;
@@ -44,8 +44,8 @@ body {
     font-size: 42px;
     font-weight: 600;
     color: #fff;
-    margin-bottom: 10px;
-    margin-top: 0;
+    margin-bottom: 20px;
+    margin-top: 10px;
 }
 
 .graph-wrapper p {
@@ -65,7 +65,7 @@ body {
     position: relative;
     padding-bottom: 30px;
     background: transparent;
-    margin-top: 0;
+    margin-top: 10px;
 }
 
 .y-axis-container {
@@ -460,6 +460,75 @@ body {
     border-color: #4ECDC4;
 }
 
+/* Pie Chart Controls */
+.add-segment-btn {
+    width: 100%;
+    padding: 10px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.add-segment-btn:hover {
+    background: #45a049;
+}
+
+.pie-segments-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.pie-segment-item {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.pie-segment-item h4 {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.segment-color-preview {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-left: 10px;
+    vertical-align: middle;
+    border: 2px solid #ddd;
+}
+
+.remove-segment-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.remove-segment-btn:hover {
+    background: #d32f2f;
+}
+
 /* Template Buttons */
 .template-buttons {
     display: grid;
@@ -540,8 +609,16 @@ body {
     align-items: center;
 }
 
+.chart-pie {
+    padding-top: 40px;
+}
+
+.chart-line {
+    padding-top: 20px;
+}
+
 #pieCanvas, #lineCanvas {
-    background: white;
+    background: transparent;
     border-radius: 8px;
 }
 
