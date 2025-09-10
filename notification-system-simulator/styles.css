@@ -1,0 +1,581 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #1a4d6d 0%, #2a5c3e 100%);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    gap: 30px;
+    padding: 20px;
+    max-width: 1300px;
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    align-items: center;
+}
+
+/* Phone Container */
+.phone-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.phone-frame {
+    width: 360px;
+    height: 90vh;
+    max-height: 780px;
+    background: #000;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3), 0 0 0 10px #1a1a1a;
+    position: relative;
+}
+
+/* Status Bar */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 25px 5px;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    color: #fff;
+}
+
+.camera-notch {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 18px;
+    background: #000;
+    border-radius: 12px;
+    box-shadow: 0 0 0 1px #000;
+}
+
+.status-left {
+    display: flex;
+    align-items: center;
+}
+
+.status-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-right i {
+    font-size: 12px;
+}
+
+/* Phone Screen */
+.phone-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, #1c1c1e 0%, #2c2c2e 100%);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Notification Container */
+.notification-container {
+    position: absolute;
+    top: 50px;
+    left: 12px;
+    right: 12px;
+    z-index: 999;
+    pointer-events: none;
+}
+
+/* Individual Notification */
+.notification {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-150%);
+    animation: slideDown 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: all;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.3s;
+}
+
+.notification:hover {
+    transform: scale(1.02);
+}
+
+.notification.removing {
+    animation: slideUp 0.3s ease-out forwards;
+}
+
+@keyframes slideDown {
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}
+
+.notification-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.notification-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+}
+
+.notification-app {
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+    flex: 1;
+}
+
+.notification-time {
+    font-size: 12px;
+    color: #999;
+}
+
+.notification-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 4px;
+}
+
+.notification-message {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.4;
+}
+
+/* Notification Actions */
+.notification-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.notification-action {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.notification-action.primary {
+    background: #007AFF;
+    color: white;
+}
+
+.notification-action.secondary {
+    background: #E5E5EA;
+    color: #000;
+}
+
+/* Incoming Call Notification */
+.notification.call {
+    background: rgba(0, 0, 0, 0.95);
+    padding: 20px;
+}
+
+.call-header {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.call-label {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 5px;
+}
+
+.call-name {
+    font-size: 28px;
+    color: white;
+    font-weight: 300;
+}
+
+.call-number {
+    font-size: 16px;
+    color: #999;
+    margin-top: 5px;
+}
+
+.call-actions {
+    display: flex;
+    justify-content: space-around;
+    gap: 30px;
+}
+
+.call-button {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.call-button:active {
+    transform: scale(0.95);
+}
+
+.call-button.decline {
+    background: #FF3B30;
+}
+
+.call-button.accept {
+    background: #34C759;
+}
+
+.call-button i {
+    color: white;
+    font-size: 24px;
+}
+
+/* Skeleton Homescreen */
+.homescreen {
+    padding: 60px 20px 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-row {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+}
+
+.app-skeleton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.app-icon-skeleton {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(90deg, #3a3a3c 0%, #48484a 50%, #3a3a3c 100%);
+    background-size: 200% 100%;
+    border-radius: 14px;
+    animation: shimmer 2s infinite;
+}
+
+.app-name-skeleton {
+    width: 50px;
+    height: 10px;
+    background: linear-gradient(90deg, #3a3a3c 0%, #48484a 50%, #3a3a3c 100%);
+    background-size: 200% 100%;
+    border-radius: 5px;
+    animation: shimmer 2s infinite;
+}
+
+.dock-skeleton {
+    position: absolute;
+    bottom: 30px;
+    left: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-radius: 30px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-around;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -100% 0;
+    }
+    100% {
+        background-position: 100% 0;
+    }
+}
+
+/* Home Indicator */
+.home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+}
+
+/* Control Panel */
+.control-panel {
+    width: 350px;
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    padding-right: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-height: 600px;
+    height: fit-content;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.control-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.control-panel-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #262626;
+}
+
+.control-panel-content {
+    overflow-y: auto;
+    max-height: 500px;
+    padding-right: 10px;
+}
+
+.control-section {
+    margin-bottom: 30px;
+}
+
+.control-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #8e8e93;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.notification-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: #0095F6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.notification-btn:hover {
+    background: #0082d9;
+    transform: translateY(-1px);
+}
+
+.notification-btn.custom {
+    background: #5856D6;
+}
+
+.notification-btn.custom:hover {
+    background: #4240a8;
+}
+
+.scenario-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: #34C759;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.scenario-btn:hover {
+    background: #28a745;
+    transform: translateY(-1px);
+}
+
+.scenario-btn.clear {
+    background: #FF3B30;
+}
+
+.scenario-btn.clear:hover {
+    background: #dc3545;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* Icon Selector */
+.input-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #8e8e93;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.icon-selector {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.icon-option {
+    width: 45px;
+    height: 45px;
+    border: 2px solid #e1e1e1;
+    border-radius: 10px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 18px;
+    color: #666;
+}
+
+.icon-option:hover {
+    transform: scale(1.05);
+    border-color: #0095F6;
+}
+
+.icon-option.active {
+    border-color: #0095F6;
+    background: #f0f8ff;
+    color: #0095F6;
+}
+
+.icon-option i {
+    pointer-events: none;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox-label span {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Vibration Animation */
+@keyframes vibrate {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+    20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+.vibrating {
+    animation: vibrate 0.3s;
+}
+
+/* Scrollbar Styling */
+.control-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.control-panel::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.control-panel::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.control-panel::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

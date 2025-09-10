@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Chat Simulator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Phone Screen -->
+        <div class="phone-container">
+            <div class="screens-wrapper">
+                <!-- Instagram Chat Screen -->
+                <div class="phone-screen active" id="instagramScreen">
+                    <!-- Status Bar -->
+                    <div class="status-bar">
+                    <div class="time">9:41</div>
+                    <div class="camera-notch"></div>
+                    <div class="status-icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <div class="header-left">
+                        <i class="fas fa-arrow-left back-arrow"></i>
+                        <img src="https://via.placeholder.com/40" alt="Avatar" class="user-avatar">
+                        <div class="user-info">
+                            <div class="user-name">john_doe</div>
+                            <div class="user-status">Active now</div>
+                        </div>
+                    </div>
+                    <div class="header-right">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Messages Area -->
+                <div class="messages-area" id="messagesArea">
+                    <!-- Typing Indicator -->
+                    <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message Input -->
+                <div class="message-input-container">
+                    <div class="message-input-wrapper">
+                        <div class="camera-icon-wrapper">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                <circle cx="12" cy="13" r="4"></circle>
+                            </svg>
+                        </div>
+                        <input type="text" class="message-input" placeholder="Message..." id="messageInput">
+                        <div class="input-icons">
+                            <i class="fas fa-microphone"></i>
+                            <i class="far fa-image"></i>
+                            <div class="plus-icon-wrapper">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                    <!-- Phone Navigation Bar -->
+                    <div class="phone-nav-bar"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-panel-header">
+                <h2>Simulator Controls</h2>
+                <button class="clear-chat-btn" onclick="clearChat()" title="Clear Chat">
+                    <i class="fas fa-trash"></i>
+                    <span>Clear Chat</span>
+                </button>
+            </div>
+            
+            <div class="control-panel-content">
+<!-- User Settings -->
+            <div class="control-section">
+                <h3>Chat User</h3>
+                <input type="text" id="userName" placeholder="Username" value="john_doe">
+                <input type="text" id="userStatus" placeholder="Status" value="Active now">
+                <input type="text" id="avatarUrl" placeholder="Avatar URL" value="https://via.placeholder.com/40">
+                <div class="upload-section">
+                    <label for="avatarUpload" class="file-upload-label">
+                        <i class="fas fa-upload"></i> Upload Avatar
+                    </label>
+                    <input type="file" id="avatarUpload" accept="image/*" onchange="handleAvatarUpload(event)" style="display: none;">
+                </div>
+                <button onclick="updateUserInfo()">Update User</button>
+            </div>
+
+            <!-- Message Controls -->
+            <div class="control-section">
+                <h3>Send Message</h3>
+                <select id="messageType">
+                    <option value="incoming">Incoming Message</option>
+                    <option value="outgoing">Outgoing Message</option>
+                </select>
+                <textarea id="messageText" placeholder="Enter message text..." rows="3"></textarea>
+                <button onclick="sendMessage()">Send Message</button>
+                <div class="typing-controls">
+                    <button onclick="showTyping()" class="typing-btn">Show Typing Indicator</button>
+                    <button onclick="hideTyping()" class="typing-btn close-typing-btn">Close Typing Indicator</button>
+                </div>
+            </div>
+
+            <!-- Preset Messages -->
+            <div class="control-section">
+                <h3>Preset Messages</h3>
+                <div class="preset-manager">
+                    <div class="add-preset-form">
+                        <input type="text" id="newPresetText" placeholder="Add new preset message...">
+                        <button onclick="addPresetMessage()">+ Add</button>
+                    </div>
+                    <div id="presetMessagesList" class="preset-messages-list">
+                        <!-- Preset messages will be rendered here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenario Builder -->
+            <div class="control-section">
+                <h3>📽️ Scenario Builder</h3>
+                <div class="scenario-controls">
+                    <select id="actionType">
+                        <option value="incoming">Incoming Message</option>
+                        <option value="outgoing">Outgoing Message</option>
+                        <option value="delay">Add Delay</option>
+                    </select>
+                    <input type="text" id="actionContent" placeholder="Message text or delay (ms)">
+                    <button onclick="addScenarioStep()">Add Step</button>
+                </div>
+                
+                <div class="scenario-list" id="scenarioList">
+                    <!-- Steps will be added here -->
+                </div>
+                
+                <div class="playback-controls">
+                    <div class="speed-control">
+                        <label>Speed:</label>
+                        <select id="playbackSpeed">
+                            <option value="slow">🐢 Slow</option>
+                            <option value="medium" selected>🚶 Medium</option>
+                            <option value="fast">🏃 Fast</option>
+                        </select>
+                    </div>
+                    <button onclick="playScenario()" class="play-btn">▶️ Play Scenario</button>
+                    <button onclick="stopScenario()" class="stop-btn">⏹️ Stop</button>
+                    <button onclick="clearScenario()" class="clear-btn">🗑️ Clear All</button>
+                </div>
+                
+                <div class="scenario-presets">
+                    <h4>Scenario Templates:</h4>
+                    <div class="preset-scenarios-controls">
+                        <button onclick="loadPresetScenario('greeting')">Greeting Chat</button>
+                        <button onclick="loadPresetScenario('missed')">Missed Messages</button>
+                        <button onclick="loadPresetScenario('conversation')">Full Conversation</button>
+                    </div>
+                    <div class="custom-scenarios">
+                        <input type="text" id="scenarioName" placeholder="Enter scenario name to save...">
+                        <div style="display: flex; gap: 5px;">
+                            <button onclick="saveCustomScenario()" style="flex: 1;">💾 Save Current</button>
+                            <button onclick="loadSavedScenarios()" style="flex: 1;">📂 Load Saved</button>
+                        </div>
+                    </div>
+                    <div id="savedScenariosList" class="saved-scenarios-list">
+                        <!-- Saved scenarios will appear here -->
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

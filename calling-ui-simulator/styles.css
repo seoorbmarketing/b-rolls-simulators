@@ -1,0 +1,1312 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #1a4d6d 0%, #2a5c3e 100%);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    gap: 30px;
+    padding: 20px;
+    max-width: 1300px;
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    align-items: center;
+}
+
+/* Phone Container */
+.phone-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.phone-screen {
+    width: 360px;
+    height: 90vh;
+    max-height: 780px;
+    background: #000;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3), 0 0 0 10px #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* Vibration animation - subtle continuous buzz */
+@keyframes vibrateBuzz {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-0.5px); }
+    75% { transform: translateX(0.5px); }
+    100% { transform: translateX(0); }
+}
+
+.phone-screen.vibrating {
+    animation: vibrateBuzz 0.1s linear infinite;
+}
+
+/* Status Bar */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 25px 5px;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    color: white;
+}
+
+.camera-notch {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 18px;
+    background: #000;
+    border-radius: 12px;
+    box-shadow: 0 0 0 1px #000;
+}
+
+.status-icons {
+    display: flex;
+    gap: 5px;
+    font-size: 12px;
+}
+
+/* Incoming Call Screen */
+.incoming-call-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 80px 20px 40px;
+    background: linear-gradient(180deg, #2c3e50 0%, #000 100%);
+}
+
+.call-info {
+    text-align: center;
+    color: white;
+}
+
+.caller-label {
+    font-size: 14px;
+    opacity: 0.7;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.caller-avatar {
+    margin: 20px 0;
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.caller-avatar img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    object-fit: cover;
+}
+
+.avatar-default {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-default i {
+    font-size: 50px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.caller-name {
+    font-size: 36px;
+    font-weight: 300;
+    margin-bottom: 10px;
+}
+
+.caller-number {
+    font-size: 18px;
+    opacity: 0.8;
+    margin-bottom: 8px;
+}
+
+.caller-subtext {
+    font-size: 16px;
+    opacity: 0.6;
+    font-style: italic;
+}
+
+.call-actions {
+    padding-bottom: 20px;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: space-around;
+    gap: 80px;
+    padding: 0 40px;
+}
+
+.action-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.decline-btn, .accept-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.decline-btn {
+    background: #ff3b30;
+}
+
+.accept-btn {
+    background: #34c759;
+    position: relative;
+    overflow: visible;
+}
+
+.decline-btn:hover, .accept-btn:hover {
+    transform: scale(1.1);
+}
+
+.decline-btn i, .accept-btn > i {
+    font-size: 28px;
+    color: white;
+}
+
+.action-label {
+    color: white;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+/* Swipe Arrows */
+.swipe-arrows {
+    position: absolute;
+    top: -55px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.swipe-arrows .arrow {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    animation: arrowFade 2s ease-in-out infinite;
+}
+
+.swipe-arrows .arrow-1 {
+    animation-delay: 0s;
+}
+
+.swipe-arrows .arrow-2 {
+    animation-delay: 0.2s;
+}
+
+.swipe-arrows .arrow-3 {
+    animation-delay: 0.4s;
+}
+
+@keyframes arrowFade {
+    0%, 100% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translateY(0);
+    }
+}
+
+/* Active Call Screen */
+.active-call-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 20px 0px;
+    background: linear-gradient(45deg, #5fc9f8, #fecb2e, #fd9426, #fc3158, #147efb, #53d769);
+    position: relative;
+}
+
+.active-call-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    pointer-events: none;
+}
+
+.active-call-info {
+    text-align: center;
+    color: white;
+    margin-bottom: 40px;
+    position: relative;
+    z-index: 1;
+}
+
+.active-caller-avatar {
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
+    min-height: 80px;
+    max-width: 80px;
+    max-height: 80px;
+    margin: 0 auto 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.active-caller-avatar img {
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
+    min-height: 80px;
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+}
+
+.avatar-default-small {
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
+    min-height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    flex-shrink: 0;
+}
+
+.avatar-default-small i {
+    font-size: 35px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.active-caller-name {
+    font-size: 32px;
+    font-weight: 300;
+    margin-bottom: 10px;
+}
+
+.call-duration {
+    font-size: 18px;
+    opacity: 0.8;
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+}
+
+.active-caller-subtext {
+    font-size: 14px;
+    opacity: 0.6;
+    font-style: italic;
+}
+
+/* Audio Visualization */
+.audio-visualization {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+#waveform {
+    width: 100%;
+    height: 100px;
+    opacity: 0.8;
+}
+
+/* Voice Visualizer */
+.voice-visualizer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    position: relative;
+    z-index: 1;
+    margin: 20px 0;
+}
+
+#voiceWaveform {
+    width: 100%;
+    max-width: 320px;
+    height: 60px;
+}
+
+/* Call Controls */
+.call-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.control-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.control-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.control-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: none;
+    border-radius: 50%;
+    width: 65px;
+    height: 65px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.control-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.control-btn i {
+    color: white;
+    font-size: 24px;
+}
+
+.control-label {
+    color: white;
+    font-size: 12px;
+    opacity: 0.9;
+    text-align: center;
+    line-height: 1;
+}
+
+.end-call-row {
+    display: flex;
+    justify-content: center;
+    padding: 15px 0;
+}
+
+.end-call-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #ff3b30;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.end-call-btn:hover {
+    transform: scale(1.1);
+}
+
+.end-call-btn i {
+    color: white;
+    font-size: 28px;
+}
+
+/* Phone Navigation Bar */
+.phone-nav-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 0 8px;
+    background: transparent;
+}
+
+
+.phone-nav-bar::after {
+    content: '';
+    width: 135px;
+    height: 4px;
+    background: white;
+    border-radius: 2px;
+}
+
+/* Active Call Navigation Bar */
+.active-nav-bar {
+    background: transparent;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+}
+
+/* Hide incoming nav bar when active call is displayed */
+.incoming-nav-bar {
+    display: none;
+}
+
+#activeCallScreen[style*="display: none"] ~ .incoming-nav-bar {
+    display: flex;
+}
+
+#activeCallScreen[style*="display: flex"] ~ .incoming-nav-bar {
+    display: none;
+}
+
+
+/* Control Panel */
+.control-panel {
+    width: 350px;
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    padding-right: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-height: 600px;
+    height: fit-content;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.control-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.control-panel h2 {
+    color: #262626;
+    font-size: 20px;
+    flex-shrink: 0;
+    margin: 0;
+}
+
+.reset-btn {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    background: #ff9800;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.reset-btn:hover {
+    background: #e68900;
+    transform: scale(1.05);
+}
+
+.reset-btn i {
+    font-size: 12px;
+}
+
+.control-panel-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 5px;
+}
+
+.control-section {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #EFEFEF;
+}
+
+.control-section:last-child {
+    border-bottom: none;
+}
+
+.control-section h3 {
+    margin-bottom: 15px;
+    color: #262626;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.control-section input,
+.control-section select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #DBDBDB;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.control-section input:focus,
+.control-section select:focus {
+    outline: none;
+    border-color: #3797F0;
+}
+
+.control-section button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: #3797F0;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.control-section button:hover {
+    background: #2A85D8;
+}
+
+/* Audio Upload */
+.file-upload-label {
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    background: #f0f0f0;
+    border: 2px dashed #3797F0;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: #3797F0;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.file-upload-label:hover {
+    background: #e8f4fd;
+    border-color: #2A85D8;
+    color: #2A85D8;
+}
+
+.file-upload-label i {
+    margin-right: 5px;
+}
+
+.remove-avatar-btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 14px;
+    font-weight: 500;
+    display: block;
+    width: 100%;
+}
+
+.remove-avatar-btn:hover {
+    background: #cc0000;
+}
+
+/* Avatar Type Selector */
+.section-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #262626;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.avatar-type-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.avatar-type-btn {
+    padding: 10px;
+    background: #f0f0f0;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.avatar-type-btn:hover {
+    background: #e8e8e8;
+    border-color: #0095F6;
+}
+
+.avatar-type-btn.active {
+    background: #0095F6;
+    border-color: #0095F6;
+    color: white;
+}
+
+.avatar-type-btn i {
+    font-size: 16px;
+}
+
+/* Bot Avatar Styles */
+.bot-avatar-styles {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.bot-style-btn {
+    padding: 10px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.bot-style-btn:hover {
+    border-color: #0095F6;
+    transform: translateY(-2px);
+}
+
+.bot-style-btn.active {
+    border-color: #0095F6;
+    background: #f0f8ff;
+}
+
+.bot-style-btn span {
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+}
+
+.bot-preview {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.bot-default {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.bot-circuit {
+    background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+    color: white;
+}
+
+.bot-assistant {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+}
+
+.bot-ai {
+    background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%);
+    color: white;
+}
+
+/* Bot Avatar in Call Screen */
+.avatar-bot {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    color: white;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Bot avatar in active call screen (smaller) */
+.active-caller-avatar .avatar-bot {
+    width: 80px;
+    height: 80px;
+    font-size: 35px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+}
+
+.avatar-bot.bot-default {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.avatar-bot.bot-circuit {
+    background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+}
+
+.avatar-bot.bot-assistant {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.avatar-bot.bot-ai {
+    background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%);
+}
+
+.audio-status {
+    margin-top: 10px;
+    padding: 8px;
+    background: #e8f5e9;
+    border-radius: 6px;
+    color: #2e7d32;
+    font-size: 13px;
+    text-align: center;
+    display: none;
+}
+
+.audio-status.active {
+    display: block;
+}
+
+/* Audio Playback Controls */
+.audio-controls {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.audio-progress-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.audio-progress {
+    flex: 1;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #e0e0e0;
+    outline: none;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+    border-radius: 2px;
+}
+
+.audio-progress:hover {
+    opacity: 1;
+}
+
+.audio-progress::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #3797F0;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.audio-progress::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: #3797F0;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.audio-time {
+    font-size: 12px;
+    color: #666;
+    min-width: 35px;
+}
+
+.audio-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.audio-btn {
+    padding: 8px 16px;
+    background: #3797F0;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+
+.audio-btn:hover {
+    background: #2A85D8;
+}
+
+.audio-btn i {
+    font-size: 12px;
+}
+
+/* Auto Answer Control */
+.auto-answer-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.auto-answer-control label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #262626;
+}
+
+.auto-answer-control input[type="number"] {
+    width: 60px;
+    padding: 5px;
+    margin: 0;
+    border: 1px solid #DBDBDB;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.start-call-btn {
+    background: #34c759 !important;
+    font-size: 16px !important;
+    padding: 12px !important;
+}
+
+.start-call-btn:hover {
+    background: #2ca849 !important;
+}
+
+/* Ringtone Control */
+.ringtone-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.ringtone-control label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #262626;
+}
+
+.ringtone-control button {
+    background: #007aff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    padding: 5px 10px;
+}
+
+.ringtone-control button:hover {
+    background: #0056cc;
+}
+
+.ringtone-control button.muted {
+    background: #ff3b30;
+}
+
+.ringtone-control button.muted:hover {
+    background: #d70015;
+}
+
+/* Summary Screen - iPhone Notes Style */
+.summary-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    background: #f2f2f7;
+}
+
+/* Dark status bar for summary screen */
+.summary-screen .status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: transparent;
+}
+
+.summary-screen .status-bar .time,
+.summary-screen .status-bar .status-icons i {
+    color: #000;
+}
+
+/* Notes Header */
+.notes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 50px 16px 12px;
+    background: #f2f2f7;
+    border-bottom: 0.5px solid #d1d1d6;
+    flex-shrink: 0;
+}
+
+.notes-header-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #007aff;
+    font-size: 17px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.notes-header-left i {
+    font-size: 22px;
+}
+
+.notes-header-left span {
+    margin-left: 2px;
+}
+
+.notes-header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: #007aff;
+}
+
+.notes-header-right i,
+.notes-header-right svg {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+/* Notes Content */
+.notes-content {
+    flex: 1;
+    background: white;
+    overflow: hidden;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.notes-title {
+    padding: 20px 16px 12px;
+    border-bottom: none;
+    flex-shrink: 0;
+}
+
+.notes-title h3 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+    margin-bottom: 6px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    letter-spacing: -0.5px;
+}
+
+.notes-date {
+    font-size: 13px;
+    color: #8e8e93;
+    font-weight: 400;
+}
+
+.notes-body {
+    flex: 1;
+    padding: 12px 16px 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    position: relative;
+}
+
+.summary-text {
+    font-size: 17px;
+    line-height: 24px;
+    color: #000;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    font-weight: 400;
+    letter-spacing: -0.2px;
+}
+
+/* Notes Bottom Bar */
+.notes-bottom-bar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 16px 8px;
+    background: #f2f2f7;
+    border-top: 0.5px solid #d1d1d6;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+}
+
+.notes-bottom-bar i {
+    font-size: 22px;
+    color: #007aff;
+    padding: 10px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.notes-bottom-bar i:hover {
+    opacity: 0.7;
+}
+
+.notes-bottom-bar i:active {
+    opacity: 0.5;
+}
+
+/* Phone nav bar for summary screen - dark indicator only */
+.summary-screen .phone-nav-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0 8px;
+    background: transparent;
+    flex-shrink: 0;
+}
+
+.summary-screen .phone-nav-bar::after {
+    content: '';
+    width: 134px;
+    height: 5px;
+    background: #000;
+    border-radius: 100px;
+}
+
+/* Scrollbar for notes body only */
+.notes-body::-webkit-scrollbar {
+    width: 3px;
+}
+
+.notes-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.notes-body::-webkit-scrollbar-thumb {
+    background: #c7c7cc;
+    border-radius: 3px;
+}
+
+.typing-cursor {
+    display: none;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes vibrate {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    10% {
+        transform: rotate(-5deg);
+    }
+    20% {
+        transform: rotate(5deg);
+    }
+    30% {
+        transform: rotate(-5deg);
+    }
+    40% {
+        transform: rotate(5deg);
+    }
+    50% {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes swipeUp {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-150px);
+        opacity: 0;
+    }
+}
+
+.incoming-call-screen {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.accept-btn {
+    animation: slideUp 2s ease-in-out infinite;
+    position: relative;
+}
+
+.accept-btn .phone-icon,
+.accept-btn .bot-icon {
+    font-size: 28px;
+    color: white;
+    position: absolute;
+}
+
+.accept-btn .phone-icon {
+    display: block;
+}
+
+.accept-btn .bot-icon {
+    display: none;
+}
+
+/* During swipe animation, show bot icon instead of phone */
+.accept-btn.swiping .phone-icon {
+    display: none;
+}
+
+.accept-btn.swiping .bot-icon {
+    display: block;
+}
+
+.accept-btn.swiping {
+    animation: swipeUp 0.5s ease-out forwards;
+}
+
+/* Scrollbar for control panel */
+.control-panel-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.control-panel-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.control-panel-content::-webkit-scrollbar-thumb {
+    background: #DBDBDB;
+    border-radius: 3px;
+}
+
+.control-panel-content::-webkit-scrollbar-thumb:hover {
+    background: #8E8E8E;
+}

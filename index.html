@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Simulators Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a4d6d 0%, #2a5c3e 100%);
+            min-height: 100vh;
+            padding: 20px 15px;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .dashboard-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .dashboard-subtitle {
+            font-size: 20px;
+            color: #666;
+            font-weight: 300;
+        }
+
+        .simulators-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .simulator-card {
+            background: white;
+            border-radius: 8px;
+            overflow: visible;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            gap: 15px;
+        }
+
+        .simulator-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .simulator-preview {
+            width: 60px;
+            height: 60px;
+            background: #f0f0f0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .simulator-icon {
+            font-size: 28px;
+        }
+
+        .simulator-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .simulator-name {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .launch-btn {
+            padding: 8px 20px;
+            background: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .launch-btn:hover {
+            background: #3367d6;
+        }
+
+
+        /* Custom colors for different simulators */
+        .instagram-gradient {
+            color: #E4405F;
+        }
+
+        .sms-gradient {
+            color: #25D366;
+        }
+
+        .call-gradient {
+            color: #007AFF;
+        }
+
+        .notification-gradient {
+            color: #FF3B30;
+        }
+
+        .calendar-gradient {
+            color: #4285F4;
+        }
+
+        .email-gradient {
+            color: #EA4335;
+        }
+
+        .chat-gradient {
+            color: #00B4DB;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.3;
+            }
+            100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+        }
+
+
+        @media (max-width: 1200px) {
+            .simulators-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .simulators-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .dashboard-title {
+                font-size: 24px;
+            }
+            
+            .simulators-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1 class="dashboard-title">B-Rolls Simulators</h1>
+        </header>
+
+        <div class="simulators-grid">
+            <!-- Instagram Chat Simulator -->
+            <div class="simulator-card" onclick="window.location.href='instagram-chat-simulator/index.html'">
+                <div class="simulator-preview">
+                    <i class="fab fa-instagram simulator-icon instagram-gradient"></i>
+                </div>
+                <div class="simulator-info">
+                    <h3 class="simulator-name">Instagram Chat</h3>
+                    <button class="launch-btn" onclick="event.stopPropagation(); window.location.href='instagram-chat-simulator/index.html'">Launch</button>
+                </div>
+            </div>
+
+            <!-- SMS Simulator -->
+            <div class="simulator-card" onclick="window.location.href='sms-simulator/index.html'">
+                <div class="simulator-preview">
+                    <i class="fas fa-comment-dots simulator-icon sms-gradient"></i>
+                </div>
+                <div class="simulator-info">
+                    <h3 class="simulator-name">SMS Messages</h3>
+                    <button class="launch-btn" onclick="event.stopPropagation(); window.location.href='sms-simulator/index.html'">Launch</button>
+                </div>
+            </div>
+
+            <!-- Calling UI Simulator -->
+            <div class="simulator-card" onclick="window.location.href='calling-ui-simulator/index.html'">
+                <div class="simulator-preview">
+                    <i class="fas fa-phone-alt simulator-icon call-gradient"></i>
+                </div>
+                <div class="simulator-info">
+                    <h3 class="simulator-name">Phone Call</h3>
+                    <button class="launch-btn" onclick="event.stopPropagation(); window.location.href='calling-ui-simulator/index.html'">Launch</button>
+                </div>
+            </div>
+
+            <!-- Notification System Simulator -->
+            <div class="simulator-card" onclick="window.location.href='notification-system-simulator/index.html'">
+                <div class="simulator-preview">
+                    <i class="fas fa-bell simulator-icon notification-gradient"></i>
+                </div>
+                <div class="simulator-info">
+                    <h3 class="simulator-name">Notifications</h3>
+                    <button class="launch-btn" onclick="event.stopPropagation(); window.location.href='notification-system-simulator/index.html'">Launch</button>
+                </div>
+            </div>
+
+            <!-- Google Calendar Simulator -->
+            <div class="simulator-card" onclick="window.location.href='google-calendar-simulator/index.html'">
+                <div class="simulator-preview">
+                    <i class="fas fa-calendar-alt simulator-icon calendar-gradient"></i>
+                </div>
+                <div class="simulator-info">
+                    <h3 class="simulator-name">Google Calendar</h3>
+                    <button class="launch-btn" onclick="event.stopPropagation(); window.location.href='google-calendar-simulator/index.html'">Launch</button>
+                </div>
+            </div>
+
+            <!-- Email Simulator -->
+            <div class="simulator-card" onclick="window.location.href='email-simulator/index.html'">
+                <div class="simulator-preview">
+                    <i class="fas fa-envelope simulator-icon email-gradient"></i>
+                </div>
+                <div class="simulator-info">
+                    <h3 class="simulator-name">Gmail</h3>
+                    <button class="launch-btn" onclick="event.stopPropagation(); window.location.href='email-simulator/index.html'">Launch</button>
+                </div>
+            </div>
+
+            <!-- Web Chat Simulator -->
+            <div class="simulator-card" onclick="window.location.href='web-chat-simulator/index.html'">
+                <div class="simulator-preview">
+                    <i class="fas fa-comments simulator-icon chat-gradient"></i>
+                </div>
+                <div class="simulator-info">
+                    <h3 class="simulator-name">Web Chat</h3>
+                    <button class="launch-btn" onclick="event.stopPropagation(); window.location.href='web-chat-simulator/index.html'">Launch</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Add entrance animations to cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.simulator-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

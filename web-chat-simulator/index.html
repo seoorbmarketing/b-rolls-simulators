@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Chat Simulator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Browser Container -->
+        <div class="browser-container">
+            <!-- Browser Frame -->
+            <div class="browser-frame">
+            <!-- Browser Header -->
+            <div class="browser-header">
+                <div class="browser-controls">
+                    <div class="browser-dot red"></div>
+                    <div class="browser-dot yellow"></div>
+                    <div class="browser-dot green"></div>
+                </div>
+                <div class="browser-address-bar">
+                    <i class="fas fa-lock"></i>
+                    <span>www.example-business.com</span>
+                </div>
+                <div class="browser-actions">
+                    <i class="fas fa-redo"></i>
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </div>
+
+            <!-- Browser Content -->
+            <div class="browser-content">
+                <!-- Skeleton Website (Default) -->
+                <div class="skeleton-website" id="skeletonWebsite">
+                    <!-- Simple Header -->
+                    <div class="simple-header">
+                        <div class="skeleton-logo"></div>
+                        <div class="skeleton-nav">
+                            <div class="skeleton-nav-item"></div>
+                            <div class="skeleton-nav-item"></div>
+                            <div class="skeleton-nav-item"></div>
+                            <div class="skeleton-nav-item"></div>
+                        </div>
+                    </div>
+
+                    <!-- Full Hero Section -->
+                    <div class="skeleton-hero-full">
+                        <div class="skeleton-hero-centered">
+                            <div class="skeleton-title"></div>
+                            <div class="skeleton-stars"></div>
+                            <div class="skeleton-description"></div>
+                            <div class="skeleton-button"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actual Business Website -->
+                <div class="business-website" id="businessWebsite" style="display: none;">
+                    <!-- Simple Header -->
+                    <div class="simple-header">
+                        <div class="website-logo" id="websiteLogo">
+                            <span class="logo-text">YourLogo</span>
+                        </div>
+                        <div class="website-nav">
+                            <a href="#">Home</a>
+                            <a href="#">About</a>
+                            <a href="#">Services</a>
+                            <a href="#">Contact</a>
+                        </div>
+                    </div>
+
+                    <!-- Full Hero Section with Background -->
+                    <div class="hero-full" id="heroSection">
+                        <div class="hero-background" id="heroBackground"></div>
+                        <div class="hero-overlay"></div>
+                        <div class="hero-centered">
+                            <h1 id="heroTitle">Welcome to Our Business</h1>
+                            <div class="star-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <p id="heroDescription">We provide excellent services to help your business grow.</p>
+                            <button class="hero-cta" id="heroCTA">Get Started</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dark Overlay -->
+                <div class="chat-overlay" id="chatOverlay" style="display: none;" onclick="closeChat()"></div>
+                
+                <!-- Mouse Cursor for Animation -->
+                <div class="hand-cursor" id="handCursor" style="display: none;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 3L19 12L12 13L8.5 20.5L5 3Z" fill="white" stroke="black" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                
+                <!-- Chatbot Button -->
+                <button class="chatbot-button" id="chatbotButton" onclick="toggleChat()">
+                    <i class="fas fa-comments"></i>
+                    <span class="chatbot-badge live"></span>
+                </button>
+
+                <!-- Chat Widget (Initially Hidden) -->
+                <div class="chat-widget-container" id="chatWidgetContainer" style="display: none;">
+                    <div class="chat-widget">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div class="agent-info">
+                    <div class="agent-avatar default" id="agentAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="agent-details">
+                        <div class="agent-name-line">
+                            <span class="agent-name" id="agentName">Sarah</span>
+                            <span class="agent-badge" id="agentBadge">AI Agent</span>
+                        </div>
+                        <div class="agent-status" id="agentStatus">
+                            <span class="status-dot" id="statusDot"></span>
+                            <span id="statusText">Online</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <i class="fas fa-minus minimize-btn" title="Minimize"></i>
+                    <i class="fas fa-times close-btn" title="Close" onclick="closeChat()"></i>
+                </div>
+            </div>
+
+            <!-- Chat Messages Area -->
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be added here -->
+                
+                <!-- Typing Indicator -->
+                <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                    <div class="message-avatar default">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="chat-input-container">
+                <div class="chat-input-field">
+                    <input type="text" id="chatInput" placeholder="Type a message">
+                    <button class="send-button" id="sendButton">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="powered-by">
+                    Powered by <a href="#" id="poweredByLink">AutomateMyBiz</a>
+                </div>
+            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-panel-header">
+                <h2>Web Chat Simulator</h2>
+                <button class="clear-chat-btn" onclick="clearChat()" title="Clear Messages">
+                    <i class="fas fa-trash"></i>
+                    Clear
+                </button>
+            </div>
+            
+            <div class="control-panel-content">
+                <!-- Agent Settings -->
+                <div class="control-section">
+                    <h3>Agent Information</h3>
+                    <input type="text" id="inputAgentName" placeholder="Agent Name" value="Sarah">
+                    <input type="text" id="inputAgentBadge" placeholder="Badge Text (e.g., AI Agent, Human Agent)" value="AI Agent">
+                    <div class="status-control">
+                        <div class="status-color-options">
+                            <label>
+                                <input type="radio" name="statusColor" value="green" checked onchange="updateStatusColor()">
+                                <span class="status-dot-preview green"></span> Green
+                            </label>
+                            <label>
+                                <input type="radio" name="statusColor" value="red" onchange="updateStatusColor()">
+                                <span class="status-dot-preview red"></span> Red
+                            </label>
+                            <label>
+                                <input type="radio" name="statusColor" value="yellow" onchange="updateStatusColor()">
+                                <span class="status-dot-preview yellow"></span> Yellow
+                            </label>
+                        </div>
+                        <input type="text" id="inputAgentStatus" placeholder="Agent Status" value="Online">
+                    </div>
+                    <input type="text" id="inputAgentAvatar" placeholder="Agent Avatar URL" value="">
+                    <div class="upload-section">
+                        <label for="agentAvatarUpload" class="file-upload-label">
+                            <i class="fas fa-upload"></i> Upload Agent Avatar
+                        </label>
+                        <input type="file" id="agentAvatarUpload" accept="image/*" onchange="handleAvatarUpload(event)" style="display: none;">
+                    </div>
+                    
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #EFEFEF;">
+                        <label style="font-size: 13px; color: #666; display: block; margin-bottom: 5px;">User (Sender) Avatar:</label>
+                        <input type="text" id="inputUserAvatar" placeholder="User Avatar URL" value="">
+                        <div class="upload-section">
+                            <label for="userAvatarUpload" class="file-upload-label">
+                                <i class="fas fa-upload"></i> Upload User Avatar
+                            </label>
+                            <input type="file" id="userAvatarUpload" accept="image/*" onchange="handleUserAvatarUpload(event)" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <button onclick="updateAgentInfo()">Update Settings</button>
+                </div>
+
+                <!-- Message Controls -->
+                <div class="control-section">
+                    <h3>Send Message</h3>
+                    <select id="messageType">
+                        <option value="user">User Message</option>
+                        <option value="agent">Agent Message</option>
+                        <option value="notification">Notification</option>
+                    </select>
+                    <textarea id="messageText" placeholder="Enter message text..." rows="3"></textarea>
+                    <input type="text" id="notificationText" placeholder="e.g., Appointment booked: Jan 23, 2025 - Monday - 08:00 AM" style="display: none;">
+                    <div class="typing-controls">
+                        <button onclick="showTyping()" class="typing-btn"><i class="fas fa-keyboard"></i> Show Typing</button>
+                        <button onclick="hideTyping()" class="typing-btn close-typing-btn"><i class="fas fa-times"></i> Hide Typing</button>
+                    </div>
+                    <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i> Send Message</button>
+                </div>
+
+                <!-- Chat Settings -->
+                <div class="control-section">
+                    <h3>Chat Settings</h3>
+                    <input type="text" id="poweredByText" placeholder="Powered by text" value="AutomateMyBiz">
+                    <button onclick="updatePoweredBy()">Update Branding</button>
+                    
+                    <div class="background-theme-section">
+                        <label>Page Background:</label>
+                        <select id="pageBackground" onchange="updatePageBackground()">
+                            <option value="gradient">🌈 Gradient (Default)</option>
+                            <option value="white">⚪ White</option>
+                        </select>
+                    </div>
+                    
+                    <div class="color-theme-section" style="margin-top: 10px;">
+                        <label>Chat Widget Theme:</label>
+                        <select id="chatTheme" onchange="updateChatTheme()">
+                            <option value="blue">🔵 Blue (Default)</option>
+                            <option value="green">🟢 Green</option>
+                            <option value="purple">🟣 Purple</option>
+                            <option value="orange">🟠 Orange</option>
+                            <option value="red">🔴 Red</option>
+                            <option value="teal">🟢 Teal</option>
+                            <option value="pink">🩷 Pink</option>
+                        </select>
+                        
+                        <label style="margin-top: 10px;">Website Theme:</label>
+                        <select id="websiteTheme" onchange="updateWebsiteTheme()">
+                            <option value="blue">🔵 Blue (Default)</option>
+                            <option value="green">🟢 Green</option>
+                            <option value="purple">🟣 Purple</option>
+                            <option value="orange">🟠 Orange</option>
+                            <option value="red">🔴 Red</option>
+                            <option value="teal">🟢 Teal</option>
+                            <option value="pink">🩷 Pink</option>
+                            <option value="dark">⚫ Dark</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Business Configuration -->
+                <div class="control-section">
+                    <h3>🏢 Business Configuration</h3>
+                    
+                    <div class="business-selector">
+                        <label>Select Business:</label>
+                        <select id="businessSelector" onchange="switchBusiness()">
+                            <option value="">Skeleton (Default)</option>
+                            <option value="business1">Business 1</option>
+                            <option value="business2">Business 2</option>
+                            <option value="business3">Business 3</option>
+                            <option value="business4">Business 4</option>
+                            <option value="business5">Business 5</option>
+                        </select>
+                    </div>
+                    
+                    <div class="business-editor" id="businessEditor" style="display: none;">
+                        <input type="text" id="businessName" placeholder="Business Name">
+                        <input type="text" id="businessLogo" placeholder="Logo Text (e.g., TechCo, ABC Inc.)">
+                        <input type="text" id="businessUrl" placeholder="Website URL (e.g., www.business.com)">
+                        <input type="text" id="businessButtonText" placeholder="Button Text (e.g., Get Started, Book Now)">
+                        <textarea id="businessDescription" placeholder="Business Description" rows="3"></textarea>
+                        
+                        <div class="image-uploads">
+                            <label>Background Image:</label>
+                            <input type="file" id="businessBackground" accept="image/*" onchange="handleBusinessImage(event, 'background')">
+                        </div>
+                        
+                        <button onclick="saveBusinessData()">Save Business</button>
+                    </div>
+                </div>
+
+                <!-- Scenario Builder -->
+                <div class="control-section">
+                    <h3><i class="fas fa-film"></i> Scenario Builder</h3>
+                    
+                    <!-- Saved Scenarios -->
+                    <div class="saved-scenarios">
+                        <label>Saved Scenarios:</label>
+                        <select id="savedScenarios" onchange="loadSelectedScenario()">
+                            <option value="">-- Select Scenario --</option>
+                        </select>
+                        <div class="scenario-actions">
+                            <button onclick="duplicateSelectedScenario()" class="duplicate-scenario-btn" title="Duplicate Selected">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button onclick="deleteSelectedScenario()" class="delete-scenario-btn" title="Delete Selected">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Scenario Name for Saving -->
+                    <input type="text" id="scenarioName" placeholder="Scenario Name (for saving)">
+                    
+                    <div class="scenario-controls">
+                        <select id="scenarioActionType">
+                            <option value="user">User Message</option>
+                            <option value="agent">Agent Message</option>
+                            <option value="notification">Notification</option>
+                            <option value="delay">Add Delay (ms)</option>
+                        </select>
+                        <input type="text" id="scenarioContent" placeholder="Message text or delay (ms)">
+                        <input type="text" id="scenarioNotification" placeholder="e.g., Appointment confirmed for Jan 23" style="display: none;">
+                        <button onclick="addScenarioStep()"><i class="fas fa-plus"></i> Add Step</button>
+                    </div>
+                    
+                    <div class="scenario-list" id="scenarioList">
+                        <!-- Steps will be added here -->
+                    </div>
+                    
+                    <div class="scenario-actions">
+                        <button onclick="saveScenario()" class="save-scenario-btn">
+                            <i class="fas fa-save"></i> Save Scenario
+                        </button>
+                        <button onclick="clearScenario()" class="clear-btn">
+                            <i class="fas fa-broom"></i> Clear Current
+                        </button>
+                    </div>
+                    
+                    <div class="playback-controls">
+                        <div class="speed-control">
+                            <label>Speed:</label>
+                            <select id="playbackSpeed">
+                                <option value="slow">Slow</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="fast">Fast</option>
+                            </select>
+                        </div>
+                        <button onclick="playScenario()" class="play-btn">
+                            <i class="fas fa-play"></i> Play Scenario
+                        </button>
+                        <button onclick="stopScenario()" class="stop-btn">
+                            <i class="fas fa-stop"></i> Stop
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

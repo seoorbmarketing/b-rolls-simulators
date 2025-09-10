@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calling UI Simulator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Phone Screen -->
+        <div class="phone-container">
+            <div class="phone-screen">
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <div class="time">9:41</div>
+                    <div class="camera-notch"></div>
+                    <div class="status-icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+
+                <!-- Incoming Call Screen -->
+                <div class="incoming-call-screen" id="incomingCallScreen">
+                    <div class="call-info">
+                        <div class="caller-label">Incoming call</div>
+                        <div class="caller-avatar" id="callerAvatarContainer">
+                            <img id="callerAvatar" src="" alt="Caller" style="display: none;">
+                            <div id="callerAvatarDefault" class="avatar-default">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+                        <h1 class="caller-name" id="callerName">John Doe</h1>
+                        <div class="caller-number" id="callerNumber">+1 (555) ***-**45</div>
+                        <div class="caller-subtext" id="callerSubtext">Customer</div>
+                    </div>
+                    
+                    <div class="call-actions">
+                        <div class="action-buttons">
+                            <div class="action-item">
+                                <button class="decline-btn">
+                                    <i class="fas fa-phone" style="transform: rotate(135deg);"></i>
+                                </button>
+                                <span class="action-label">Decline</span>
+                            </div>
+                            <div class="action-item">
+                                <button class="accept-btn">
+                                    <div class="swipe-arrows">
+                                        <i class="fas fa-chevron-up arrow arrow-1"></i>
+                                        <i class="fas fa-chevron-up arrow arrow-2"></i>
+                                        <i class="fas fa-chevron-up arrow arrow-3"></i>
+                                    </div>
+                                    <i class="fas fa-phone phone-icon"></i>
+                                    <i class="fas fa-robot bot-icon"></i>
+                                </button>
+                                <span class="action-label">Accept</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Screen -->
+                <div class="summary-screen" id="summaryScreen" style="display: none;">
+                    <!-- Status Bar with dark theme for light screen -->
+                    <div class="status-bar">
+                        <div class="time">9:41</div>
+                        <div class="camera-notch"></div>
+                        <div class="status-icons">
+                            <i class="fas fa-signal"></i>
+                            <i class="fas fa-wifi"></i>
+                            <i class="fas fa-battery-three-quarters"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Notes App Header -->
+                    <div class="notes-header">
+                        <div class="notes-header-left">
+                            <i class="fas fa-chevron-left"></i>
+                            <span>Notes</span>
+                        </div>
+                        <div class="notes-header-right">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                                <polyline points="16 6 12 2 8 6"/>
+                                <line x1="12" y1="2" x2="12" y2="15"/>
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="1"></circle>
+                                <circle cx="12" cy="5" r="1"></circle>
+                                <circle cx="12" cy="19" r="1"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- Notes Content -->
+                    <div class="notes-content">
+                        <div class="notes-title">
+                            <h3>Call Summary</h3>
+                            <span class="notes-date" id="summaryDate"></span>
+                        </div>
+                        <div class="notes-body">
+                            <div id="summaryText" class="summary-text"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notes Bottom Bar -->
+                    <div class="notes-bottom-bar">
+                        <i class="far fa-check-circle"></i>
+                        <i class="fas fa-camera"></i>
+                        <i class="fas fa-pen"></i>
+                        <i class="fas fa-table"></i>
+                        <i class="far fa-trash-alt"></i>
+                    </div>
+                    
+                    <!-- Phone Navigation Bar -->
+                    <div class="phone-nav-bar"></div>
+                </div>
+
+                <!-- Active Call Screen -->
+                <div class="active-call-screen" id="activeCallScreen" style="display: none;">
+                    <div class="active-call-info">
+                        <div class="active-caller-avatar" id="activeCallerAvatarContainer">
+                            <img id="activeCallerAvatar" src="" alt="Caller" style="display: none;">
+                            <div id="activeCallerAvatarDefault" class="avatar-default-small">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+                        <h2 class="active-caller-name" id="activeCallerName">John Doe</h2>
+                        <div class="call-duration" id="callDuration">00:00</div>
+                        <div class="active-caller-subtext" id="activeCallerSubtext">Customer</div>
+                    </div>
+
+                    <!-- Voice Visualizer -->
+                    <div class="voice-visualizer">
+                        <canvas id="voiceWaveform"></canvas>
+                    </div>
+
+                    <div class="call-controls">
+                        <div class="control-row">
+                            <div class="control-item">
+                                <button class="control-btn">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </button>
+                                <span class="control-label">Transfer</span>
+                            </div>
+                            <div class="control-item">
+                                <button class="control-btn">
+                                    <i class="fas fa-sticky-note"></i>
+                                </button>
+                                <span class="control-label">Notes</span>
+                            </div>
+                            <div class="control-item">
+                                <button class="control-btn">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </button>
+                                <span class="control-label">Calendar</span>
+                            </div>
+                        </div>
+                        <div class="end-call-row">
+                            <button class="end-call-btn" onclick="endCall()">
+                                <i class="fas fa-robot"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Phone Navigation Bar inside Active Call -->
+                    <div class="phone-nav-bar active-nav-bar"></div>
+                </div>
+
+                <!-- Phone Navigation Bar (hidden when active call) -->
+                <div class="phone-nav-bar incoming-nav-bar"></div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-panel-header">
+                <h2>Call Simulator Controls</h2>
+                <button class="reset-btn" onclick="resetSimulator()" title="Reset">
+                    <i class="fas fa-redo"></i>
+                    <span>Reset</span>
+                </button>
+            </div>
+            
+            <div class="control-panel-content">
+                <!-- Caller Settings -->
+                <div class="control-section">
+                    <h3>Caller Information</h3>
+                    <input type="text" id="inputCallerName" placeholder="Caller Name" value="John Doe">
+                    <input type="text" id="inputCallerNumber" placeholder="Phone Number" value="+1 (555) 123-4545">
+                    <input type="text" id="inputCallerSubtext" placeholder="Subtext (e.g., Customer)" value="Customer">
+                    
+                    <div class="avatar-section">
+                        <label class="section-label">Avatar Type</label>
+                        <div class="avatar-type-selector">
+                            <button type="button" class="avatar-type-btn active" data-type="human" onclick="selectAvatarType('human')">
+                                <i class="fas fa-user"></i> Human
+                            </button>
+                            <button type="button" class="avatar-type-btn" data-type="bot" onclick="selectAvatarType('bot')">
+                                <i class="fas fa-robot"></i> Bot/AI
+                            </button>
+                        </div>
+                        
+                        <div id="humanAvatarOptions" class="avatar-options">
+                            <div class="upload-section">
+                                <label for="avatarUpload" class="file-upload-label">
+                                    <i class="fas fa-upload"></i> Upload Avatar Image
+                                </label>
+                                <input type="file" id="avatarUpload" accept="image/*" onchange="handleAvatarUpload(event)" style="display: none;">
+                                <button type="button" id="removeAvatarBtn" onclick="removeAvatar()" style="display: none;" class="remove-avatar-btn">
+                                    <i class="fas fa-times"></i> Remove Avatar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="botAvatarOptions" class="avatar-options" style="display: none;">
+                            <div class="bot-avatar-styles">
+                                <button type="button" class="bot-style-btn active" data-style="default" onclick="selectBotStyle('default')">
+                                    <div class="bot-preview bot-default">
+                                        <i class="fas fa-robot"></i>
+                                    </div>
+                                    <span>Default</span>
+                                </button>
+                                <button type="button" class="bot-style-btn" data-style="circuit" onclick="selectBotStyle('circuit')">
+                                    <div class="bot-preview bot-circuit">
+                                        <i class="fas fa-microchip"></i>
+                                    </div>
+                                    <span>Circuit</span>
+                                </button>
+                                <button type="button" class="bot-style-btn" data-style="assistant" onclick="selectBotStyle('assistant')">
+                                    <div class="bot-preview bot-assistant">
+                                        <i class="fas fa-headset"></i>
+                                    </div>
+                                    <span>Assistant</span>
+                                </button>
+                                <button type="button" class="bot-style-btn" data-style="ai" onclick="selectBotStyle('ai')">
+                                    <div class="bot-preview bot-ai">
+                                        <i class="fas fa-brain"></i>
+                                    </div>
+                                    <span>AI Brain</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <input type="hidden" id="avatarUrl" value="">
+                        <input type="hidden" id="avatarType" value="human">
+                        <input type="hidden" id="botStyle" value="default">
+                    </div>
+                    
+                    <button onclick="updateCallerInfo()">Update Caller Info</button>
+                </div>
+
+                <!-- Audio Upload -->
+                <div class="control-section">
+                    <h3>Call Audio</h3>
+                    <div class="audio-upload">
+                        <label for="audioUpload" class="file-upload-label">
+                            <i class="fas fa-upload"></i> Upload Audio (MP3/WAV)
+                        </label>
+                        <input type="file" id="audioUpload" accept="audio/mp3,audio/wav,audio/*" onchange="handleAudioUpload(event)" style="display: none;">
+                    </div>
+                    <div id="audioStatus" class="audio-status"></div>
+                    <audio id="callAudio" style="display: none;"></audio>
+                    
+                    <!-- Ringtone Audio -->
+                    <audio id="ringtoneAudio" loop style="display: none;">
+                        <source src="ringtone-iphone.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+
+                <!-- Summary Text -->
+                <div class="control-section">
+                    <h3>Call Summary Text</h3>
+                    <textarea id="customSummaryText" placeholder="Enter custom summary text (leave empty for auto-generated)" rows="8" style="width: 100%; padding: 10px; border: 1px solid #DBDBDB; border-radius: 8px; font-size: 13px; font-family: inherit; resize: vertical;"></textarea>
+                    <button onclick="saveSummaryText()" style="margin-top: 10px;">Save Summary Text</button>
+                </div>
+
+                <!-- Call Controls -->
+                <div class="control-section">
+                    <h3>Call Simulation</h3>
+                    <div class="auto-answer-control">
+                        <label>
+                            <input type="checkbox" id="autoAnswer" checked>
+                            Auto-answer after
+                        </label>
+                        <input type="number" id="autoAnswerDelay" value="0" min="0" max="10" style="width: 60px;">
+                        <span>seconds</span>
+                    </div>
+                    
+                    <div class="ringtone-control">
+                        <label>
+                            <input type="checkbox" id="ringtoneEnabled" checked>
+                            Play ringtone
+                        </label>
+                        <button id="muteRingtone" onclick="toggleRingtoneMute()" style="margin-left: 10px; padding: 5px 10px;">
+                            <i class="fas fa-volume-up"></i> Mute
+                        </button>
+                    </div>
+                    
+                    <div class="initial-duration-control" style="margin-top: 10px;">
+                        <label style="display: block; margin-bottom: 5px;">Initial Call Duration:</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="number" id="initialMinutes" min="0" max="59" value="0" style="width: 60px;" onchange="savePreferences()">
+                            <span>min</span>
+                            <input type="number" id="initialSeconds" min="0" max="59" value="0" style="width: 60px;" onchange="savePreferences()">
+                            <span>sec</span>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-control" style="margin-top: 10px;">
+                        <label>
+                            <input type="checkbox" id="showSummary" checked onchange="savePreferences()">
+                            Show call summary after call ends
+                        </label>
+                    </div>
+                    
+                    <button onclick="startIncomingCall()" class="start-call-btn">
+                        <i class="fas fa-phone"></i> Start Incoming Call
+                    </button>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="control-section">
+                    <h3>Quick Templates</h3>
+                    <button onclick="loadTemplate('support')">Support Call</button>
+                    <button onclick="loadTemplate('sales')">Sales Call</button>
+                    <button onclick="loadTemplate('personal')">Personal Call</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

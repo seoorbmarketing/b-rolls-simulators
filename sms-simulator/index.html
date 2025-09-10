@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Simulator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Phone Screen -->
+        <div class="phone-container">
+            <div class="phone-screen">
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <div class="time">3:26</div>
+                    <div class="camera-notch"></div>
+                    <div class="status-icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+
+                <!-- Messages Header -->
+                <div class="messages-header">
+                    <div class="header-left">
+                        <i class="fas fa-chevron-left back-arrow"></i>
+                        <div class="message-count-badge" id="messageCountBadge">3</div>
+                    </div>
+                    <div class="header-center">
+                        <div class="contact-info">
+                            <div class="contact-avatar default" id="contactAvatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="contact-details">
+                                <div class="contact-name" id="contactName">Swati</div>
+                                <i class="fas fa-chevron-right contact-arrow"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="header-right">
+                        <i class="fas fa-video"></i>
+                        <i class="fas fa-phone"></i>
+                    </div>
+                </div>
+
+                <!-- Messages Area -->
+                <div class="messages-area" id="messagesArea">
+                    <!-- Messages will be added here -->
+                </div>
+
+                <!-- Message Input -->
+                <div class="message-input-container">
+                    <button class="add-btn">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <div class="input-field">
+                        <input type="text" class="message-input" placeholder="Text Message" id="messageInput">
+                        <button class="send-btn" id="sendBtn">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Phone Navigation Bar -->
+                <div class="phone-nav-bar"></div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-panel-header">
+                <h2>SMS Simulator</h2>
+                <button class="clear-chat-btn" onclick="clearMessages()" title="Clear Messages">
+                    <i class="fas fa-trash"></i>
+                    Clear
+                </button>
+            </div>
+            
+            <div class="control-panel-content">
+                <!-- Contact Settings -->
+                <div class="control-section">
+                    <h3>Contact Information</h3>
+                    <input type="text" id="inputContactName" placeholder="Contact Name" value="Swati">
+                    <input type="text" id="inputContactNumber" placeholder="Phone Number" value="1806">
+                    <input type="number" id="inputMessageCount" placeholder="Message Count" value="3" min="0">
+                    <input type="text" id="inputAvatarUrl" placeholder="Avatar URL" value="">
+                    <div class="upload-section">
+                        <label for="avatarUpload" class="file-upload-label">
+                            <i class="fas fa-upload"></i> Upload Avatar
+                        </label>
+                        <input type="file" id="avatarUpload" accept="image/*" onchange="handleAvatarUpload(event)" style="display: none;">
+                    </div>
+                    <button onclick="updateContactInfo()">Update Contact</button>
+                </div>
+
+                <!-- Message Controls -->
+                <div class="control-section">
+                    <h3>Send Message</h3>
+                    <select id="messageType">
+                        <option value="sent">Sent Message (Blue)</option>
+                        <option value="received">Received Message (Gray)</option>
+                    </select>
+                    <textarea id="messageText" placeholder="Enter message text..." rows="3"></textarea>
+                    <div class="message-options">
+                        <label>
+                            <input type="checkbox" id="showRead">
+                            Show "Read" status
+                        </label>
+                    </div>
+                    <button onclick="sendMessage()">Send Message</button>
+                </div>
+
+
+                <!-- Scenario Builder -->
+                <div class="control-section">
+                    <h3>📱 Scenario Builder</h3>
+                    <div class="scenario-controls">
+                        <select id="scenarioActionType">
+                            <option value="sent">Send Message</option>
+                            <option value="received">Receive Message</option>
+                            <option value="delay">Add Delay</option>
+                        </select>
+                        <input type="text" id="scenarioContent" placeholder="Message text or delay (ms)">
+                        <button onclick="addScenarioStep()">Add Step</button>
+                    </div>
+                    
+                    <div class="scenario-list" id="scenarioList">
+                        <!-- Steps will be added here -->
+                    </div>
+                    
+                    <div class="playback-controls">
+                        <div class="speed-control">
+                            <label>Speed:</label>
+                            <select id="playbackSpeed">
+                                <option value="slow">🐢 Slow</option>
+                                <option value="medium" selected>🚶 Medium</option>
+                                <option value="fast">🏃 Fast</option>
+                            </select>
+                        </div>
+                        <button onclick="playScenario()" class="play-btn">▶️ Play Scenario</button>
+                        <button onclick="stopScenario()" class="stop-btn">⏹️ Stop</button>
+                        <button onclick="clearScenario()" class="clear-btn">🗑️ Clear All</button>
+                    </div>
+                    
+                    <div class="scenario-presets">
+                        <h4>Save/Load Scenarios:</h4>
+                        <div class="custom-scenarios">
+                            <input type="text" id="scenarioName" placeholder="Enter scenario name to save...">
+                            <div style="display: flex; gap: 5px;">
+                                <button onclick="saveCustomScenario()" style="flex: 1;">💾 Save Current</button>
+                                <button onclick="loadSavedScenarios()" style="flex: 1;">📂 Load Saved</button>
+                            </div>
+                        </div>
+                        <div id="savedScenariosList" class="saved-scenarios-list">
+                            <!-- Saved scenarios will appear here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

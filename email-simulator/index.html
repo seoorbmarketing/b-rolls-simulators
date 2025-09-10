@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gmail Simulator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Phone Screen -->
+        <div class="phone-container">
+            <div class="phone-screen">
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <div class="time">9:41</div>
+                    <div class="camera-notch"></div>
+                    <div class="status-icons">
+                        <i class="fas fa-signal"></i>
+                        <i class="fas fa-wifi"></i>
+                        <i class="fas fa-battery-three-quarters"></i>
+                    </div>
+                </div>
+
+                <!-- Gmail App Container -->
+                <div class="gmail-container">
+                    <!-- Inbox View -->
+                    <div class="inbox-view" id="inboxView">
+                        <!-- Search Bar -->
+                        <div class="search-bar">
+                            <div class="menu-icon">
+                                <i class="fas fa-bars" onclick="toggleSidebar()"></i>
+                            </div>
+                            <div class="search-input">
+                                <span>Search in mail</span>
+                            </div>
+                            <div class="profile-avatar">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%2334A853'/%3E%3Ctext x='50' y='67' font-size='50' text-anchor='middle' fill='white' font-family='Arial'%3ES%3C/text%3E%3C/svg%3E" alt="Profile">
+                            </div>
+                        </div>
+
+                        <!-- Tab Section -->
+                        <div class="tab-section">
+                            <div class="tab-label">Primary</div>
+                        </div>
+
+                        <!-- Email List -->
+                        <div class="email-list" id="emailList">
+                            <!-- Emails will be dynamically added here -->
+                        </div>
+
+                        <!-- Compose Button -->
+                        <div class="compose-button" onclick="openCompose()">
+                            <i class="fas fa-edit"></i>
+                            <span>Compose</span>
+                        </div>
+                    </div>
+
+                    <!-- Email Detail View -->
+                    <div class="email-detail-view" id="emailDetailView" style="display: none;">
+                        <div class="email-header">
+                            <i class="fas fa-arrow-left" onclick="backToInbox()"></i>
+                            <div class="email-actions">
+                                <i class="fas fa-archive"></i>
+                                <i class="fas fa-trash"></i>
+                                <i class="fas fa-envelope"></i>
+                                <i class="fas fa-ellipsis-v"></i>
+                            </div>
+                        </div>
+                        <div class="email-content" id="emailContent">
+                            <!-- Email content will be displayed here -->
+                        </div>
+                    </div>
+
+                    <!-- Compose View -->
+                    <div class="compose-view" id="composeView" style="display: none;">
+                        <div class="compose-header">
+                            <i class="fas fa-arrow-left" onclick="closeCompose()"></i>
+                            <span>Compose</span>
+                            <div class="compose-actions">
+                                <i class="fas fa-paperclip"></i>
+                                <i class="fas fa-paper-plane"></i>
+                                <i class="fas fa-ellipsis-v"></i>
+                            </div>
+                        </div>
+                        <div class="compose-form">
+                            <div class="compose-field">
+                                <label>From</label>
+                                <input type="text" value="sagarseoorb@gmail.com" readonly>
+                            </div>
+                            <div class="compose-field">
+                                <label>To</label>
+                                <input type="text" id="composeTo">
+                            </div>
+                            <div class="compose-field">
+                                <label>Subject</label>
+                                <input type="text" id="composeSubject">
+                            </div>
+                            <div class="compose-body">
+                                <textarea placeholder="Compose email" id="composeBody"></textarea>
+                            </div>
+                        </div>
+                        <!-- Keyboard Placeholder -->
+                        <div class="keyboard-placeholder"></div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="sidebar" id="sidebar">
+                        <div class="sidebar-header">
+                            <div class="gmail-logo">Gmail</div>
+                        </div>
+                        <div class="sidebar-menu">
+                            <div class="menu-item">
+                                <i class="fas fa-inbox"></i>
+                                <span>All inboxes</span>
+                            </div>
+                            <div class="menu-divider"></div>
+                            <div class="menu-item active">
+                                <i class="fas fa-inbox"></i>
+                                <span>Primary</span>
+                                <span class="count">774</span>
+                            </div>
+                            <div class="menu-item">
+                                <i class="fas fa-tag"></i>
+                                <span>Promotions</span>
+                                <span class="badge">9 new</span>
+                            </div>
+                            <div class="menu-item">
+                                <i class="fas fa-users"></i>
+                                <span>Social</span>
+                            </div>
+                            <div class="menu-divider"></div>
+                            <div class="menu-label">All labels</div>
+                            <div class="menu-item">
+                                <i class="fas fa-star"></i>
+                                <span>Starred</span>
+                            </div>
+                            <div class="menu-item">
+                                <i class="fas fa-clock"></i>
+                                <span>Snoozed</span>
+                            </div>
+                            <div class="menu-item">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span>Important</span>
+                                <span class="count">86</span>
+                            </div>
+                            <div class="menu-item">
+                                <i class="fas fa-paper-plane"></i>
+                                <span>Sent</span>
+                            </div>
+                            <div class="menu-item">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Scheduled</span>
+                            </div>
+                            <div class="menu-item">
+                                <i class="fas fa-inbox"></i>
+                                <span>Outbox</span>
+                            </div>
+                            <div class="menu-item">
+                                <i class="fas fa-file"></i>
+                                <span>Drafts</span>
+                            </div>
+                            <div class="menu-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>All mail</span>
+                                <span class="count">939</span>
+                            </div>
+                            <div class="menu-item">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Spam</span>
+                                <span class="count">1</span>
+                            </div>
+                            <div class="menu-item">
+                                <i class="fas fa-trash"></i>
+                                <span>Trash</span>
+                                <span class="count">1</span>
+                            </div>
+                            <div class="menu-divider"></div>
+                            <div class="menu-label">Google apps</div>
+                            <div class="menu-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>Calendar</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sidebar Overlay -->
+                    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+                </div>
+
+                <!-- Bottom Navigation - Always visible -->
+                <div class="bottom-nav">
+                    <i class="fas fa-envelope" style="color: #EA4335;"></i>
+                    <i class="fas fa-video"></i>
+                </div>
+
+                <!-- Phone Navigation Bar -->
+                <div class="phone-nav-bar"></div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-panel-header">
+                <h2>Gmail Simulator Controls</h2>
+                <button class="reset-btn" onclick="resetSimulator()" title="Reset">
+                    <i class="fas fa-redo"></i>
+                    <span>Reset</span>
+                </button>
+            </div>
+            
+            <div class="control-panel-content">
+                <!-- Add New Email -->
+                <div class="control-section">
+                    <h3>Add New Email</h3>
+                    <input type="text" id="senderName" placeholder="Sender Name (e.g., Google Gemini)">
+                    <input type="text" id="senderEmail" placeholder="Sender Email (optional)">
+                    <input type="text" id="emailSubject" placeholder="Email Subject">
+                    <textarea id="emailBody" placeholder="Email Body (first line will be preview)" rows="4"></textarea>
+                    <input type="text" id="emailTime" placeholder="Time (e.g., 2:03 AM, Sep 8)">
+                    
+                    <div class="avatar-section">
+                        <label class="section-label">Sender Avatar</label>
+                        <select id="avatarType">
+                            <option value="initial">Initial (Letter)</option>
+                            <option value="icon">Icon</option>
+                            <option value="image">Custom Image</option>
+                        </select>
+                        <input type="text" id="avatarInitial" placeholder="Initial (e.g., G)" maxlength="2">
+                        <div class="color-options">
+                            <label class="section-label">Avatar Color</label>
+                            <div class="color-selector">
+                                <button type="button" class="color-option active" data-color="#4285F4" style="background: #4285F4;" onclick="selectColor('#4285F4')"></button>
+                                <button type="button" class="color-option" data-color="#EA4335" style="background: #EA4335;" onclick="selectColor('#EA4335')"></button>
+                                <button type="button" class="color-option" data-color="#34A853" style="background: #34A853;" onclick="selectColor('#34A853')"></button>
+                                <button type="button" class="color-option" data-color="#FBBC04" style="background: #FBBC04;" onclick="selectColor('#FBBC04')"></button>
+                                <button type="button" class="color-option" data-color="#9C27B0" style="background: #9C27B0;" onclick="selectColor('#9C27B0')"></button>
+                                <button type="button" class="color-option" data-color="#00ACC1" style="background: #00ACC1;" onclick="selectColor('#00ACC1')"></button>
+                                <button type="button" class="color-option" data-color="#FF6D00" style="background: #FF6D00;" onclick="selectColor('#FF6D00')"></button>
+                                <button type="button" class="color-option" data-color="#5F6368" style="background: #5F6368;" onclick="selectColor('#5F6368')"></button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="avatarColor" value="#4285F4">
+                    </div>
+                    
+                    <button onclick="addEmail()">Add Email to Inbox</button>
+                </div>
+
+                <!-- Email Templates -->
+                <div class="control-section">
+                    <h3>Quick Templates</h3>
+                    <button onclick="loadTemplate('promotion')">Promotion Email</button>
+                    <button onclick="loadTemplate('notification')">System Notification</button>
+                    <button onclick="loadTemplate('personal')">Personal Email</button>
+                    <button onclick="loadTemplate('work')">Work Email</button>
+                    <button onclick="loadTemplate('lead')">Lead Getting</button>
+                </div>
+
+                <!-- User Profile Settings -->
+                <div class="control-section">
+                    <h3>User Profile Avatar</h3>
+                    <div class="user-avatar-options">
+                        <div class="avatar-type-selector">
+                            <label>
+                                <input type="radio" name="userAvatarType" value="initial" checked onchange="updateUserAvatarType('initial')">
+                                Initial Letter
+                            </label>
+                            <label>
+                                <input type="radio" name="userAvatarType" value="upload" onchange="updateUserAvatarType('upload')">
+                                Upload Image
+                            </label>
+                        </div>
+                        
+                        <div id="userInitialOptions" class="user-avatar-input">
+                            <input type="text" id="userInitial" placeholder="Your Initial (e.g., S)" maxlength="1" value="S" onkeyup="updateUserAvatar()">
+                            <div class="color-selector" style="margin-top: 8px;">
+                                <button type="button" class="color-option active" data-color="#34A853" style="background: #34A853;" onclick="selectUserColor('#34A853')"></button>
+                                <button type="button" class="color-option" data-color="#4285F4" style="background: #4285F4;" onclick="selectUserColor('#4285F4')"></button>
+                                <button type="button" class="color-option" data-color="#EA4335" style="background: #EA4335;" onclick="selectUserColor('#EA4335')"></button>
+                                <button type="button" class="color-option" data-color="#FBBC04" style="background: #FBBC04;" onclick="selectUserColor('#FBBC04')"></button>
+                                <button type="button" class="color-option" data-color="#9C27B0" style="background: #9C27B0;" onclick="selectUserColor('#9C27B0')"></button>
+                            </div>
+                        </div>
+                        
+                        <div id="userUploadOptions" class="user-avatar-input" style="display: none;">
+                            <label for="userAvatarUpload" class="file-upload-label" style="margin-top: 8px;">
+                                <i class="fas fa-upload"></i> Upload Avatar Image
+                            </label>
+                            <input type="file" id="userAvatarUpload" accept="image/*" onchange="handleUserAvatarUpload(event)" style="display: none;">
+                            <button type="button" id="removeUserAvatar" onclick="removeUserAvatar()" style="display: none; margin-top: 8px;">
+                                <i class="fas fa-times"></i> Remove Avatar
+                            </button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="userAvatarColor" value="#34A853">
+                </div>
+
+                <!-- Inbox Settings -->
+                <div class="control-section">
+                    <h3>Inbox Settings</h3>
+                    <label>
+                        <input type="checkbox" id="showUnreadBadge" checked>
+                        Show unread badge on new emails
+                    </label>
+                    <label>
+                        <input type="checkbox" id="starEmails">
+                        Auto-star important emails
+                    </label>
+                    <button onclick="clearAllEmails()">Clear All Emails</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

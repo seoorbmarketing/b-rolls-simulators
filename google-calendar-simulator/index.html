@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Calendar Simulator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Browser Container -->
+        <div class="browser-container">
+            <div class="browser-frame">
+                <!-- Browser Top Bar -->
+                <div class="browser-top-bar">
+                    <div class="browser-controls">
+                        <span class="browser-button close"></span>
+                        <span class="browser-button minimize"></span>
+                        <span class="browser-button maximize"></span>
+                    </div>
+                    <div class="browser-url-bar">
+                        <i class="fas fa-lock"></i>
+                        <span>calendar.google.com</span>
+                    </div>
+                    <div class="browser-actions">
+                        <i class="fas fa-redo"></i>
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                </div>
+
+                <!-- Calendar Content -->
+                <div class="calendar-content">
+                    <!-- Calendar Header -->
+                    <div class="calendar-header">
+                        <div class="calendar-header-left">
+                            <button class="menu-btn">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                            <img src="https://ssl.gstatic.com/calendar/images/dynamiclogo_2020q4/calendar_31_2x.png" alt="Calendar" class="calendar-logo">
+                            <h1 class="calendar-title">Calendar</h1>
+                            <button class="today-btn">Today</button>
+                            <div class="nav-arrows">
+                                <button class="nav-arrow" onclick="previousMonth()">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="nav-arrow" onclick="nextMonth()">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            <span class="month-year" id="monthYear">September 2025</span>
+                        </div>
+                        <div class="calendar-header-right">
+                            <button class="view-selector">
+                                <span>Month</span>
+                                <i class="fas fa-caret-down"></i>
+                            </button>
+                            <i class="fas fa-search"></i>
+                            <i class="fas fa-cog"></i>
+                            <i class="fas fa-question-circle"></i>
+                            <i class="fas fa-th"></i>
+                            <div class="profile-pic-container">
+                                <img id="headerProfilePic" src="" alt="Profile" class="profile-pic" style="display: none;">
+                                <div id="defaultAvatar" class="default-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Calendar Area -->
+                    <div class="calendar-main">
+                        <!-- Sidebar -->
+                        <div class="calendar-sidebar">
+                            <button class="create-btn" id="createBtn">
+                                <i class="fas fa-plus"></i>
+                                <span>Create</span>
+                            </button>
+                            
+                            <div class="mini-calendar">
+                                <div class="mini-calendar-header">
+                                    <span id="miniMonthYear">September 2025</span>
+                                    <div class="mini-nav">
+                                        <i class="fas fa-chevron-left"></i>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </div>
+                                </div>
+                                <div class="mini-calendar-grid">
+                                    <!-- Mini calendar will be generated here -->
+                                </div>
+                            </div>
+
+                            <div class="my-calendars">
+                                <h3>My calendars</h3>
+                                <div class="calendar-list">
+                                    <div class="calendar-item">
+                                        <span class="calendar-color" style="background: #4285f4;"></span>
+                                        <span>Personal</span>
+                                    </div>
+                                    <div class="calendar-item">
+                                        <span class="calendar-color" style="background: #0f9d58;"></span>
+                                        <span>Work</span>
+                                    </div>
+                                    <div class="calendar-item">
+                                        <span class="calendar-color" style="background: #ea4335;"></span>
+                                        <span>Emergency</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Calendar Grid -->
+                        <div class="calendar-grid-container">
+                            <div class="weekdays">
+                                <div>SUN</div>
+                                <div>MON</div>
+                                <div>TUE</div>
+                                <div>WED</div>
+                                <div>THU</div>
+                                <div>FRI</div>
+                                <div>SAT</div>
+                            </div>
+                            <div class="calendar-grid" id="calendarGrid">
+                                <!-- Calendar days will be generated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Success Message -->
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i>
+                    <p>Event created successfully!</p>
+                </div>
+                
+                <!-- Event Creation Modal -->
+                <div class="event-modal" id="eventModal">
+                    <div class="event-modal-content">
+                        <div class="event-modal-header">
+                            <h2>New Event</h2>
+                            <button class="close-modal" onclick="closeEventModal()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="event-modal-body">
+                            <input type="text" id="modalEventTitle" placeholder="Add title" class="event-title-input">
+                            
+                            <div class="event-form-row">
+                                <i class="fas fa-clock"></i>
+                                <div class="event-datetime">
+                                    <input type="text" id="modalEventDate" placeholder="Date">
+                                    <input type="text" id="modalEventTime" placeholder="Time">
+                                </div>
+                            </div>
+
+                            <div class="event-form-row">
+                                <i class="fas fa-users"></i>
+                                <input type="text" placeholder="Add guests" class="event-guests-input">
+                            </div>
+
+                            <div class="event-form-row">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <input type="text" placeholder="Add location" class="event-location-input">
+                            </div>
+
+                            <div class="event-form-row">
+                                <i class="fas fa-align-left"></i>
+                                <textarea id="eventDescription" placeholder="Add description" class="event-description"></textarea>
+                            </div>
+
+                            <div class="event-form-row">
+                                <label>Event color:</label>
+                                <div class="color-picker">
+                                    <span class="color-option active" data-color="#4285f4" style="background: #4285f4;"></span>
+                                    <span class="color-option" data-color="#0f9d58" style="background: #0f9d58;"></span>
+                                    <span class="color-option" data-color="#ea4335" style="background: #ea4335;"></span>
+                                    <span class="color-option" data-color="#9c27b0" style="background: #9c27b0;"></span>
+                                    <span class="color-option" data-color="#fb8c00" style="background: #fb8c00;"></span>
+                                </div>
+                            </div>
+
+                            <div class="event-modal-footer">
+                                <button class="save-event-btn" onclick="saveEvent()">Save</button>
+                                <button class="cancel-btn" onclick="closeEventModal()">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-panel-header">
+                <h2>Calendar Controls</h2>
+            </div>
+            
+            <div class="control-panel-content">
+                <!-- User Profile -->
+                <div class="control-section">
+                    <h3>User Profile</h3>
+                    <div class="profile-preview">
+                        <img id="profilePreview" src="" alt="Profile" class="profile-preview-img">
+                    </div>
+                    <div class="upload-section">
+                        <label for="profileUpload" class="file-upload-label">
+                            <i class="fas fa-upload"></i> Upload Avatar
+                        </label>
+                        <input type="file" id="profileUpload" accept="image/*" onchange="handleProfileUpload(event)" style="display: none;">
+                    </div>
+                    <button onclick="resetToDefaultAvatar()">Use Default Avatar</button>
+                </div>
+                
+                <!-- Quick Event Creation -->
+                <div class="control-section">
+                    <h3>Quick Event Creation</h3>
+                    <input type="text" id="quickEventTitle" placeholder="Event title" value="Team Meeting">
+                    <input type="text" id="quickEventDate" placeholder="Date (e.g., 15)" value="15">
+                    <input type="text" id="quickEventTime" placeholder="Time (e.g., 2:00 PM)" value="2:00 PM">
+                    <select id="quickEventColor">
+                        <option value="#4285f4">Blue (Personal)</option>
+                        <option value="#0f9d58">Green (Work)</option>
+                        <option value="#ea4335">Red (Emergency)</option>
+                        <option value="#9c27b0">Purple (Special)</option>
+                    </select>
+                    <button onclick="addQuickEvent()">Add Event</button>
+                </div>
+
+
+                <!-- Automation Effects -->
+                <div class="control-section">
+                    <h3>🎬 Automation Effects</h3>
+                    <div class="automation-effects">
+                        <button onclick="startMissedOpportunitiesAnimation()" class="effect-btn" style="background: #ea4335;">
+                            <i class="fas fa-bomb"></i> Missed Opportunities
+                        </button>
+                        <div class="animation-style-selector" style="margin-top: 10px;">
+                            <label style="font-size: 12px; color: #666;">Animation Style:</label>
+                            <select id="animationStyle" style="width: 100%; padding: 6px; font-size: 12px; margin-top: 5px;">
+                                <option value="shake-vanish" selected>Shake & Vanish (B-Roll)</option>
+                                <option value="strike-fall">Strike & Fall (Dramatic)</option>
+                                <option value="fade">Simple Fade</option>
+                            </select>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <label style="font-size: 12px; color: #666; display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" id="showLostRevenue" checked style="margin-right: 5px;">
+                                Show Lost Revenue
+                            </label>
+                        </div>
+                        <p style="font-size: 12px; color: #666; margin-top: 8px;">
+                            Shows appointments vanishing (requires existing events)
+                        </p>
+                        
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                            <button onclick="startWhatIfAnimation()" class="effect-btn" style="background: #4285f4;">
+                                <i class="fas fa-question-circle"></i> What If?
+                            </button>
+                            <p style="font-size: 12px; color: #666; margin-top: 8px;">
+                                Shows potential missed opportunities in empty slots
+                            </p>
+                            
+                            <button onclick="convertQuestionMarksToAppointments()" class="effect-btn" style="background: #9c27b0; margin-top: 10px;">
+                                <i class="fas fa-exchange-alt"></i> Convert to Bookings
+                            </button>
+                            <p style="font-size: 12px; color: #666; margin-top: 8px;">
+                                Transforms question marks into real appointments
+                            </p>
+                            
+                            <button onclick="startLostRevenueAnimation()" class="effect-btn" style="background: #ff4444; margin-top: 10px;">
+                                <i class="fas fa-dollar-sign"></i> Lost Revenue
+                            </button>
+                            <p style="font-size: 12px; color: #666; margin-top: 8px;">
+                                Shows lost revenue on empty calendar slots
+                            </p>
+                        </div>
+                        
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                            <button onclick="startCalendarFillingAnimation()" class="effect-btn" style="background: #0f9d58;">
+                                <i class="fas fa-magic"></i> Calendar Filling Up
+                            </button>
+                            <div class="business-type-selector" style="margin-top: 10px;">
+                                <label style="font-size: 12px; color: #666;">Business Type:</label>
+                                <select id="fillingBusinessType" style="width: 100%; padding: 6px; font-size: 12px; margin-top: 5px;">
+                                    <option value="plumbing">Plumbing</option>
+                                    <option value="electrician">Electrician</option>
+                                    <option value="hvac">HVAC</option>
+                                    <option value="landscaping">Landscaping</option>
+                                    <option value="carpet">Carpet Cleaning</option>
+                                </select>
+                            </div>
+                            <p style="font-size: 12px; color: #666; margin-top: 8px;">
+                                Shows calendar filling with appointments
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preset Events -->
+                <div class="control-section">
+                    <h3>Business Demo Events</h3>
+                    <button onclick="loadPresetEvents('plumbing')">Plumbing</button>
+                    <button onclick="loadPresetEvents('electrician')">Electrician</button>
+                    <button onclick="loadPresetEvents('hvac')">HVAC</button>
+                    <button onclick="loadPresetEvents('landscaping')">Landscaping</button>
+                    <button onclick="loadPresetEvents('carpet')">Carpet Cleaners</button>
+                    <button onclick="clearAllEvents()" style="background: #ff4444; color: white;">Clear All</button>
+                </div>
+
+                <!-- Month Navigation -->
+                <div class="control-section">
+                    <h3>Navigate</h3>
+                    <select id="monthSelector" onchange="goToMonth()">
+                        <option value="0">January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8" selected>September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">December</option>
+                    </select>
+                    <select id="yearSelector" onchange="goToMonth()">
+                        <option value="2024">2024</option>
+                        <option value="2025" selected>2025</option>
+                        <option value="2026">2026</option>
+                    </select>
+                    <button onclick="goToToday()">Go to Today</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
