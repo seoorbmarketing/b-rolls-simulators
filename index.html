@@ -146,6 +146,14 @@
             color: #00B4DB;
         }
 
+        .whiteboard-gradient {
+            color: #795548;
+        }
+
+        .graph-gradient {
+            color: #FF6B6B;
+        }
+
         @keyframes fadeInDown {
             from {
                 opacity: 0;
@@ -289,6 +297,28 @@
                 <div class="simulator-info">
                     <h3 class="simulator-name">Web Chat</h3>
                     <button class="launch-btn" onclick="event.stopPropagation(); window.location.href='web-chat-simulator/index.html'">Launch</button>
+                </div>
+            </div>
+
+            <!-- Whiteboard Simulator -->
+            <div class="simulator-card" onclick="window.location.href='whiteboard-simulator/index.html'">
+                <div class="simulator-preview">
+                    <i class="fas fa-chalkboard simulator-icon whiteboard-gradient"></i>
+                </div>
+                <div class="simulator-info">
+                    <h3 class="simulator-name">Whiteboard</h3>
+                    <button class="launch-btn" onclick="event.stopPropagation(); window.location.href='whiteboard-simulator/index.html'">Launch</button>
+                </div>
+            </div>
+
+            <!-- Graph Simulator -->
+            <div class="simulator-card" onclick="window.location.href='graph-simulator/index.html'">
+                <div class="simulator-preview">
+                    <i class="fas fa-chart-line simulator-icon graph-gradient"></i>
+                </div>
+                <div class="simulator-info">
+                    <h3 class="simulator-name">Graph Charts</h3>
+                    <button class="launch-btn" onclick="event.stopPropagation(); window.location.href='graph-simulator/index.html'">Launch</button>
                 </div>
             </div>
         </div>

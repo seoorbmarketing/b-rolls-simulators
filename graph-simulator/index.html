@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Simulator - Comparison Bars</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Graph Display Area -->
+        <div class="graph-container">
+            <div class="graph-wrapper">
+                <h2 id="graphTitle">Productivity Comparison</h2>
+                <p id="graphSubtitle" style="display: none;">Price per minute</p>
+                
+                <!-- Bar Chart -->
+                <div class="chart-area chart-bar" id="barChart">
+                    <div class="y-axis-container">
+                        <span class="y-axis-label" id="yAxisLabelDisplay">Value</span>
+                        <div class="y-axis">
+                            <div class="y-label">100</div>
+                            <div class="y-label">80</div>
+                            <div class="y-label">60</div>
+                            <div class="y-label">40</div>
+                            <div class="y-label">20</div>
+                            <div class="y-label">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bars-container">
+                        <div class="bar-group">
+                            <div class="bar-wrapper">
+                                <div class="bar bar-left" id="barLeft">
+                                    <span class="bar-value" id="valueLeft">25</span>
+                                    <span class="bar-label-inside" id="labelLeftInside">Without AI</span>
+                                    <span class="bar-label-outside" id="labelLeftOutside">Without AI</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bar-wrapper">
+                                <div class="bar bar-right" id="barRight">
+                                    <span class="bar-value" id="valueRight">85</span>
+                                    <span class="bar-label-inside" id="labelRightInside">With AI</span>
+                                    <span class="bar-label-outside" id="labelRightOutside">With AI</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="x-axis-label" id="xAxisLabelDisplay">Categories</span>
+                    </div>
+                </div>
+
+                <!-- Pie Chart -->
+                <div class="chart-area chart-pie" id="pieChart" style="display: none;">
+                    <canvas id="pieCanvas" width="500" height="500"></canvas>
+                </div>
+
+                <!-- Line Chart -->
+                <div class="chart-area chart-line" id="lineChart" style="display: none;">
+                    <canvas id="lineCanvas" width="700" height="500"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-panel-header">
+                <h2>Graph Controls</h2>
+                <button class="reset-btn" onclick="resetGraph()">
+                    <i class="fas fa-undo"></i> Reset
+                </button>
+            </div>
+            
+            <div class="control-panel-content">
+                <!-- Graph Type Selector -->
+                <div class="control-section">
+                    <h3>Graph Type</h3>
+                    <div class="graph-type-selector">
+                        <button class="graph-type-btn active" onclick="switchGraphType('bar')">
+                            <i class="fas fa-chart-bar"></i> Bar Chart
+                        </button>
+                        <button class="graph-type-btn" onclick="switchGraphType('pie')">
+                            <i class="fas fa-chart-pie"></i> Pie Chart
+                        </button>
+                        <button class="graph-type-btn" onclick="switchGraphType('line')">
+                            <i class="fas fa-chart-line"></i> Line Chart
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Graph Title & Subtitle -->
+                <div class="control-section">
+                    <h3>Graph Details</h3>
+                    <div class="input-group">
+                        <label>Title:</label>
+                        <input type="text" id="titleInput" value="Productivity Comparison" onchange="updateGraphText()">
+                    </div>
+                    <div class="input-group" style="display: none;">
+                        <label>Subtitle:</label>
+                        <input type="text" id="subtitleInput" value="" onchange="updateGraphText()">
+                    </div>
+                    <div class="input-group">
+                        <label>Y-Axis Label:</label>
+                        <input type="text" id="yAxisLabel" value="Value" onchange="updateAxisLabels()">
+                    </div>
+                    <div class="input-group">
+                        <label>X-Axis Label:</label>
+                        <input type="text" id="xAxisLabel" value="Categories" onchange="updateAxisLabels()">
+                    </div>
+                </div>
+
+                <!-- Bar Settings -->
+                <div class="control-section bar-controls" id="barControls">
+                    <h3>Bar Settings</h3>
+                    <div class="input-group">
+                        <label>Display Mode:</label>
+                        <div class="mode-toggle">
+                            <button class="mode-btn active" onclick="setBarMode('detailed')">With Axes</button>
+                            <button class="mode-btn" onclick="setBarMode('simplified')">Simplified</button>
+                        </div>
+                    </div>
+                    <div class="bar-settings">
+                        <div class="bar-setting-group">
+                            <h4>Left Bar</h4>
+                            <div class="input-group">
+                                <label>Label:</label>
+                                <input type="text" id="leftLabel" value="Without AI" onchange="updateLabels()">
+                            </div>
+                            <div class="input-group">
+                                <label>Value:</label>
+                                <input type="number" id="leftValue" value="25" min="0" max="100" onchange="updateValues()">
+                            </div>
+                            <div class="input-group">
+                                <label>Color:</label>
+                                <div class="color-options">
+                                    <button class="color-btn active" data-color="#FF6B6B" onclick="selectLeftColor('#FF6B6B', this)" style="background: #FF6B6B"></button>
+                                    <button class="color-btn" data-color="#4ECDC4" onclick="selectLeftColor('#4ECDC4', this)" style="background: #4ECDC4"></button>
+                                    <button class="color-btn" data-color="#45B7D1" onclick="selectLeftColor('#45B7D1', this)" style="background: #45B7D1"></button>
+                                    <button class="color-btn" data-color="#96CEB4" onclick="selectLeftColor('#96CEB4', this)" style="background: #96CEB4"></button>
+                                    <button class="color-btn" data-color="#FFEAA7" onclick="selectLeftColor('#FFEAA7', this)" style="background: #FFEAA7"></button>
+                                    <button class="color-btn" data-color="#DDA0DD" onclick="selectLeftColor('#DDA0DD', this)" style="background: #DDA0DD"></button>
+                                    <button class="color-btn" data-color="#FA8072" onclick="selectLeftColor('#FA8072', this)" style="background: #FA8072"></button>
+                                    <button class="color-btn" data-color="#778899" onclick="selectLeftColor('#778899', this)" style="background: #778899"></button>
+                                </div>
+                                <input type="hidden" id="leftColor" value="#FF6B6B">
+                            </div>
+                        </div>
+                        
+                        <div class="bar-setting-group">
+                            <h4>Right Bar</h4>
+                            <div class="input-group">
+                                <label>Label:</label>
+                                <input type="text" id="rightLabel" value="With AI" onchange="updateLabels()">
+                            </div>
+                            <div class="input-group">
+                                <label>Value:</label>
+                                <input type="number" id="rightValue" value="85" min="0" max="100" onchange="updateValues()">
+                            </div>
+                            <div class="input-group">
+                                <label>Color:</label>
+                                <div class="color-options">
+                                    <button class="color-btn" data-color="#FF6B6B" onclick="selectRightColor('#FF6B6B', this)" style="background: #FF6B6B"></button>
+                                    <button class="color-btn active" data-color="#4ECDC4" onclick="selectRightColor('#4ECDC4', this)" style="background: #4ECDC4"></button>
+                                    <button class="color-btn" data-color="#45B7D1" onclick="selectRightColor('#45B7D1', this)" style="background: #45B7D1"></button>
+                                    <button class="color-btn" data-color="#96CEB4" onclick="selectRightColor('#96CEB4', this)" style="background: #96CEB4"></button>
+                                    <button class="color-btn" data-color="#FFEAA7" onclick="selectRightColor('#FFEAA7', this)" style="background: #FFEAA7"></button>
+                                    <button class="color-btn" data-color="#DDA0DD" onclick="selectRightColor('#DDA0DD', this)" style="background: #DDA0DD"></button>
+                                    <button class="color-btn" data-color="#FA8072" onclick="selectRightColor('#FA8072', this)" style="background: #FA8072"></button>
+                                    <button class="color-btn" data-color="#778899" onclick="selectRightColor('#778899', this)" style="background: #778899"></button>
+                                </div>
+                                <input type="hidden" id="rightColor" value="#4ECDC4">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pie Chart Settings -->
+                <div class="control-section pie-controls" id="pieControls" style="display: none;">
+                    <h3>Pie Chart Settings</h3>
+                    <div class="pie-settings">
+                        <div class="input-group">
+                            <label>Segment 1 Label:</label>
+                            <input type="text" id="pie1Label" value="Category A" onchange="updatePieChart()">
+                        </div>
+                        <div class="input-group">
+                            <label>Segment 1 Value:</label>
+                            <input type="number" id="pie1Value" value="35" min="0" max="100" onchange="updatePieChart()">
+                        </div>
+                        <div class="input-group">
+                            <label>Segment 2 Label:</label>
+                            <input type="text" id="pie2Label" value="Category B" onchange="updatePieChart()">
+                        </div>
+                        <div class="input-group">
+                            <label>Segment 2 Value:</label>
+                            <input type="number" id="pie2Value" value="25" min="0" max="100" onchange="updatePieChart()">
+                        </div>
+                        <div class="input-group">
+                            <label>Segment 3 Label:</label>
+                            <input type="text" id="pie3Label" value="Category C" onchange="updatePieChart()">
+                        </div>
+                        <div class="input-group">
+                            <label>Segment 3 Value:</label>
+                            <input type="number" id="pie3Value" value="40" min="0" max="100" onchange="updatePieChart()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Line Chart Settings -->
+                <div class="control-section line-controls" id="lineControls" style="display: none;">
+                    <h3>Line Chart Settings</h3>
+                    <div class="line-settings">
+                        <div class="input-group">
+                            <label>Data Points (comma separated):</label>
+                            <input type="text" id="lineData" value="20,35,30,45,60,55,70,85,80,90" onchange="updateLineChart()">
+                        </div>
+                        <div class="input-group">
+                            <label>X-Axis Labels (comma separated):</label>
+                            <input type="text" id="lineLabels" value="Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct" onchange="updateLineChart()">
+                        </div>
+                        <div class="input-group">
+                            <label>Line Color:</label>
+                            <div class="color-options">
+                                <button class="color-btn active" onclick="selectLineColor('#4ECDC4', this)" style="background: #4ECDC4"></button>
+                                <button class="color-btn" onclick="selectLineColor('#FF6B6B', this)" style="background: #FF6B6B"></button>
+                                <button class="color-btn" onclick="selectLineColor('#45B7D1', this)" style="background: #45B7D1"></button>
+                                <button class="color-btn" onclick="selectLineColor('#96CEB4', this)" style="background: #96CEB4"></button>
+                            </div>
+                            <input type="hidden" id="lineColor" value="#4ECDC4">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Animation Controls -->
+                <div class="control-section">
+                    <h3>Animation</h3>
+                    <div class="input-group">
+                        <label>Animation Delay (seconds):</label>
+                        <input type="number" id="animationDelay" value="2" min="0" max="10" step="0.5">
+                    </div>
+                    <button onclick="playAnimation()" class="play-btn">
+                        <i class="fas fa-play"></i> Play Animation
+                    </button>
+                    <button onclick="exportAsImage()" class="export-btn">
+                        <i class="fas fa-download"></i> Export as Image
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

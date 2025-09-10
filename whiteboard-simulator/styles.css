@@ -1,0 +1,505 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: linear-gradient(135deg, #1a4d6d 0%, #2a5c3e 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    display: flex;
+    gap: 30px;
+    max-width: 1400px;
+    width: 100%;
+}
+
+/* Whiteboard Container */
+.whiteboard-container {
+    flex: 1;
+    background: transparent;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.whiteboard {
+    width: 100%;
+    height: 550px;
+    background: white;
+    border: 12px solid #8B4513;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    margin: 20px auto;
+}
+
+#whiteboardCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.text-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* Text Elements on Board */
+.text-element {
+    position: absolute;
+    cursor: move;
+    pointer-events: all;
+    transition: transform 0.1s ease;
+    opacity: 0;
+    white-space: nowrap;
+}
+
+.text-element.animating {
+    opacity: 1;
+}
+
+.text-element:hover {
+    transform: scale(1.02);
+}
+
+.text-element.heading {
+    font-weight: 700;
+}
+
+.text-element.body {
+    font-weight: 400;
+}
+
+/* Writing Animation */
+.text-element .text-wrapper {
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+.text-element .char {
+    display: inline-block;
+    opacity: 0;
+}
+
+.text-element.writing .char.visible {
+    opacity: 1;
+}
+
+/* Underline Styles */
+.underline-black,
+.underline-green,
+.underline-red {
+    position: relative;
+    display: inline-block;
+}
+
+.underline-line {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 4px; /* Default height, will be overridden by JS */
+    width: 0;
+    transform-origin: left center;
+}
+
+.underline-line.black {
+    background: #000;
+}
+
+.underline-line.green {
+    background: #4CAF50;
+}
+
+.underline-line.red {
+    background: #f44336;
+}
+
+@keyframes drawUnderline {
+    to {
+        width: 100%;
+    }
+}
+
+.underline-line.animating {
+    animation: drawUnderline 0.6s ease-out forwards;
+}
+
+/* Control Panel */
+.control-panel {
+    width: 380px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    overflow: hidden;
+}
+
+.control-panel-header {
+    padding: 20px;
+    background: #f8f9fa;
+    color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.control-panel-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.clear-btn {
+    background: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s ease;
+}
+
+.clear-btn:hover {
+    background: #d32f2f;
+}
+
+.control-panel-content {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.control-section {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.control-section:last-child {
+    border-bottom: none;
+}
+
+.control-section h3 {
+    font-size: 16px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Text Input */
+#textInput {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    resize: vertical;
+    margin-bottom: 15px;
+    font-family: inherit;
+}
+
+#textInput:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* Button Groups */
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.type-btn, .underline-btn, .layout-btn, .color-btn {
+    flex: 1;
+    padding: 8px;
+    background: #f5f5f5;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 13px;
+}
+
+.type-btn.active, .underline-btn.active, .layout-btn.active, .color-btn.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.type-btn:hover, .underline-btn:hover, .layout-btn:hover, .color-btn:hover {
+    background: #e8e8e8;
+}
+
+.type-btn.active:hover, .underline-btn.active:hover, .layout-btn.active:hover, .color-btn.active:hover {
+    background: #5569d3;
+}
+
+/* Selectors */
+.text-type-selector, .font-selector, .size-selector, 
+.alignment-selector, .underline-selector, .position-controls {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+select {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    background: white;
+}
+
+select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* Font Size Range */
+.size-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.size-selector label {
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+
+#fontSize {
+    flex: 1;
+    cursor: pointer;
+}
+
+#fontSizeLabel {
+    font-size: 13px;
+    color: #333;
+    font-weight: 600;
+    min-width: 45px;
+}
+
+/* Position Controls */
+.position-inputs {
+    display: flex;
+    gap: 20px;
+    margin-top: 8px;
+}
+
+.position-inputs > div {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.position-inputs input {
+    width: 60px;
+    padding: 5px;
+    border: 2px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* Add Text Button */
+.add-text-btn {
+    width: 100%;
+    padding: 12px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+
+.add-text-btn:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+}
+
+/* Text Elements List */
+.text-elements-list {
+    max-height: 200px;
+    overflow-y: auto;
+    background: #f8f8f8;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.text-element-item {
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.text-element-item .text-content {
+    font-size: 13px;
+    color: #333;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.text-element-item .delete-btn {
+    background: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.empty-state {
+    text-align: center;
+    color: #999;
+    font-size: 13px;
+    padding: 20px;
+}
+
+/* Action Buttons */
+.export-btn, .save-btn, .load-btn, .play-animation-btn, .stop-animation-btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.export-btn {
+    background: #4CAF50;
+    color: white;
+}
+
+.save-btn {
+    background: #2196F3;
+    color: white;
+}
+
+.load-btn {
+    background: #FF9800;
+    color: white;
+}
+
+.play-animation-btn {
+    background: #9C27B0;
+    color: white;
+}
+
+.stop-animation-btn {
+    background: #F44336;
+    color: white;
+}
+
+.export-btn:hover, .save-btn:hover, .load-btn:hover, 
+.play-animation-btn:hover, .stop-animation-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Text Preview */
+.text-preview {
+    background: #f8f8f8;
+    padding: 20px;
+    border-radius: 8px;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 24px;
+    color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .whiteboard-container {
+        width: 100%;
+        max-width: 800px;
+    }
+    
+    .control-panel {
+        width: 100%;
+        max-width: 800px;
+        max-height: none;
+    }
+}
+
+/* Custom Scrollbar */
+.control-panel-content::-webkit-scrollbar,
+.text-elements-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.control-panel-content::-webkit-scrollbar-track,
+.text-elements-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.control-panel-content::-webkit-scrollbar-thumb,
+.text-elements-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.control-panel-content::-webkit-scrollbar-thumb:hover,
+.text-elements-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

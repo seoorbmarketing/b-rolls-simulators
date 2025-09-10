@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whiteboard Simulator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for Handwritten Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Kalam:wght@300;400;700&family=Permanent+Marker&family=Shadows+Into+Light&family=Indie+Flower&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Whiteboard Area -->
+        <div class="whiteboard-container">
+            <div class="whiteboard" id="whiteboard">
+                <canvas id="whiteboardCanvas"></canvas>
+                <div id="textOverlay" class="text-overlay"></div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-panel-header">
+                <h2>Whiteboard Controls</h2>
+                <button class="clear-btn" onclick="clearWhiteboard()" title="Clear All">
+                    <i class="fas fa-trash"></i>
+                    <span>Clear All</span>
+                </button>
+            </div>
+            
+            <div class="control-panel-content">
+                <!-- Text Input Section -->
+                <div class="control-section">
+                    <h3>Add Text</h3>
+                    <textarea id="textInput" placeholder="Enter your text here..." rows="3"></textarea>
+                    
+                    <!-- Text Type -->
+                    <div class="text-type-selector">
+                        <label>Text Type:</label>
+                        <div class="button-group">
+                            <button class="type-btn active" data-type="heading" onclick="selectTextType('heading')">
+                                <i class="fas fa-heading"></i> Heading
+                            </button>
+                            <button class="type-btn" data-type="body" onclick="selectTextType('body')">
+                                <i class="fas fa-paragraph"></i> Body
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Font Style -->
+                    <div class="font-selector">
+                        <label>Font Style:</label>
+                        <select id="fontStyle" onchange="updatePreview()">
+                            <option value="Caveat">Caveat (Casual)</option>
+                            <option value="Kalam">Kalam (Natural)</option>
+                            <option value="Permanent Marker">Marker (Bold)</option>
+                            <option value="Shadows Into Light">Shadows (Light)</option>
+                            <option value="Indie Flower">Indie Flower</option>
+                            <option value="Patrick Hand">Patrick Hand</option>
+                        </select>
+                    </div>
+
+                    <!-- Font Size -->
+                    <div class="size-selector">
+                        <label>Font Size:</label>
+                        <input type="range" id="fontSize" min="30" max="120" value="60" onchange="updateFontSizeLabel()">
+                        <span id="fontSizeLabel">60px</span>
+                    </div>
+
+                    <!-- Text Color -->
+                    <div class="color-selector">
+                        <label>Text Color:</label>
+                        <div class="button-group">
+                            <button class="color-btn active" data-color="black" onclick="selectTextColor('black')">
+                                <span style="color: #000;">●</span> Black
+                            </button>
+                            <button class="color-btn" data-color="blue" onclick="selectTextColor('blue')">
+                                <span style="color: #2196F3;">●</span> Blue
+                            </button>
+                            <button class="color-btn" data-color="grey" onclick="selectTextColor('grey')">
+                                <span style="color: #666;">●</span> Grey
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <!-- Underline Style -->
+                    <div class="underline-selector">
+                        <label>Underline:</label>
+                        <div class="button-group">
+                            <button class="underline-btn active" data-underline="none" onclick="selectUnderline('none')">
+                                None
+                            </button>
+                            <button class="underline-btn" data-underline="black" onclick="selectUnderline('black')">
+                                <span style="border-bottom: 2px solid black;">Black</span>
+                            </button>
+                            <button class="underline-btn" data-underline="green" onclick="selectUnderline('green')">
+                                <span style="border-bottom: 2px solid #4CAF50;">Green</span>
+                            </button>
+                            <button class="underline-btn" data-underline="red" onclick="selectUnderline('red')">
+                                <span style="border-bottom: 2px solid #f44336;">Red</span>
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <button class="add-text-btn" onclick="addTextToBoard()">
+                        <i class="fas fa-plus"></i> Add Text to Board
+                    </button>
+                </div>
+
+                <!-- Text Elements List -->
+                <div class="control-section">
+                    <h3>Text Elements</h3>
+                    <div id="textElementsList" class="text-elements-list">
+                        <p class="empty-state">No text elements yet</p>
+                    </div>
+                </div>
+
+                <!-- Animation Controls -->
+                <div class="control-section">
+                    <h3>Animation</h3>
+                    <div class="board-alignment">
+                        <label>Board Layout:</label>
+                        <div class="button-group">
+                            <button class="layout-btn active" data-layout="center" onclick="setBoardLayout('center')">
+                                <i class="fas fa-align-center"></i> Center
+                            </button>
+                            <button class="layout-btn" data-layout="left" onclick="setBoardLayout('left')">
+                                <i class="fas fa-align-left"></i> Left
+                            </button>
+                        </div>
+                    </div>
+                    <button onclick="playWritingAnimation()" class="play-animation-btn" style="margin-top: 15px;">
+                        <i class="fas fa-play"></i> Play Writing Animation
+                    </button>
+                    <button onclick="stopAnimation()" class="stop-animation-btn">
+                        <i class="fas fa-stop"></i> Stop Animation
+                    </button>
+                    <button onclick="exportAsImage()" class="export-btn">
+                        <i class="fas fa-download"></i> Export as Image
+                    </button>
+                </div>
+
+
+                <!-- Preview Section -->
+                <div class="control-section">
+                    <h3>Preview</h3>
+                    <div id="textPreview" class="text-preview">
+                        <span>Your text will appear here...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
