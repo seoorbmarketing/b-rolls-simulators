@@ -1354,15 +1354,15 @@ body {
 
 @keyframes revenueAppear {
     0% {
-        transform: translate(-50%, -50%) scale(0) rotate(180deg);
+        transform: translate(-50%, -50%) scale(0);
         opacity: 0;
     }
     50% {
-        transform: translate(-50%, -50%) scale(1.2) rotate(90deg);
+        transform: translate(-50%, -50%) scale(1.1);
         opacity: 1;
     }
     100% {
-        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        transform: translate(-50%, -50%) scale(1);
         opacity: 1;
     }
 }

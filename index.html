@@ -154,6 +154,10 @@
             color: #FF6B6B;
         }
 
+        .text-animation-gradient {
+            color: #9C27B0;
+        }
+
         @keyframes fadeInDown {
             from {
                 opacity: 0;
@@ -319,6 +323,17 @@
                 <div class="simulator-info">
                     <h3 class="simulator-name">Graph Charts</h3>
                     <button class="launch-btn" onclick="event.stopPropagation(); window.location.href='graph-simulator/index.html'">Launch</button>
+                </div>
+            </div>
+
+            <!-- Text Animation Simulator -->
+            <div class="simulator-card" onclick="window.location.href='text-animation-simulator/index.html'">
+                <div class="simulator-preview">
+                    <i class="fas fa-font simulator-icon text-animation-gradient"></i>
+                </div>
+                <div class="simulator-info">
+                    <h3 class="simulator-name">Text Animation</h3>
+                    <button class="launch-btn" onclick="event.stopPropagation(); window.location.href='text-animation-simulator/index.html'">Launch</button>
                 </div>
             </div>
         </div>

@@ -310,6 +310,24 @@ function loadTemplate(type) {
             document.getElementById('avatarInitial').value = 'MT';
             document.getElementById('avatarColor').value = '#EA4335';
             break;
+            
+        case 'invoice':
+            document.getElementById('senderName').value = 'QuickBooks';
+            document.getElementById('emailSubject').value = 'Invoice #INV-2024-1547 - Payment Due';
+            document.getElementById('emailBody').value = "Invoice from ABC Services Inc.\n\nInvoice Number: INV-2024-1547\nDate: December 15, 2024\nDue Date: December 30, 2024\n\nServices Rendered:\n• HVAC System Repair - $450.00\n• Parts & Materials - $185.00\n• Emergency Service Fee - $75.00\n\nSubtotal: $710.00\nTax (8%): $56.80\nTotal Due: $766.80\n\nPayment Methods:\n• Online: Pay via QuickBooks\n• Check: Mail to 123 Business St.\n• Wire Transfer: Contact accounting\n\nThank you for your business!";
+            document.getElementById('emailTime').value = '9:15 AM';
+            document.getElementById('avatarInitial').value = 'QB';
+            document.getElementById('avatarColor').value = '#2CA01C';
+            break;
+            
+        case 'quotation':
+            document.getElementById('senderName').value = 'Sales Team';
+            document.getElementById('emailSubject').value = 'Quote #Q-2024-3892 - Your Custom Solution Package';
+            document.getElementById('emailBody').value = "Thank you for your interest in our services!\n\nQuote Number: Q-2024-3892\nValid Until: January 15, 2025\n\nProposed Services:\n• Complete Kitchen Remodel\n  - Cabinet Installation: $8,500\n  - Countertop (Granite): $3,200\n  - Plumbing Updates: $2,100\n  - Electrical Work: $1,800\n  - Labor: $4,400\n\nTotal Estimate: $20,000\n\nPayment Terms:\n• 30% deposit upon acceptance\n• 40% at project midpoint\n• 30% upon completion\n\nThis quote includes:\n✓ All materials and labor\n✓ 2-year warranty\n✓ Project management\n✓ Cleanup and disposal\n\nReady to proceed? Reply to accept this quote.";
+            document.getElementById('emailTime').value = '2:30 PM';
+            document.getElementById('avatarInitial').value = 'ST';
+            document.getElementById('avatarColor').value = '#4285F4';
+            break;
     }
 }
 

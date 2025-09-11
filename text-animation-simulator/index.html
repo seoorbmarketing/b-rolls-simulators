@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Animation Simulator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;700;900&family=Roboto:wght@300;400;500;700;900&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Animation Display Area -->
+        <div class="animation-container">
+            <div class="animation-screen" id="animationScreen">
+                <div class="text-element" id="textElement">
+                    <span class="text-content" id="textContent">Hello World</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-panel-header">
+                <h2>Text Animation Controls</h2>
+                <button class="reset-btn" onclick="resetAnimation()">
+                    <i class="fas fa-undo"></i> Reset
+                </button>
+            </div>
+            
+            <div class="control-panel-content">
+                <!-- Text Input -->
+                <div class="control-section">
+                    <h3>Text Content</h3>
+                    <div class="input-group">
+                        <label>Text:</label>
+                        <input type="text" id="textInput" value="Hello World" onchange="updateText()">
+                    </div>
+                    <div class="input-group">
+                        <label>Font Family:</label>
+                        <select id="fontFamily" onchange="updateFont()">
+                            <option value="'Poppins', sans-serif">Poppins</option>
+                            <option value="'Playfair Display', serif">Playfair Display</option>
+                            <option value="'Roboto', sans-serif">Roboto</option>
+                            <option value="'Montserrat', sans-serif">Montserrat</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Font Size:</label>
+                        <input type="range" id="fontSize" min="20" max="120" value="48" onchange="updateFontSize()">
+                        <span id="fontSizeLabel">48px</span>
+                    </div>
+                    <div class="input-group">
+                        <label>Font Weight:</label>
+                        <select id="fontWeight" onchange="updateFontWeight()">
+                            <option value="300">Light</option>
+                            <option value="400">Regular</option>
+                            <option value="500">Medium</option>
+                            <option value="600" selected>Semi Bold</option>
+                            <option value="700">Bold</option>
+                            <option value="800">Extra Bold</option>
+                            <option value="900">Black</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Text Color:</label>
+                        <div class="color-options">
+                            <button class="color-btn" onclick="selectTextColor('#ffffff', this)" style="background: #ffffff"></button>
+                            <button class="color-btn active" onclick="selectTextColor('#000000', this)" style="background: #000000"></button>
+                            <button class="color-btn" onclick="selectTextColor('#FF6B6B', this)" style="background: #FF6B6B"></button>
+                            <button class="color-btn" onclick="selectTextColor('#4ECDC4', this)" style="background: #4ECDC4"></button>
+                            <button class="color-btn" onclick="selectTextColor('#45B7D1', this)" style="background: #45B7D1"></button>
+                            <button class="color-btn" onclick="selectTextColor('#F7DC6F', this)" style="background: #F7DC6F"></button>
+                            <button class="color-btn" onclick="selectTextColor('#BB8FCE', this)" style="background: #BB8FCE"></button>
+                            <button class="color-btn" onclick="selectTextColor('#85C88A', this)" style="background: #85C88A"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Animation Settings -->
+                <div class="control-section">
+                    <h3>Animation Style</h3>
+                    <div class="animation-grid">
+                        <button class="animation-btn active" onclick="selectAnimation('fadeIn')">
+                            <i class="fas fa-eye"></i>
+                            <span>Fade In</span>
+                        </button>
+                        <button class="animation-btn" onclick="selectAnimation('slideIn')">
+                            <i class="fas fa-arrow-right"></i>
+                            <span>Slide In</span>
+                        </button>
+                        <button class="animation-btn" onclick="selectAnimation('bounceIn')">
+                            <i class="fas fa-basketball-ball"></i>
+                            <span>Bounce In</span>
+                        </button>
+                        <button class="animation-btn" onclick="selectAnimation('zoomIn')">
+                            <i class="fas fa-search-plus"></i>
+                            <span>Zoom In</span>
+                        </button>
+                        <button class="animation-btn" onclick="selectAnimation('flipIn')">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>Flip In</span>
+                        </button>
+                        <button class="animation-btn" onclick="selectAnimation('rotateIn')">
+                            <i class="fas fa-spinner"></i>
+                            <span>Rotate In</span>
+                        </button>
+                        <button class="animation-btn" onclick="selectAnimation('elasticIn')">
+                            <i class="fas fa-expand-alt"></i>
+                            <span>Elastic In</span>
+                        </button>
+                        <button class="animation-btn" onclick="selectAnimation('typewriter')">
+                            <i class="fas fa-keyboard"></i>
+                            <span>Typewriter</span>
+                        </button>
+                        <button class="animation-btn" onclick="selectAnimation('glitchIn')">
+                            <i class="fas fa-tv"></i>
+                            <span>Glitch In</span>
+                        </button>
+                        <button class="animation-btn" onclick="selectAnimation('waveIn')">
+                            <i class="fas fa-water"></i>
+                            <span>Wave In</span>
+                        </button>
+                        <button class="animation-btn" onclick="selectAnimation('blurIn')">
+                            <i class="fas fa-cloud"></i>
+                            <span>Blur In</span>
+                        </button>
+                        <button class="animation-btn" onclick="selectAnimation('splitIn')">
+                            <i class="fas fa-columns"></i>
+                            <span>Split In</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Animation Options -->
+                <div class="control-section">
+                    <h3>Animation Options</h3>
+                    <div class="input-group">
+                        <label>Direction:</label>
+                        <select id="animationDirection" onchange="updateAnimation()">
+                            <option value="normal">In</option>
+                            <option value="reverse">Out</option>
+                            <option value="alternate">In & Out</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Duration (seconds):</label>
+                        <input type="range" id="duration" min="0.5" max="5" step="0.1" value="1.5" onchange="updateDuration()">
+                        <span id="durationLabel">1.5s</span>
+                    </div>
+                    <div class="input-group">
+                        <label>Delay (seconds):</label>
+                        <input type="range" id="delay" min="0" max="3" step="0.1" value="0" onchange="updateDelay()">
+                        <span id="delayLabel">0s</span>
+                    </div>
+                    <div class="input-group">
+                        <label>Easing:</label>
+                        <select id="easing" onchange="updateEasing()">
+                            <option value="ease">Ease</option>
+                            <option value="ease-in">Ease In</option>
+                            <option value="ease-out">Ease Out</option>
+                            <option value="ease-in-out" selected>Ease In Out</option>
+                            <option value="linear">Linear</option>
+                            <option value="cubic-bezier(0.68, -0.55, 0.265, 1.55)">Back</option>
+                            <option value="cubic-bezier(0.175, 0.885, 0.32, 1.275)">Elastic</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Background Settings -->
+                <div class="control-section">
+                    <h3>Background</h3>
+                    <div class="input-group">
+                        <label>Background Color:</label>
+                        <div class="color-options">
+                            <button class="color-btn bg-color-btn active" onclick="selectBackground('green', this)" style="background: #00ff00"></button>
+                            <button class="color-btn bg-color-btn" onclick="selectBackground('white', this)" style="background: #ffffff"></button>
+                            <button class="color-btn bg-color-btn" onclick="selectBackground('black', this)" style="background: #000000"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="control-section">
+                    <button onclick="playAnimation()" class="play-btn">
+                        <i class="fas fa-play"></i> Play Animation
+                    </button>
+                    <button onclick="exportAnimation()" class="export-btn">
+                        <i class="fas fa-download"></i> Export as GIF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

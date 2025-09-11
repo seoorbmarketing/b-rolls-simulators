@@ -125,13 +125,9 @@ function renderCalendar() {
     }
     
     // Current month days
-    const today = new Date();
     for (let day = 1; day <= daysInMonth; day++) {
-        const isToday = currentYear === today.getFullYear() && 
-                       currentMonth === today.getMonth() && 
-                       day === today.getDate();
         const dateKey = `${currentYear}-${currentMonth + 1}-${day}`;
-        const dayDiv = createDayElement(day, false, dateKey, isToday);
+        const dayDiv = createDayElement(day, false, dateKey, false);
         calendarGrid.appendChild(dayDiv);
     }
     
