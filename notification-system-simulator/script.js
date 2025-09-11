@@ -313,3 +313,17 @@ function sendClientMessages() {
         }, index * 600);
     });
 }
+
+// Toggle between skeleton and real iOS UI
+function toggleUIStyle(style) {
+    const skeletonUI = document.getElementById('homescreenSkeleton');
+    const realUI = document.getElementById('homescreenReal');
+    
+    if (style === 'skeleton') {
+        skeletonUI.style.display = 'block';
+        realUI.style.display = 'none';
+    } else if (style === 'real') {
+        skeletonUI.style.display = 'none';
+        realUI.style.display = 'flex';
+    }
+}

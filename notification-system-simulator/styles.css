@@ -496,14 +496,15 @@ textarea {
 
 .icon-selector {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 8px;
     margin-bottom: 15px;
 }
 
 .icon-option {
-    width: 45px;
-    height: 45px;
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 50px;
     border: 2px solid #e1e1e1;
     border-radius: 10px;
     background: white;
@@ -512,7 +513,7 @@ textarea {
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
-    font-size: 18px;
+    font-size: 16px;
     color: #666;
 }
 
@@ -578,4 +579,227 @@ textarea {
 
 .control-panel::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+/* Real iOS Homescreen Styles */
+.homescreen-real {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 60px 20px 20px;
+}
+
+.wallpaper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #FF3CAC 0%, #784BA0 25%, #2B86C5 75%, #FF3CAC 100%);
+    z-index: -1;
+}
+
+.apps-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.homescreen-real .app-row {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+}
+
+.app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.app-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.app-label {
+    font-size: 11px;
+    color: white;
+    text-align: center;
+    font-weight: 400;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* App Icon Backgrounds */
+.mail-icon {
+    background: linear-gradient(135deg, #006EE6 0%, #0051D5 100%);
+}
+
+.calendar-icon {
+    background: white;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    font-size: 12px;
+}
+
+.calendar-day {
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 1;
+}
+
+.calendar-weekday {
+    font-size: 9px;
+    color: #FF3B30;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.photos-icon {
+    background: linear-gradient(135deg, #FFD60A 0%, #FE9F0A 25%, #FE6F0A 50%, #FE3B30 75%, #C6007E 100%);
+}
+
+.camera-icon {
+    background: linear-gradient(135deg, #8E8E93 0%, #636366 100%);
+}
+
+.maps-icon {
+    background: linear-gradient(135deg, #7FFF00 0%, #00C851 50%, #007AFF 100%);
+}
+
+.clock-icon {
+    background: #1C1C1E;
+}
+
+.weather-icon {
+    background: linear-gradient(135deg, #4A90E2 0%, #50C7FB 100%);
+}
+
+.news-icon {
+    background: linear-gradient(135deg, #FF3B30 0%, #FF6482 100%);
+}
+
+.home-icon {
+    background: linear-gradient(135deg, #FFD60A 0%, #FF9F0A 100%);
+}
+
+.notes-icon {
+    background: linear-gradient(135deg, #FFD60A 0%, #FFB340 100%);
+}
+
+.stocks-icon {
+    background: #1C1C1E;
+}
+
+.reminders-icon {
+    background: linear-gradient(135deg, #007AFF 0%, #5AC8FA 100%);
+}
+
+.tv-icon {
+    background: #1C1C1E;
+}
+
+.appstore-icon {
+    background: linear-gradient(135deg, #007AFF 0%, #00C6FF 100%);
+}
+
+.appstore-icon i {
+    font-size: 38px;
+}
+
+.itunes-icon {
+    background: linear-gradient(135deg, #FA2B56 0%, #FB5C74 50%, #FC8C92 100%);
+}
+
+.books-icon {
+    background: linear-gradient(135deg, #FF9500 0%, #FF6200 100%);
+}
+
+.health-icon {
+    background: white;
+    color: #FF3B30;
+}
+
+.wallet-icon {
+    background: #1C1C1E;
+}
+
+.settings-icon {
+    background: linear-gradient(135deg, #8E8E93 0%, #636366 100%);
+}
+
+.phone-icon {
+    background: linear-gradient(135deg, #34C759 0%, #30D158 100%);
+}
+
+.safari-icon {
+    background: linear-gradient(135deg, #007AFF 0%, #5AC8FA 100%);
+}
+
+.messages-icon {
+    background: linear-gradient(135deg, #34C759 0%, #30D158 100%);
+}
+
+.music-icon {
+    background: linear-gradient(135deg, #FA2D48 0%, #FA576C 50%, #FA8190 100%);
+}
+
+/* Dock */
+.dock {
+    position: absolute;
+    bottom: 30px;
+    left: 20px;
+    right: 20px;
+    height: 95px;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(20px);
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 15px;
+}
+
+.dock-app {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dock-app .app-icon {
+    width: 60px;
+    height: 60px;
+}
+
+/* UI Toggle Styles */
+.ui-toggle {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.radio-label input[type="radio"] {
+    cursor: pointer;
 }

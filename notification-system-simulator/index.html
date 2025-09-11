@@ -32,8 +32,155 @@
                         <!-- Notifications will be added here dynamically -->
                     </div>
                     
+                    <!-- Real iOS Homescreen -->
+                    <div class="homescreen-real" id="homescreenReal" style="display: none;">
+                        <!-- Wallpaper -->
+                        <div class="wallpaper"></div>
+                        
+                        <!-- Apps Grid -->
+                        <div class="apps-container">
+                            <!-- Row 1 -->
+                            <div class="app-row">
+                                <div class="app">
+                                    <div class="app-icon mail-icon">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <span class="app-label">Mail</span>
+                                </div>
+                                <div class="app">
+                                    <div class="app-icon calendar-icon">
+                                        <span class="calendar-day">12</span>
+                                        <span class="calendar-weekday">Tuesday</span>
+                                    </div>
+                                    <span class="app-label">Calendar</span>
+                                </div>
+                                <div class="app">
+                                    <div class="app-icon photos-icon">
+                                        <i class="fas fa-images"></i>
+                                    </div>
+                                    <span class="app-label">Photos</span>
+                                </div>
+                                <div class="app">
+                                    <div class="app-icon camera-icon">
+                                        <i class="fas fa-camera"></i>
+                                    </div>
+                                    <span class="app-label">Camera</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Row 2 -->
+                            <div class="app-row">
+                                <div class="app">
+                                    <div class="app-icon maps-icon">
+                                        <i class="fas fa-map-marked-alt"></i>
+                                    </div>
+                                    <span class="app-label">Maps</span>
+                                </div>
+                                <div class="app">
+                                    <div class="app-icon clock-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <span class="app-label">Clock</span>
+                                </div>
+                                <div class="app">
+                                    <div class="app-icon weather-icon">
+                                        <i class="fas fa-cloud-sun"></i>
+                                    </div>
+                                    <span class="app-label">Weather</span>
+                                </div>
+                                <div class="app">
+                                    <div class="app-icon news-icon">
+                                        <i class="fas fa-newspaper"></i>
+                                    </div>
+                                    <span class="app-label">News</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Row 3 -->
+                            <div class="app-row">
+                                <div class="app">
+                                    <div class="app-icon home-icon">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                    <span class="app-label">Home</span>
+                                </div>
+                                <div class="app">
+                                    <div class="app-icon notes-icon">
+                                        <i class="fas fa-sticky-note"></i>
+                                    </div>
+                                    <span class="app-label">Notes</span>
+                                </div>
+                                <div class="app">
+                                    <div class="app-icon stocks-icon">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <span class="app-label">Stocks</span>
+                                </div>
+                                <div class="app">
+                                    <div class="app-icon reminders-icon">
+                                        <i class="fas fa-list"></i>
+                                    </div>
+                                    <span class="app-label">Reminders</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Row 4 -->
+                            <div class="app-row">
+                                <div class="app">
+                                    <div class="app-icon tv-icon">
+                                        <i class="fas fa-tv"></i>
+                                    </div>
+                                    <span class="app-label">TV</span>
+                                </div>
+                                <div class="app">
+                                    <div class="app-icon appstore-icon">
+                                        <i class="fab fa-app-store"></i>
+                                    </div>
+                                    <span class="app-label">App Store</span>
+                                </div>
+                                <div class="app">
+                                    <div class="app-icon itunes-icon">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <span class="app-label">iTunes Store</span>
+                                </div>
+                                <div class="app">
+                                    <div class="app-icon books-icon">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                    <span class="app-label">iBooks</span>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <!-- Dock -->
+                        <div class="dock">
+                            <div class="dock-app">
+                                <div class="app-icon phone-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                            </div>
+                            <div class="dock-app">
+                                <div class="app-icon safari-icon">
+                                    <i class="fas fa-compass"></i>
+                                </div>
+                            </div>
+                            <div class="dock-app">
+                                <div class="app-icon messages-icon">
+                                    <i class="fas fa-comment"></i>
+                                </div>
+                            </div>
+                            <div class="dock-app">
+                                <div class="app-icon music-icon">
+                                    <i class="fas fa-music"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Skeleton Homescreen -->
-                    <div class="homescreen">
+                    <div class="homescreen" id="homescreenSkeleton">
                         <!-- First Row of Apps -->
                         <div class="app-row">
                             <div class="app-skeleton">
@@ -144,6 +291,21 @@
             </div>
             
             <div class="control-panel-content">
+                <!-- UI Style Toggle -->
+                <div class="control-section">
+                    <h3>UI Style</h3>
+                    <div class="ui-toggle">
+                        <label class="radio-label">
+                            <input type="radio" name="uiStyle" value="skeleton" checked onchange="toggleUIStyle('skeleton')">
+                            <span>Skeleton UI</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="uiStyle" value="real" onchange="toggleUIStyle('real')">
+                            <span>Real iOS UI</span>
+                        </label>
+                    </div>
+                </div>
+                
                 <!-- Notification Builder -->
                 <div class="control-section">
                     <h3>Notification Builder</h3>
