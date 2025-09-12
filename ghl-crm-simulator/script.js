@@ -977,8 +977,10 @@ function loadBusinessTemplate(type) {
     // Clear existing appointments first
     clearCalendar();
     
-    // Status colors mapping
-    const statusColors = {
+    // Wait for clear animation to complete before adding new appointments
+    setTimeout(() => {
+        // Status colors mapping
+        const statusColors = {
         'Confirmed': '#22c55e',    // Green
         'Pending': '#ff6900',      // Orange
         'Tentative': '#ef4444',    // Red
@@ -1128,6 +1130,7 @@ function loadBusinessTemplate(type) {
             }
         }, index * 150); // Stagger the appointments
     });
+    }, 350); // Wait for clear animation to complete
 }
 
 function confirmBooking() {
@@ -1295,7 +1298,8 @@ function toggleView(view) {
 }
 
 function clearCalendar() {
-    const appointments = document.querySelectorAll('.appointment');
+    // Select both .appointment and .appointment-card classes
+    const appointments = document.querySelectorAll('.appointment, .appointment-card');
     const hourSlots = document.querySelectorAll('.hour-slot');
     
     appointments.forEach(appointment => {
@@ -1313,17 +1317,27 @@ function fillSampleData() {
     // Clear existing appointments first
     clearCalendar();
     
-    const colors = ['#5643ce', '#22c55e', '#ff6900', '#ef4444', '#8b5cf6', '#eab308'];
-    const sampleBookings = [
-        { time: 2, day: 1, title: 'Team Meeting', contact: 'James Mitchell', color: colors[0] },
-        { time: 4, day: 2, title: 'Client Call', contact: 'Emma Thompson', color: colors[1] },
-        { time: 1, day: 3, title: 'Project Review', contact: 'Oliver Davies', color: colors[2] },
-        { time: 3, day: 4, title: 'Training Session', contact: 'Sarah Johnson', color: colors[3] },
-        { time: 5, day: 5, title: 'Sales Presentation', duration: '1 hour' }
-    ];
-    
-    sampleBookings.forEach((booking, index) => {
-        setTimeout(() => {
+    // Wait for clear animation to complete before adding new appointments
+    setTimeout(() => {
+        // Status colors mapping (matching template structure)
+        const statusColors = {
+            'Confirmed': '#22c55e',    // Green
+            'Pending': '#ff6900',      // Orange
+            'Tentative': '#ef4444',    // Red
+            'Cancelled': '#6b7280',    // Gray
+            'Completed': '#3b82f6'     // Blue
+        };
+        
+        const sampleBookings = [
+            { time: 2, day: 1, title: 'Team Meeting', contact: 'James Mitchell', status: 'Confirmed' },
+            { time: 4, day: 2, title: 'Client Call', contact: 'Emma Thompson', status: 'Pending' },
+            { time: 1, day: 3, title: 'Project Review', contact: 'Oliver Davies', status: 'Confirmed' },
+            { time: 3, day: 4, title: 'Training Session', contact: 'Sarah Johnson', status: 'Tentative' },
+            { time: 5, day: 5, title: 'Sales Presentation', contact: 'Michael Brown', status: 'Confirmed' }
+        ];
+        
+        sampleBookings.forEach((booking, index) => {
+            setTimeout(() => {
             const dayColumns = document.querySelectorAll('.day-column');
             const day = dayColumns[booking.day];
             if (day) {
@@ -1332,7 +1346,9 @@ function fillSampleData() {
                 if (slot && !slot.classList.contains('has-appointment')) {
                     const bookingEl = document.createElement('div');
                     bookingEl.className = 'appointment-card';
-                    const color = booking.color || colors[index % colors.length];
+                    
+                    // Use status-based color like templates
+                    const color = statusColors[booking.status] || '#5643ce';
                     
                     bookingEl.style.cssText = `
                         position: absolute;
@@ -1351,10 +1367,12 @@ function fillSampleData() {
                         z-index: 10;
                         overflow: hidden;
                     `;
+                    
+                    // Match the exact template structure
                     bookingEl.innerHTML = `
-                        <div class="appointment-status" style="background: ${color};">${status}</div>
-                        <div class="appointment-title">${booking.title}</div>
-                        <div class="appointment-name">${booking.contact || 'Client'}</div>
+                        <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${booking.title}</div>
+                        <div style="opacity: 0.9; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${booking.contact}</div>
+                        <div style="opacity: 0.8; font-size: 9px;">${booking.status}</div>
                     `;
                     
                     slot.style.position = 'relative';
@@ -1384,8 +1402,9 @@ function fillSampleData() {
                     playSound('chachingSound');
                 }
             }
-        }, index * 200); // Stagger the appointments
-    });
+            }, index * 200); // Stagger the appointments
+        });
+    }, 350); // Wait for clear animation to complete
 }
 
 // Helper function to get default date
