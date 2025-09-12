@@ -504,6 +504,68 @@ function initLineChart() {
     updateLineChart();
 }
 
+// Helper function to draw just the chart frame (axes and grid)
+function drawLineChartFrame() {
+    const canvas = document.getElementById('lineCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Get data for labels and scaling
+    const dataString = document.getElementById('lineData')?.value || '20,35,30,45,60,55,70,85,80,90';
+    const labelsString = document.getElementById('lineLabels')?.value || 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct';
+    
+    const data = dataString.split(',').map(v => parseFloat(v.trim()));
+    const labels = labelsString.split(',').map(l => l.trim());
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Chart dimensions
+    const padding = 60;
+    const chartWidth = canvas.width - padding * 2;
+    const chartHeight = canvas.height - padding * 2;
+    const maxValue = Math.max(...data);
+    
+    // Draw axes
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, canvas.height - padding);
+    ctx.lineTo(canvas.width - padding, canvas.height - padding);
+    ctx.stroke();
+    
+    // Draw grid lines
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 5]);
+    for (let i = 1; i <= 5; i++) {
+        const y = padding + (chartHeight / 5) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(canvas.width - padding, y);
+        ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    
+    // Draw Y-axis labels
+    ctx.fillStyle = '#ccc';
+    ctx.font = '14px Poppins';
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= 5; i++) {
+        const value = (maxValue / 5) * (5 - i);
+        const y = padding + (chartHeight / 5) * i;
+        ctx.fillText(Math.round(value), padding - 10, y + 4);
+    }
+    
+    // Draw X-axis labels
+    ctx.textAlign = 'center';
+    const xStep = chartWidth / (labels.length - 1);
+    labels.forEach((label, index) => {
+        const x = padding + xStep * index;
+        ctx.fillText(label, x, canvas.height - padding + 25);
+    });
+}
+
 // Animate line chart
 let lineAnimationId = null;
 function animateLineChart() {
@@ -513,6 +575,9 @@ function animateLineChart() {
     if (lineAnimationId) {
         cancelAnimationFrame(lineAnimationId);
     }
+    
+    // Draw the chart frame immediately (axes and grid only, no line)
+    drawLineChartFrame();
     
     setTimeout(() => {
         let progress = 0;
@@ -595,11 +660,13 @@ function animateLineChart() {
                 ctx.save();
                 
                 // Create a clipping region that reveals the line progressively
+                // Add extra padding to ensure the last point is fully visible
+                const clipWidth = padding + (chartWidth * progress) + 10;
                 ctx.beginPath();
-                ctx.rect(0, 0, padding + chartWidth * progress, canvas.height);
+                ctx.rect(0, 0, clipWidth, canvas.height);
                 ctx.clip();
                 
-                // Draw the complete line with smooth curves
+                // Draw the line exactly like the static version - simple straight segments
                 ctx.shadowColor = lineColor;
                 ctx.shadowBlur = 10;
                 ctx.strokeStyle = lineColor;
@@ -608,20 +675,14 @@ function animateLineChart() {
                 ctx.lineJoin = 'round';
                 ctx.beginPath();
                 
-                // Use quadratic curves for smooth line
-                ctx.moveTo(points[0].x, points[0].y);
-                
-                for (let i = 1; i < points.length; i++) {
-                    const cp1x = (points[i-1].x + points[i].x) / 2;
-                    const cp1y = points[i-1].y;
-                    const cp2x = cp1x;
-                    const cp2y = points[i].y;
-                    
-                    // Create smooth curve between points
-                    const midX = (points[i-1].x + points[i].x) / 2;
-                    ctx.quadraticCurveTo(cp1x, cp1y, midX, (points[i-1].y + points[i].y) / 2);
-                    ctx.quadraticCurveTo(cp2x, cp2y, points[i].x, points[i].y);
-                }
+                // Simple linear path - no curves
+                points.forEach((point, index) => {
+                    if (index === 0) {
+                        ctx.moveTo(point.x, point.y);
+                    } else {
+                        ctx.lineTo(point.x, point.y);
+                    }
+                });
                 
                 ctx.stroke();
                 ctx.shadowBlur = 0;
@@ -631,8 +692,9 @@ function animateLineChart() {
                 // Draw points that are within the progress
                 points.forEach((point, i) => {
                     const pointProgress = i / (points.length - 1);
-                    if (pointProgress <= progress) {
-                        const pointAlpha = Math.min(1, (progress - pointProgress) * points.length);
+                    // Ensure all points are drawn when animation is complete
+                    if (progress >= 1 || pointProgress <= progress) {
+                        const pointAlpha = progress >= 1 ? 1 : Math.min(1, (progress - pointProgress) * points.length);
                         
                         // Outer glow with fade-in
                         ctx.fillStyle = lineColor;
@@ -653,14 +715,24 @@ function animateLineChart() {
                         ctx.arc(point.x, point.y, 2, 0, 2 * Math.PI);
                         ctx.fill();
                         
-                        // Value labels (fade in at the end)
-                        if (progress > 0.7) {
-                            const labelAlpha = ((progress - 0.7) / 0.3) * pointAlpha;
+                        // Value labels - clean and simple
+                        if (progress > 0.85) {
+                            const labelAlpha = ((progress - 0.85) / 0.15) * pointAlpha;
                             ctx.globalAlpha = labelAlpha;
+                            
+                            // Label text with shadow for visibility
                             ctx.fillStyle = '#fff';
                             ctx.font = 'bold 14px Poppins';
                             ctx.textAlign = 'center';
-                            ctx.fillText(point.value, point.x, point.y - 15);
+                            ctx.textBaseline = 'bottom';
+                            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                            ctx.shadowBlur = 4;
+                            ctx.shadowOffsetX = 1;
+                            ctx.shadowOffsetY = 1;
+                            ctx.fillText(point.value, point.x, point.y - 12);
+                            ctx.shadowBlur = 0;
+                            ctx.shadowOffsetX = 0;
+                            ctx.shadowOffsetY = 0;
                         }
                     }
                 });
@@ -789,14 +861,19 @@ function updateLineChart() {
         ctx.arc(x, y, 2, 0, 2 * Math.PI);
         ctx.fill();
         
-        // Draw value labels with better visibility
+        // Draw value labels - clean and simple
         ctx.fillStyle = '#fff';
         ctx.font = 'bold 14px Poppins';
         ctx.textAlign = 'center';
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-        ctx.shadowBlur = 3;
-        ctx.fillText(value, x, y - 15);
+        ctx.textBaseline = 'bottom';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetX = 1;
+        ctx.shadowOffsetY = 1;
+        ctx.fillText(value, x, y - 12);
         ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
     });
 }
 
