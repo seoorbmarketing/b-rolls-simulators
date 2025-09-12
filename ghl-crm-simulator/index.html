@@ -665,6 +665,32 @@
                     </button>
                 </div>
 
+                <!-- Rescheduling Animation -->
+                <div class="control-section">
+                    <h3>Rescheduling Animation</h3>
+                    
+                    <div class="control-input-group">
+                        <label>Select Appointment to Reschedule</label>
+                        <div style="position: relative;">
+                            <input type="text" class="control-input datetime-picker-input" id="rescheduleSource" placeholder="Click to select existing appointment" readonly onclick="openAppointmentPicker()" style="padding-right: 30px;">
+                            <i class="fas fa-calendar-times" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #ff6900; pointer-events: none;"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="control-input-group">
+                        <label>New Date & Time Slot</label>
+                        <div style="position: relative;">
+                            <input type="text" class="control-input datetime-picker-input" id="rescheduleTarget" placeholder="Click to select new slot" readonly onclick="openReschedulePicker()" style="padding-right: 30px;">
+                            <i class="fas fa-calendar-check" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #22c55e; pointer-events: none;"></i>
+                        </div>
+                    </div>
+                    
+                    <button class="control-btn primary" onclick="startRescheduleAnimation()">
+                        <i class="fas fa-exchange-alt"></i>
+                        Start Reschedule Animation
+                    </button>
+                </div>
+
                 <!-- Calendar Settings -->
                 <div class="control-section">
                     <h3>View Settings</h3>
@@ -828,6 +854,32 @@
         </div>
         <div class="datetime-picker-instruction">
             Click on any available time slot in the calendar to select
+        </div>
+    </div>
+
+    <!-- Appointment Picker Overlay -->
+    <div class="datetime-picker-overlay" id="appointmentPickerOverlay" style="display: none;">
+        <div class="datetime-picker-header">
+            <h3>Select Appointment to Reschedule</h3>
+            <button class="datetime-close-btn" onclick="closeAppointmentPicker()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="datetime-picker-instruction">
+            Click on an existing appointment to select it for rescheduling
+        </div>
+    </div>
+
+    <!-- Reschedule Target Picker Overlay -->
+    <div class="datetime-picker-overlay" id="reschedulePickerOverlay" style="display: none;">
+        <div class="datetime-picker-header">
+            <h3>Select New Time Slot</h3>
+            <button class="datetime-close-btn" onclick="closeReschedulePicker()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="datetime-picker-instruction">
+            Click on an available time slot for the new appointment time
         </div>
     </div>
     

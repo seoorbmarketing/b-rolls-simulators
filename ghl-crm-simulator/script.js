@@ -591,6 +591,8 @@ function typeText(element, text, speed) {
 let currentSlot = null;
 let currentSlotInfo = null;
 let pickerMode = null; // 'date' or 'time' or null
+let selectedAppointment = null; // For rescheduling
+let rescheduleTargetSlot = null;
 
 // Open date/time picker
 function openDateTimePicker() {
@@ -612,6 +614,167 @@ function closeDateTimePicker() {
     document.querySelector('.container').classList.remove('picker-mode');
 }
 
+// Open appointment picker for rescheduling
+function openAppointmentPicker() {
+    console.log('Opening appointment picker...');
+    pickerMode = 'appointment';
+    const overlay = document.getElementById('appointmentPickerOverlay');
+    overlay.style.display = 'block';
+    document.querySelector('.container').classList.add('picker-mode');
+    
+    // Highlight all appointments
+    const appointments = document.querySelectorAll('.appointment-card');
+    console.log('Found appointments to highlight:', appointments.length);
+    appointments.forEach((appointment, index) => {
+        console.log(`Appointment ${index}:`, appointment);
+        appointment.style.cursor = 'pointer';
+        appointment.style.outline = '2px dashed #ff6900';
+        appointment.style.outlineOffset = '2px';
+    });
+    
+    // Use a single event listener on the calendar grid for better event handling
+    const calendarGrid = document.querySelector('.calendar-grid');
+    console.log('Calendar grid found:', calendarGrid);
+    
+    if (!calendarGrid._appointmentPickerHandler) {
+        console.log('Adding appointment picker handler to calendar grid...');
+        calendarGrid._appointmentPickerHandler = function(e) {
+            console.log('Click event fired on:', e.target);
+            console.log('Current pickerMode:', pickerMode);
+            
+            if (pickerMode !== 'appointment') {
+                console.log('Not in appointment picker mode, ignoring click');
+                return;
+            }
+            
+            // Check if we clicked on an appointment or its child
+            let appointment = e.target.closest('.appointment-card');
+            console.log('Closest appointment-card:', appointment);
+            
+            if (!appointment) {
+                console.log('No appointment card found in click target');
+                return;
+            }
+            
+            console.log('Appointment clicked! Processing selection...');
+            e.stopPropagation();
+            e.preventDefault();
+            
+            // Get the parent slot
+            const slot = appointment.closest('.hour-slot');
+            if (!slot) return;
+            
+            // Store the selected appointment details
+            const appointmentTitle = appointment.querySelector('.appointment-title')?.textContent || 
+                                   appointment.querySelector('div:first-child')?.textContent || 'Appointment';
+            const appointmentName = appointment.querySelector('.appointment-name')?.textContent || 
+                                  appointment.querySelector('div:nth-child(2)')?.textContent || 'Customer';
+            
+            // Find slot info
+            const dayColumn = slot.closest('.day-column');
+            const dayHeader = dayColumn.querySelector('.day-header');
+            const dayNumber = dayHeader.querySelector('.day-number').textContent;
+            const timeGrid = dayColumn.querySelector('.time-grid');
+            const hourSlotsInDay = timeGrid.querySelectorAll('.hour-slot');
+            const slotIndexInDay = Array.from(hourSlotsInDay).indexOf(slot);
+            const hour = 11 + slotIndexInDay;
+            let timeString;
+            
+            if (hour === 12) {
+                timeString = '12PM';
+            } else if (hour < 12) {
+                timeString = `${hour}AM`;
+            } else if (hour === 24) {
+                timeString = '12AM';
+            } else {
+                timeString = `${hour - 12}PM`;
+            }
+            
+            const today = new Date();
+            const selectedDate = new Date(today.getFullYear(), today.getMonth(), parseInt(dayNumber));
+            const month = selectedDate.toLocaleDateString('en-US', { month: 'short' });
+            const year = selectedDate.getFullYear();
+            
+            selectedAppointment = {
+                element: appointment,
+                slot: slot,
+                title: appointmentTitle,
+                name: appointmentName,
+                originalDateTime: `${month} ${dayNumber}, ${year} at ${timeString}`,
+                dateTimeString: `${month} ${dayNumber}, ${year} at ${timeString}`
+            };
+            
+            document.getElementById('rescheduleSource').value = `${appointmentTitle} - ${selectedAppointment.dateTimeString}`;
+            
+            // Highlight selected appointment
+            appointment.style.border = '2px solid #ff6900';
+            setTimeout(() => {
+                appointment.style.border = '';
+            }, 500);
+            
+            closeAppointmentPicker();
+        };
+        
+        // Add the handler with capture phase
+        calendarGrid.addEventListener('click', calendarGrid._appointmentPickerHandler, true);
+        console.log('Handler attached successfully');
+    } else {
+        console.log('Handler already exists, not re-adding');
+    }
+    
+    // Let's also add a direct test click handler to see if clicks are working at all
+    console.log('Testing if appointments are clickable...');
+    appointments.forEach((appointment, index) => {
+        appointment.onclick = function(e) {
+            console.log(`Direct onclick fired for appointment ${index}!`);
+        };
+    });
+    
+    // Add a document-level listener to see ALL clicks
+    document._debugClickHandler = function(e) {
+        if (pickerMode === 'appointment') {
+            console.log('Document click detected during appointment picker mode:');
+            console.log('  - Target:', e.target);
+            console.log('  - Target className:', e.target.className);
+            console.log('  - Target tagName:', e.target.tagName);
+            console.log('  - Event phase:', e.eventPhase);
+        }
+    };
+    document.addEventListener('click', document._debugClickHandler, true);
+}
+
+// Close appointment picker
+function closeAppointmentPicker() {
+    pickerMode = null;
+    const overlay = document.getElementById('appointmentPickerOverlay');
+    overlay.style.display = 'none';
+    document.querySelector('.container').classList.remove('picker-mode');
+    
+    // Remove visual indicators
+    const appointments = document.querySelectorAll('.appointment-card');
+    appointments.forEach(appointment => {
+        appointment.style.cursor = '';
+        appointment.style.outline = '';
+        appointment.style.outlineOffset = '';
+    });
+}
+
+// Open reschedule target picker
+function openReschedulePicker() {
+    pickerMode = 'reschedule';
+    const overlay = document.getElementById('reschedulePickerOverlay');
+    overlay.style.display = 'block';
+    document.querySelector('.container').classList.add('picker-mode');
+}
+
+// Close reschedule picker
+function closeReschedulePicker() {
+    pickerMode = null;
+    const overlay = document.getElementById('reschedulePickerOverlay');
+    overlay.style.display = 'none';
+    document.querySelector('.container').classList.remove('picker-mode');
+}
+
 // Setup click handlers for hour slots
 function setupHourSlotClickHandlers() {
     const hourSlots = document.querySelectorAll('.hour-slot');
@@ -620,8 +783,13 @@ function setupHourSlotClickHandlers() {
     
     hourSlots.forEach((slot, slotIndex) => {
         slot.addEventListener('click', function(e) {
-            // Don't do anything if slot already has appointment
-            if (this.classList.contains('has-appointment')) {
+            // Skip slot clicks when in appointment picker mode (handled directly on appointments)
+            if (pickerMode === 'appointment') {
+                return;
+            }
+            
+            // Don't allow clicking on occupied slots for other modes
+            if (this.classList.contains('has-appointment') && pickerMode !== 'appointment') {
                 return;
             }
             
@@ -664,11 +832,22 @@ function setupHourSlotClickHandlers() {
                 const year = selectedDate.getFullYear();
                 const dateTimeString = `${month} ${dayNumber}, ${year} at ${timeString}`;
                 
-                // Set the combined date and time value
-                document.getElementById('animDateTime').value = dateTimeString;
-                
-                // Close the picker
-                closeDateTimePicker();
+                if (pickerMode === 'datetime') {
+                    // Set the combined date and time value for booking animation
+                    document.getElementById('animDateTime').value = dateTimeString;
+                    closeDateTimePicker();
+                } else if (pickerMode === 'reschedule') {
+                    // Set the target slot for rescheduling
+                    rescheduleTargetSlot = {
+                        slot: this,
+                        dayNumber,
+                        dayName,
+                        timeString,
+                        dateTimeString
+                    };
+                    document.getElementById('rescheduleTarget').value = dateTimeString;
+                    closeReschedulePicker();
+                }
                 
                 // Visual feedback
                 this.style.background = '#10b981';
@@ -786,18 +965,7 @@ function confirmQuickAppointment() {
             this.style.boxShadow = 'none';
         });
         
-        // Add click to remove
-        appointment.addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (confirm('Remove this appointment?')) {
-                this.style.opacity = '0';
-                this.style.transform = 'scale(0.8)';
-                setTimeout(() => {
-                    currentSlot.removeChild(this);
-                    currentSlot.classList.remove('has-appointment');
-                }, 300);
-            }
-        });
+        // Removed click-to-delete functionality to avoid conflicts with selection
     }
     
     // Close the modal
@@ -888,7 +1056,7 @@ function loadBusinessTemplate(type) {
                 const slot = hourSlots[appointment.time];
                 if (slot && !slot.classList.contains('has-appointment')) {
                     const appointmentEl = document.createElement('div');
-                    appointmentEl.className = 'appointment';
+                    appointmentEl.className = 'appointment-card';
                     
                     // Use status-based color
                     const appointmentColor = statusColors[appointment.status] || '#5643ce';
@@ -952,18 +1120,7 @@ function loadBusinessTemplate(type) {
                         this.style.boxShadow = 'none';
                     });
                     
-                    // Add click to remove
-                    appointmentEl.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        if (confirm('Remove this appointment?')) {
-                            this.style.opacity = '0';
-                            this.style.transform = 'scale(0.8)';
-                            setTimeout(() => {
-                                slot.removeChild(this);
-                                slot.classList.remove('has-appointment');
-                            }, 300);
-                        }
-                    });
+                    // Removed click-to-delete functionality to avoid conflicts with selection
                     
                     // Play sound for each appointment
                     playSound('chachingSound');
@@ -999,7 +1156,7 @@ function confirmBooking() {
         }
         
         const booking = document.createElement('div');
-        booking.className = 'appointment';
+        booking.className = 'appointment-card';
         booking.style.cssText = `
             position: absolute;
             left: 2px;
@@ -1044,18 +1201,7 @@ function confirmBooking() {
             this.style.boxShadow = 'none';
         });
         
-        // Add click to remove
-        booking.addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (confirm('Remove this appointment?')) {
-                this.style.opacity = '0';
-                this.style.transform = 'scale(0.8)';
-                setTimeout(() => {
-                    randomSlot.removeChild(this);
-                    randomSlot.classList.remove('has-appointment');
-                }, 300);
-            }
-        });
+        // Removed click-to-delete functionality to avoid conflicts with selection
         
         // Play chaching sound when appointment appears
         playSound('chachingSound');
@@ -1185,7 +1331,7 @@ function fillSampleData() {
                 const slot = hourSlots[booking.time];
                 if (slot && !slot.classList.contains('has-appointment')) {
                     const bookingEl = document.createElement('div');
-                    bookingEl.className = 'appointment';
+                    bookingEl.className = 'appointment-card';
                     const color = booking.color || colors[index % colors.length];
                     
                     bookingEl.style.cssText = `
@@ -1206,9 +1352,9 @@ function fillSampleData() {
                         overflow: hidden;
                     `;
                     bookingEl.innerHTML = `
-                        <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${booking.title}</div>
-                        <div style="font-size: 10px; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${booking.contact || 'Client'}</div>
-                        <div style="font-size: 9px; opacity: 0.8;">Confirmed</div>
+                        <div class="appointment-status" style="background: ${color};">${status}</div>
+                        <div class="appointment-title">${booking.title}</div>
+                        <div class="appointment-name">${booking.contact || 'Client'}</div>
                     `;
                     
                     slot.style.position = 'relative';
@@ -1232,18 +1378,7 @@ function fillSampleData() {
                         this.style.boxShadow = 'none';
                     });
                     
-                    // Add click to remove
-                    bookingEl.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        if (confirm('Remove this appointment?')) {
-                            this.style.opacity = '0';
-                            this.style.transform = 'scale(0.8)';
-                            setTimeout(() => {
-                                slot.removeChild(this);
-                                slot.classList.remove('has-appointment');
-                            }, 300);
-                        }
-                    });
+                    // Removed click-to-delete functionality to avoid conflicts with selection
                     
                     // Play sound for each appointment
                     playSound('chachingSound');
@@ -1341,6 +1476,167 @@ function randomizeBookingData() {
     // Random status
     const statuses = ['Confirmed', 'Pending', 'Tentative'];
     document.getElementById('animStatus').value = statuses[Math.floor(Math.random() * statuses.length)];
+}
+
+// Start reschedule animation
+function startRescheduleAnimation() {
+    // Check if both source and target are selected
+    if (!selectedAppointment || !rescheduleTargetSlot) {
+        alert('Please select both an appointment to reschedule and a new time slot');
+        return;
+    }
+    
+    // Show animated cursor
+    const cursor = document.getElementById('animatedCursor');
+    cursor.style.display = 'block';
+    
+    // Get position of the source appointment
+    const sourceRect = selectedAppointment.slot.getBoundingClientRect();
+    const sourceX = sourceRect.left + sourceRect.width / 2;
+    const sourceY = sourceRect.top + sourceRect.height / 2;
+    
+    // Start cursor from center and move to source appointment
+    cursor.style.left = '50%';
+    cursor.style.top = '50%';
+    
+    setTimeout(() => {
+        cursor.style.left = sourceX + 'px';
+        cursor.style.top = sourceY + 'px';
+    }, 100);
+    
+    // Click on the appointment
+    setTimeout(() => {
+        cursor.style.transform = 'scale(0.8)';
+        playSound('clickSound');
+        
+        // Highlight the appointment
+        selectedAppointment.element.style.transform = 'scale(1.05)';
+        selectedAppointment.element.style.boxShadow = '0 4px 12px rgba(255, 105, 0, 0.4)';
+        
+        setTimeout(() => {
+            cursor.style.transform = 'scale(1)';
+        }, 150);
+    }, 1000);
+    
+    // Animate appointment "popping out"
+    setTimeout(() => {
+        selectedAppointment.element.style.transition = 'all 0.4s ease';
+        selectedAppointment.element.style.transform = 'scale(0)';
+        selectedAppointment.element.style.opacity = '0';
+        
+        // Play caching sound for removal
+        playSound('cachingSound');
+    }, 1800);
+    
+    // Move cursor to new slot
+    setTimeout(() => {
+        const targetRect = rescheduleTargetSlot.slot.getBoundingClientRect();
+        const targetX = targetRect.left + targetRect.width / 2;
+        const targetY = targetRect.top + targetRect.height / 2;
+        
+        cursor.style.left = targetX + 'px';
+        cursor.style.top = targetY + 'px';
+    }, 2500);
+    
+    // Click on new slot and create appointment
+    setTimeout(() => {
+        cursor.style.transform = 'scale(0.8)';
+        playSound('clickSound');
+        
+        // Add ripple effect
+        const targetRect = rescheduleTargetSlot.slot.getBoundingClientRect();
+        const targetX = targetRect.left + targetRect.width / 2;
+        const targetY = targetRect.top + targetRect.height / 2;
+        
+        const ripple = document.createElement('div');
+        ripple.style.cssText = `
+            position: fixed;
+            left: ${targetX}px;
+            top: ${targetY}px;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #22c55e;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: ripple 0.6s ease-out;
+            pointer-events: none;
+            z-index: 3001;
+        `;
+        document.body.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+        
+        setTimeout(() => {
+            cursor.style.transform = 'scale(1)';
+        }, 150);
+    }, 3200);
+    
+    // Create new appointment with same data but "Rescheduled" status
+    setTimeout(() => {
+        // Remove the old appointment
+        selectedAppointment.element.remove();
+        selectedAppointment.slot.classList.remove('has-appointment');
+        
+        // Create new appointment with EXACT same styling as template appointments
+        const newAppointment = document.createElement('div');
+        newAppointment.className = 'appointment-card';
+        newAppointment.style.cssText = `
+            position: absolute;
+            left: 2px;
+            right: 2px;
+            height: calc(100% - 4px);
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+            padding: 4px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+            z-index: 10;
+            overflow: hidden;
+        `;
+        
+        // Keep EXACT same layout as template appointments
+        newAppointment.innerHTML = `
+            <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${selectedAppointment.title}</div>
+            <div style="font-size: 10px; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${selectedAppointment.name}</div>
+            <div style="font-size: 9px; opacity: 0.8;">Rescheduled</div>
+        `;
+        
+        rescheduleTargetSlot.slot.appendChild(newAppointment);
+        rescheduleTargetSlot.slot.classList.add('has-appointment');
+        rescheduleTargetSlot.slot.style.position = 'relative';
+        
+        // Add hover effects to the new appointment
+        newAppointment.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.02)';
+            this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+        });
+        
+        newAppointment.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+            this.style.boxShadow = 'none';
+        });
+        
+        // Animate the new appointment appearing
+        setTimeout(() => {
+            newAppointment.style.opacity = '1';
+            newAppointment.style.transform = 'scale(1)';
+            playSound('cachingSound');
+        }, 100);
+        
+        // Hide cursor and reset
+        setTimeout(() => {
+            cursor.style.display = 'none';
+            
+            // Reset selections
+            selectedAppointment = null;
+            rescheduleTargetSlot = null;
+            document.getElementById('rescheduleSource').value = '';
+            document.getElementById('rescheduleTarget').value = '';
+        }, 500);
+    }, 3800); // Create appointment after click animation
 }
 
 // Add CSS animations
