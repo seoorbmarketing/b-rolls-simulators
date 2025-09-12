@@ -49,8 +49,8 @@
                         <i class="fas fa-map-marker-alt"></i>
                     </div>
                     <div class="location-details">
-                        <div class="location-name">Win Massive Impa...</div>
-                        <div class="location-sub">Kolkata, West Ben...</div>
+                        <div class="location-name" id="sidebarCompanyName">Win Massive Impa...</div>
+                        <div class="location-sub" id="sidebarCompanyAddress">Kolkata, West Ben...</div>
                     </div>
                     <div class="location-arrows">
                         <i class="fas fa-chevron-up"></i>
@@ -555,6 +555,21 @@
             </div>
             
             <div class="control-panel-content">
+                <!-- Company Settings -->
+                <div class="control-section">
+                    <h3>Company Settings</h3>
+                    
+                    <div class="control-input-group">
+                        <label>Company Name</label>
+                        <input type="text" class="control-input" id="companyName" placeholder="e.g., Win Massive Impact" value="Win Massive Impa..." onkeyup="updateCompanyInfo()">
+                    </div>
+                    
+                    <div class="control-input-group">
+                        <label>Company Address</label>
+                        <input type="text" class="control-input" id="companyAddress" placeholder="e.g., Kolkata, West Bengal" value="Kolkata, West Ben..." onkeyup="updateCompanyInfo()">
+                    </div>
+                </div>
+                
                 <!-- Booking Animation -->
                 <div class="control-section">
                     <h3>Booking Animation Settings</h3>
@@ -590,8 +605,11 @@
                     </div>
                     
                     <div class="control-input-group">
-                        <label>Start Time</label>
-                        <input type="text" class="control-input" id="animStartTime" placeholder="e.g., 2:00 PM">
+                        <label>Date & Time <i class="fas fa-calendar-alt" style="color: #5643ce; font-size: 10px;"></i></label>
+                        <div style="position: relative;">
+                            <input type="text" class="control-input datetime-picker-input" id="animDateTime" placeholder="Click to select from calendar" readonly onclick="openDateTimePicker()" style="padding-right: 30px;">
+                            <i class="fas fa-calendar-check" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #5643ce; pointer-events: none;"></i>
+                        </div>
                     </div>
                     
                     <div class="control-input-group">
@@ -757,12 +775,6 @@
                 
                 <div class="form-row">
                     <label>Date & Time</label>
-                    <div class="timezone-info">
-                        Showing slots in this timezone: (Account Timezone)
-                    </div>
-                    <select class="form-select">
-                        <option>GMT+05:30 Asia/Kolkata (IST)</option>
-                    </select>
                 </div>
                 
                 <div class="form-row">
@@ -804,6 +816,19 @@
     <!-- Mouse Cursor for Animation -->
     <div class="animated-cursor" id="animatedCursor" style="display: none;">
         <i class="fas fa-mouse-pointer"></i>
+    </div>
+    
+    <!-- Date/Time Picker Overlay -->
+    <div class="datetime-picker-overlay" id="datetimePickerOverlay" style="display: none;">
+        <div class="datetime-picker-header">
+            <h3>Select Date & Time Slot</h3>
+            <button class="datetime-close-btn" onclick="closeDateTimePicker()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="datetime-picker-instruction">
+            Click on any available time slot in the calendar to select
+        </div>
     </div>
     
     <!-- Quick Appointment Form Modal -->

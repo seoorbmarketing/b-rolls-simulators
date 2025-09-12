@@ -191,25 +191,85 @@ if (userSearchInput) {
 
 // Control Panel Functions
 
+// Update company info in sidebar
+function updateCompanyInfo() {
+    const companyName = document.getElementById('companyName').value;
+    const companyAddress = document.getElementById('companyAddress').value;
+    
+    // Update sidebar display
+    document.getElementById('sidebarCompanyName').textContent = companyName || 'Company Name';
+    document.getElementById('sidebarCompanyAddress').textContent = companyAddress || 'Company Address';
+}
+
 function startBookingAnimation() {
     // Show animated cursor
     const cursor = document.getElementById('animatedCursor');
     cursor.style.display = 'block';
     
-    // Find a random time slot to click
-    const dayColumns = document.querySelectorAll('.day-column');
-    const randomDayIndex = Math.floor(Math.random() * 5) + 1; // Skip weekend
-    const randomDay = dayColumns[randomDayIndex];
-    const hourSlots = randomDay.querySelectorAll('.hour-slot');
-    const randomSlotIndex = Math.floor(Math.random() * 6) + 2; // Middle of the day
-    const targetSlot = hourSlots[randomSlotIndex];
+    // Parse the selected date/time to find the correct slot
+    const dateTimeValue = document.getElementById('animDateTime').value;
+    let targetSlot = null;
+    
+    if (dateTimeValue && dateTimeValue.includes(' at ')) {
+        const [datePart, timePart] = dateTimeValue.split(' at ');
+        const dayMatch = datePart.match(/\d+/);
+        const dayNumber = dayMatch ? dayMatch[0] : null;
+        
+        // Find the day column with matching day number
+        const dayColumns = document.querySelectorAll('.day-column');
+        
+        dayColumns.forEach(dayCol => {
+            const dayHeader = dayCol.querySelector('.day-header');
+            const dayNum = dayHeader.querySelector('.day-number').textContent;
+            if (dayNum === dayNumber || dayNum === dayNumber?.padStart(2, '0')) {
+                // Calculate slot index from time
+                let slotIndex = 0;
+                const timeHour = parseInt(timePart);
+                
+                // Parse time and calculate the correct slot index
+                // Calendar starts at 11AM (index 0) and goes to 12AM (index 13)
+                if (timePart === '11AM') {
+                    slotIndex = 0;
+                } else if (timePart === '12PM') {
+                    slotIndex = 1;
+                } else if (timePart === '12AM') {
+                    slotIndex = 13;
+                } else if (timePart.includes('PM')) {
+                    // PM times (1PM-11PM)
+                    slotIndex = timeHour + 1; // 1PM = index 2, 2PM = index 3, etc.
+                } else if (timePart.includes('AM') && timeHour < 11) {
+                    // Should not happen with our calendar (starts at 11AM)
+                    slotIndex = 0;
+                }
+                
+                // Get the specific slot
+                const hourSlots = dayCol.querySelectorAll('.hour-slot');
+                if (hourSlots[slotIndex]) {
+                    targetSlot = hourSlots[slotIndex];
+                }
+            }
+        });
+    }
+    
+    // If no slot selected or found, use a random one
+    if (!targetSlot) {
+        const dayColumns = document.querySelectorAll('.day-column');
+        const randomDayIndex = Math.floor(Math.random() * 5) + 1; // Skip weekend
+        const randomDay = dayColumns[randomDayIndex];
+        const hourSlots = randomDay.querySelectorAll('.hour-slot');
+        const randomSlotIndex = Math.floor(Math.random() * 6) + 2; // Middle of the day
+        targetSlot = hourSlots[randomSlotIndex];
+    }
+    
+    // Don't scroll - assume the slot is already in view
+    // Just proceed with the animation immediately
     
     // Get position of the target slot
     const rect = targetSlot.getBoundingClientRect();
     const targetX = rect.left + rect.width / 2;
     const targetY = rect.top + rect.height / 2;
     
-    // Animate cursor moving to the slot
+    // Start cursor from center and animate to the slot
     cursor.style.left = '50%';
     cursor.style.top = '50%';
     
@@ -306,7 +366,20 @@ function autoFillBookingForm() {
     const appointmentTitle = document.getElementById('animAppTitle').value || getRandomTitle();
     const description = document.getElementById('animDescription').value || getRandomDescription();
     const teamMember = document.getElementById('animTeamMember').value;
-    const startTime = document.getElementById('animStartTime').value || '2:00 PM';
+    
+    // Parse date/time from combined field
+    const dateTimeValue = document.getElementById('animDateTime').value;
+    let dateValue, startTime;
+    
+    if (dateTimeValue && dateTimeValue.includes(' at ')) {
+        const [datePart, timePart] = dateTimeValue.split(' at ');
+        dateValue = datePart;
+        startTime = timePart;
+    } else {
+        dateValue = getDefaultDate();
+        startTime = '2:00 PM';
+    }
+    
     const duration = document.getElementById('animDuration').value || '30';
     const status = document.getElementById('animStatus').value || 'Confirmed';
     
@@ -384,10 +457,6 @@ function autoFillBookingForm() {
     setTimeout(() => {
         const startTimeInput = document.getElementById('startTime');
         const endTimeInput = document.getElementById('endTime');
-        const today = new Date();
-        const day = today.getDate();
-        const month = today.toLocaleDateString('en-US', { month: 'short' });
-        const year = today.getFullYear();
         
         // Calculate end time based on duration
         const durationMinutes = parseInt(duration);
@@ -401,8 +470,8 @@ function autoFillBookingForm() {
             endMinutes = endMinutes % 60;
         }
         
-        const startTimeValue = `${month} ${day}, ${year} ${startTime}`;
-        const endTimeValue = `${month} ${day}, ${year} ${endHours}:${endMinutes.toString().padStart(2, '0')} ${period}`;
+        const startTimeValue = `${dateValue} ${startTime}`;
+        const endTimeValue = `${dateValue} ${endHours}:${endMinutes.toString().padStart(2, '0')} ${period}`;
         
         // Smooth scroll to time fields first
         if (modal && startTimeInput) {
@@ -521,6 +590,27 @@ function typeText(element, text, speed) {
 // Global variables for quick appointment
 let currentSlot = null;
 let currentSlotInfo = null;
+let pickerMode = null; // 'date' or 'time' or null
+
+// Open date/time picker
+function openDateTimePicker() {
+    pickerMode = 'datetime';
+    const overlay = document.getElementById('datetimePickerOverlay');
+    overlay.style.display = 'block';
+    document.querySelector('.container').classList.add('picker-mode');
+    
+    // Update instruction
+    const instruction = overlay.querySelector('.datetime-picker-instruction');
+    instruction.textContent = 'Click on any available time slot to select date and time';
+}
+
+// Close date/time picker
+function closeDateTimePicker() {
+    pickerMode = null;
+    const overlay = document.getElementById('datetimePickerOverlay');
+    overlay.style.display = 'none';
+    document.querySelector('.container').classList.remove('picker-mode');
+}
 
 // Setup click handlers for hour slots
 function setupHourSlotClickHandlers() {
@@ -542,9 +632,52 @@ function setupHourSlotClickHandlers() {
             const dayNumber = dayHeader.querySelector('.day-number').textContent;
             const dayName = dayHeader.querySelector('.day-name').textContent;
             
-            // Calculate time based on slot index (11AM start)
-            const hour = 11 + slotIndex;
-            const timeString = hour <= 11 ? `${hour}AM` : hour === 12 ? '12PM' : hour <= 12 ? `${hour}PM` : `${hour - 12}PM`;
+            // Get the time-grid within this day column
+            const timeGrid = dayColumn.querySelector('.time-grid');
+            const hourSlotsInDay = timeGrid.querySelectorAll('.hour-slot');
+            const slotIndexInDay = Array.from(hourSlotsInDay).indexOf(this);
+            
+            // Calculate time based on slot index within the day (11AM start)
+            const hour = 11 + slotIndexInDay;
+            let timeString;
+            
+            if (hour === 12) {
+                timeString = '12PM';
+            } else if (hour < 12) {
+                timeString = `${hour}AM`;
+            } else if (hour === 24) {
+                timeString = '12AM';
+            } else {
+                timeString = `${hour - 12}PM`;
+            }
+            
+            // If in picker mode, set the value and close picker
+            if (pickerMode) {
+                // Get current date or use today
+                const today = new Date();
+                const currentYear = today.getFullYear();
+                const currentMonth = today.toLocaleDateString('en-US', { month: 'short' });
+                
+                // Calculate the actual date based on the day number
+                const selectedDate = new Date(currentYear, today.getMonth(), parseInt(dayNumber));
+                const month = selectedDate.toLocaleDateString('en-US', { month: 'short' });
+                const year = selectedDate.getFullYear();
+                const dateTimeString = `${month} ${dayNumber}, ${year} at ${timeString}`;
+                
+                // Set the combined date and time value
+                document.getElementById('animDateTime').value = dateTimeString;
+                
+                // Close the picker
+                closeDateTimePicker();
+                
+                // Visual feedback
+                this.style.background = '#10b981';
+                setTimeout(() => {
+                    this.style.background = '';
+                }, 300);
+                
+                return;
+            }
             
             // Store slot info for later use
             currentSlot = this;
@@ -780,7 +913,17 @@ function loadBusinessTemplate(type) {
                     
                     // Calculate time string
                     const hour = 11 + appointment.time;
-                    const timeString = hour <= 11 ? `${hour}AM` : hour === 12 ? '12PM' : `${hour - 12}PM`;
+                    let timeString;
+                    
+                    if (hour === 12) {
+                        timeString = '12PM';
+                    } else if (hour < 12) {
+                        timeString = `${hour}AM`;
+                    } else if (hour === 24) {
+                        timeString = '12AM';
+                    } else {
+                        timeString = `${hour - 12}PM`;
+                    }
                     
                     appointmentEl.innerHTML = `
                         <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${appointment.name}</div>
@@ -1110,6 +1253,15 @@ function fillSampleData() {
     });
 }
 
+// Helper function to get default date
+function getDefaultDate() {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.toLocaleDateString('en-US', { month: 'short' });
+    const year = today.getFullYear();
+    return `${month} ${day}, ${year}`;
+}
+
 // Helper functions for random data
 function getRandomContact() {
     const contacts = ['John Smith', 'Sarah Wilson', 'Mike Johnson', 'Emily Davis', 'Robert Brown', 
@@ -1168,9 +1320,19 @@ function randomizeBookingData() {
     const teamMembers = ['', 'James Mitchell', 'Emma Thompson', 'Oliver Davies'];
     document.getElementById('animTeamMember').value = teamMembers[Math.floor(Math.random() * teamMembers.length)];
     
+    // Random date (within next 7 days) and time combined
+    const date = new Date();
+    date.setDate(date.getDate() + Math.floor(Math.random() * 7));
+    const day = date.getDate();
+    const month = date.toLocaleDateString('en-US', { month: 'short' });
+    const year = date.getFullYear();
+    
     // Random time
     const times = ['9:00 AM', '10:00 AM', '11:00 AM', '2:00 PM', '3:00 PM', '4:00 PM'];
-    document.getElementById('animStartTime').value = times[Math.floor(Math.random() * times.length)];
+    const randomTime = times[Math.floor(Math.random() * times.length)];
+    
+    // Set combined date/time value
+    document.getElementById('animDateTime').value = `${month} ${day}, ${year} at ${randomTime}`;
     
     // Random duration
     const durations = ['30', '60', '90', '120'];
