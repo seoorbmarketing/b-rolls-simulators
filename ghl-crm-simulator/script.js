@@ -1478,6 +1478,35 @@ function randomizeBookingData() {
     document.getElementById('animStatus').value = statuses[Math.floor(Math.random() * statuses.length)];
 }
 
+// Helper function to calculate end time
+function calculateEndTime(startDateTime, durationMinutes) {
+    // Parse the date/time string (e.g., "Sep 13, 2025 at 2PM")
+    const parts = startDateTime.match(/(\w+) (\d+), (\d+) at (\d+)(AM|PM)/);
+    if (!parts) return startDateTime;
+    
+    const [, month, day, year, hour, period] = parts;
+    let startHour = parseInt(hour);
+    if (period === 'PM' && startHour !== 12) startHour += 12;
+    if (period === 'AM' && startHour === 12) startHour = 0;
+    
+    // Add duration
+    let endHour = startHour;
+    let endMinutes = durationMinutes;
+    if (endMinutes >= 60) {
+        endHour += Math.floor(endMinutes / 60);
+        endMinutes = endMinutes % 60;
+    }
+    
+    // Format end time
+    let endPeriod = endHour >= 12 ? 'PM' : 'AM';
+    let displayHour = endHour;
+    if (endHour > 12) displayHour = endHour - 12;
+    if (endHour === 0) displayHour = 12;
+    
+    const timeStr = endMinutes > 0 ? `${displayHour}:${endMinutes.toString().padStart(2, '0')}` : `${displayHour}:30`;
+    return `${month} ${day}, ${year} at ${timeStr}${endPeriod}`;
+}
+
 // Start reschedule animation
 function startRescheduleAnimation() {
     // Check if both source and target are selected
@@ -1504,7 +1533,7 @@ function startRescheduleAnimation() {
         cursor.style.top = sourceY + 'px';
     }, 100);
     
-    // Click on the appointment
+    // Click on the appointment to open edit modal
     setTimeout(() => {
         cursor.style.transform = 'scale(0.8)';
         playSound('clickSound');
@@ -1515,66 +1544,134 @@ function startRescheduleAnimation() {
         
         setTimeout(() => {
             cursor.style.transform = 'scale(1)';
+            selectedAppointment.element.style.transform = 'scale(1)';
         }, 150);
     }, 1000);
     
-    // Animate appointment "popping out"
+    // Open the booking modal with existing appointment data
     setTimeout(() => {
-        selectedAppointment.element.style.transition = 'all 0.4s ease';
-        selectedAppointment.element.style.transform = 'scale(0)';
-        selectedAppointment.element.style.opacity = '0';
+        cursor.style.display = 'none';
+        const modal = document.getElementById('bookingModal');
+        modal.style.display = 'flex';
         
-        // Play caching sound for removal
-        playSound('cachingSound');
-    }, 1800);
+        // Pre-fill the form with existing appointment data
+        document.getElementById('contactSearch').value = selectedAppointment.name;
+        document.getElementById('appointmentTitle').value = selectedAppointment.title;
+        document.getElementById('appointmentDesc').value = 'Rescheduling appointment to new time slot';
+        document.getElementById('teamMember').selectedIndex = 1;
+        document.getElementById('appointmentStatus').value = 'Confirmed';
+        
+        // FIRST show the EXISTING date/time
+        document.getElementById('startTime').value = selectedAppointment.originalDateTime;
+        const existingEndTime = calculateEndTime(selectedAppointment.originalDateTime, 30);
+        document.getElementById('endTime').value = existingEndTime;
+    }, 1500);
     
-    // Move cursor to new slot
+    // Animate editing the date/time field - show old time first, then update
     setTimeout(() => {
-        const targetRect = rescheduleTargetSlot.slot.getBoundingClientRect();
-        const targetX = targetRect.left + targetRect.width / 2;
-        const targetY = targetRect.top + targetRect.height / 2;
+        const modal = document.querySelector('.booking-modal');
+        const startTimeInput = document.getElementById('startTime');
+        const endTimeInput = document.getElementById('endTime');
         
-        cursor.style.left = targetX + 'px';
-        cursor.style.top = targetY + 'px';
-    }, 2500);
+        // Scroll to time field
+        if (modal && startTimeInput) {
+            smoothScrollTo(modal, startTimeInput.offsetTop - 150, 800);
+        }
+        
+        // First highlight the existing time
+        setTimeout(() => {
+            startTimeInput.style.borderColor = '#ff6900';
+            startTimeInput.style.backgroundColor = '#fff3e0';
+            
+            // Wait a moment to show the existing time
+            setTimeout(() => {
+                // Now clear and type the NEW time
+                startTimeInput.value = '';
+                typeText(startTimeInput, rescheduleTargetSlot.dateTimeString, 40);
+                
+                // Update end time after start time is typed
+                setTimeout(() => {
+                    endTimeInput.value = '';
+                    const newEndTime = calculateEndTime(rescheduleTargetSlot.dateTimeString, 30);
+                    typeText(endTimeInput, newEndTime, 40);
+                    
+                    setTimeout(() => {
+                        startTimeInput.style.borderColor = '#d0d0d0';
+                        startTimeInput.style.backgroundColor = 'white';
+                        endTimeInput.style.borderColor = '#d0d0d0';
+                    }, 800);
+                }, 1200);
+            }, 1200); // Show existing time for 1.2 seconds
+        }, 1000);
+    }, 3000);
     
-    // Click on new slot and create appointment
+    // Click Save/Update button
     setTimeout(() => {
-        cursor.style.transform = 'scale(0.8)';
-        playSound('clickSound');
+        const cursor = document.getElementById('animatedCursor');
+        cursor.style.display = 'block';
         
-        // Add ripple effect
-        const targetRect = rescheduleTargetSlot.slot.getBoundingClientRect();
-        const targetX = targetRect.left + targetRect.width / 2;
-        const targetY = targetRect.top + targetRect.height / 2;
+        const bookBtn = document.querySelector('.btn-book');
+        const btnRect = bookBtn.getBoundingClientRect();
+        const btnX = btnRect.left + btnRect.width / 2;
+        const btnY = btnRect.top + btnRect.height / 2;
         
-        const ripple = document.createElement('div');
-        ripple.style.cssText = `
-            position: fixed;
-            left: ${targetX}px;
-            top: ${targetY}px;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #22c55e;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            animation: ripple 0.6s ease-out;
-            pointer-events: none;
-            z-index: 3001;
-        `;
-        document.body.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 600);
+        // Move cursor to button
+        cursor.style.left = btnX + 'px';
+        cursor.style.top = btnY + 'px';
         
         setTimeout(() => {
-            cursor.style.transform = 'scale(1)';
-        }, 150);
-    }, 3200);
+            cursor.style.transform = 'scale(0.8)';
+            bookBtn.style.transform = 'scale(0.95)';
+            playSound('clickSound');
+            
+            setTimeout(() => {
+                cursor.style.transform = 'scale(1)';
+                bookBtn.style.transform = 'scale(1)';
+                
+                // Close modal
+                document.getElementById('bookingModal').style.display = 'none';
+                cursor.style.display = 'none';
+            }, 300);
+        }, 500);
+    }, 7000); // Increased delay to account for time field animation
     
-    // Create new appointment with same data but "Rescheduled" status
+    // After modal closes, animate the appointment card moving to new slot
     setTimeout(() => {
-        // Remove the old appointment
-        selectedAppointment.element.remove();
-        selectedAppointment.slot.classList.remove('has-appointment');
+        // Create a floating copy of the appointment for movement animation
+        const movingAppointment = selectedAppointment.element.cloneNode(true);
+        movingAppointment.style.position = 'fixed';
+        movingAppointment.style.zIndex = '5000';
+        movingAppointment.style.transition = 'all 1.2s ease-in-out';
+        movingAppointment.style.pointerEvents = 'none';
+        
+        // Get current position
+        const sourceRect = selectedAppointment.element.getBoundingClientRect();
+        movingAppointment.style.left = sourceRect.left + 'px';
+        movingAppointment.style.top = sourceRect.top + 'px';
+        movingAppointment.style.width = sourceRect.width + 'px';
+        movingAppointment.style.height = sourceRect.height + 'px';
+        
+        document.body.appendChild(movingAppointment);
+        
+        // Hide original
+        selectedAppointment.element.style.opacity = '0';
+        
+        // Get target position
+        const targetRect = rescheduleTargetSlot.slot.getBoundingClientRect();
+        
+        // Animate movement to new slot
+        setTimeout(() => {
+            movingAppointment.style.left = targetRect.left + 2 + 'px';
+            movingAppointment.style.top = targetRect.top + 2 + 'px';
+            movingAppointment.style.width = (targetRect.width - 4) + 'px';
+            movingAppointment.style.height = (targetRect.height - 4) + 'px';
+        }, 50);
+        
+        // After movement completes, replace with actual appointment
+        setTimeout(() => {
+            movingAppointment.remove();
+            selectedAppointment.element.remove();
+            selectedAppointment.slot.classList.remove('has-appointment');
         
         // Create new appointment with EXACT same styling as template appointments
         const newAppointment = document.createElement('div');
@@ -1636,7 +1733,8 @@ function startRescheduleAnimation() {
             document.getElementById('rescheduleSource').value = '';
             document.getElementById('rescheduleTarget').value = '';
         }, 500);
-    }, 3800); // Create appointment after click animation
+        }, 1300); // After movement animation completes (1.2s movement)
+    }, 8000); // After modal closes and form is saved
 }
 
 // Add CSS animations
