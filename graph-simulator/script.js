@@ -582,75 +582,90 @@ function animateLineChart() {
                 ctx.fillText(label, x, canvas.height - padding + 25);
             });
             
-            // Draw animated line
-            const pointsToShow = Math.floor(data.length * progress);
+            // Calculate all points first
+            const points = [];
+            for (let i = 0; i < data.length; i++) {
+                const x = padding + xStep * i;
+                const y = canvas.height - padding - ((data[i] - minValue) / (maxValue - minValue)) * chartHeight;
+                points.push({ x, y, value: data[i] });
+            }
             
-            if (pointsToShow > 0) {
-                // Draw line with glow
+            // Draw the full line path but use clipping to reveal it progressively
+            if (progress > 0 && points.length > 1) {
+                ctx.save();
+                
+                // Create a clipping region that reveals the line progressively
+                ctx.beginPath();
+                ctx.rect(0, 0, padding + chartWidth * progress, canvas.height);
+                ctx.clip();
+                
+                // Draw the complete line with smooth curves
                 ctx.shadowColor = lineColor;
                 ctx.shadowBlur = 10;
                 ctx.strokeStyle = lineColor;
                 ctx.lineWidth = 4;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
                 ctx.beginPath();
                 
-                for (let i = 0; i <= pointsToShow; i++) {
-                    const actualIndex = i === pointsToShow && pointsToShow < data.length ? 
-                        Math.min(i, data.length - 1) : i;
+                // Use quadratic curves for smooth line
+                ctx.moveTo(points[0].x, points[0].y);
+                
+                for (let i = 1; i < points.length; i++) {
+                    const cp1x = (points[i-1].x + points[i].x) / 2;
+                    const cp1y = points[i-1].y;
+                    const cp2x = cp1x;
+                    const cp2y = points[i].y;
                     
-                    if (actualIndex < data.length) {
-                        const x = padding + xStep * actualIndex;
-                        const partialProgress = i === pointsToShow ? (progress * data.length) % 1 : 1;
-                        const prevY = actualIndex > 0 ? 
-                            canvas.height - padding - ((data[actualIndex - 1] - minValue) / (maxValue - minValue)) * chartHeight : 0;
-                        const currentY = canvas.height - padding - ((data[actualIndex] - minValue) / (maxValue - minValue)) * chartHeight;
-                        const y = i === pointsToShow && actualIndex > 0 ? 
-                            prevY + (currentY - prevY) * partialProgress : currentY;
-                        
-                        if (i === 0) {
-                            ctx.moveTo(x, y);
-                        } else {
-                            ctx.lineTo(x, y);
-                        }
-                    }
+                    // Create smooth curve between points
+                    const midX = (points[i-1].x + points[i].x) / 2;
+                    ctx.quadraticCurveTo(cp1x, cp1y, midX, (points[i-1].y + points[i].y) / 2);
+                    ctx.quadraticCurveTo(cp2x, cp2y, points[i].x, points[i].y);
                 }
+                
                 ctx.stroke();
                 ctx.shadowBlur = 0;
                 
-                // Draw points
-                for (let i = 0; i < Math.min(pointsToShow, data.length); i++) {
-                    const x = padding + xStep * i;
-                    const y = canvas.height - padding - ((data[i] - minValue) / (maxValue - minValue)) * chartHeight;
-                    
-                    // Outer glow
-                    ctx.fillStyle = lineColor;
-                    ctx.globalAlpha = 0.3;
-                    ctx.beginPath();
-                    ctx.arc(x, y, 8, 0, 2 * Math.PI);
-                    ctx.fill();
-                    
-                    // Inner circle
-                    ctx.globalAlpha = 1;
-                    ctx.beginPath();
-                    ctx.arc(x, y, 5, 0, 2 * Math.PI);
-                    ctx.fill();
-                    
-                    // White center
-                    ctx.fillStyle = '#fff';
-                    ctx.beginPath();
-                    ctx.arc(x, y, 2, 0, 2 * Math.PI);
-                    ctx.fill();
-                    
-                    // Value labels (fade in)
-                    if (progress > 0.8) {
-                        const labelAlpha = (progress - 0.8) / 0.2;
-                        ctx.globalAlpha = labelAlpha;
+                ctx.restore();
+                
+                // Draw points that are within the progress
+                points.forEach((point, i) => {
+                    const pointProgress = i / (points.length - 1);
+                    if (pointProgress <= progress) {
+                        const pointAlpha = Math.min(1, (progress - pointProgress) * points.length);
+                        
+                        // Outer glow with fade-in
+                        ctx.fillStyle = lineColor;
+                        ctx.globalAlpha = 0.3 * pointAlpha;
+                        ctx.beginPath();
+                        ctx.arc(point.x, point.y, 8, 0, 2 * Math.PI);
+                        ctx.fill();
+                        
+                        // Inner circle
+                        ctx.globalAlpha = pointAlpha;
+                        ctx.beginPath();
+                        ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+                        ctx.fill();
+                        
+                        // White center
                         ctx.fillStyle = '#fff';
-                        ctx.font = 'bold 14px Poppins';
-                        ctx.textAlign = 'center';
-                        ctx.fillText(data[i], x, y - 15);
-                        ctx.globalAlpha = 1;
+                        ctx.beginPath();
+                        ctx.arc(point.x, point.y, 2, 0, 2 * Math.PI);
+                        ctx.fill();
+                        
+                        // Value labels (fade in at the end)
+                        if (progress > 0.7) {
+                            const labelAlpha = ((progress - 0.7) / 0.3) * pointAlpha;
+                            ctx.globalAlpha = labelAlpha;
+                            ctx.fillStyle = '#fff';
+                            ctx.font = 'bold 14px Poppins';
+                            ctx.textAlign = 'center';
+                            ctx.fillText(point.value, point.x, point.y - 15);
+                        }
                     }
-                }
+                });
+                
+                ctx.globalAlpha = 1;
             }
             
             if (progress < 1) {
