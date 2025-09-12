@@ -423,6 +423,30 @@ body {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* Line Dataset Styles */
+.line-dataset {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #e0e0e0;
+}
+
+.line-dataset h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.line-dataset .input-group {
+    margin-bottom: 10px;
+}
+
+.line-dataset:not(.active) {
+    display: none;
+}
+
 /* Graph Type Selector */
 .graph-type-selector {
     display: grid;

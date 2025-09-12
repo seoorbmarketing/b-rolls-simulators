@@ -196,22 +196,64 @@
                     <h3>Line Chart Settings</h3>
                     <div class="line-settings">
                         <div class="input-group">
-                            <label>Data Points (comma separated):</label>
-                            <input type="text" id="lineData" value="20,35,30,45,60,55,70,85,80,90" onchange="updateLineChart()">
-                        </div>
-                        <div class="input-group">
                             <label>X-Axis Labels (comma separated):</label>
                             <input type="text" id="lineLabels" value="Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct" onchange="updateLineChart()">
                         </div>
                         <div class="input-group">
-                            <label>Line Color:</label>
-                            <div class="color-options">
-                                <button class="color-btn active" onclick="selectLineColor('#4ECDC4', this)" style="background: #4ECDC4"></button>
-                                <button class="color-btn" onclick="selectLineColor('#FF6B6B', this)" style="background: #FF6B6B"></button>
-                                <button class="color-btn" onclick="selectLineColor('#45B7D1', this)" style="background: #45B7D1"></button>
-                                <button class="color-btn" onclick="selectLineColor('#96CEB4', this)" style="background: #96CEB4"></button>
+                            <label>Number of Lines:</label>
+                            <select id="numLines" onchange="updateLineCount()">
+                                <option value="1">1 Line</option>
+                                <option value="2" selected>2 Lines</option>
+                                <option value="3">3 Lines</option>
+                                <option value="4">4 Lines</option>
+                                <option value="5">5 Lines</option>
+                            </select>
+                        </div>
+                        <div id="lineDatasets">
+                            <!-- Line 1 -->
+                            <div class="line-dataset" data-line="0">
+                                <h4>Line 1</h4>
+                                <div class="input-group">
+                                    <label>Name:</label>
+                                    <input type="text" class="line-name" value="Series A" onchange="updateLineChart()">
+                                </div>
+                                <div class="input-group">
+                                    <label>Data (comma separated):</label>
+                                    <input type="text" class="line-data" value="20,35,30,45,60,55,70,85,80,90" onchange="updateLineChart()">
+                                </div>
+                                <div class="input-group">
+                                    <label>Color:</label>
+                                    <div class="color-options">
+                                        <button class="color-btn active" onclick="selectLineDatasetColor(0, '#4ECDC4', this)" style="background: #4ECDC4"></button>
+                                        <button class="color-btn" onclick="selectLineDatasetColor(0, '#FF6B6B', this)" style="background: #FF6B6B"></button>
+                                        <button class="color-btn" onclick="selectLineDatasetColor(0, '#45B7D1', this)" style="background: #45B7D1"></button>
+                                        <button class="color-btn" onclick="selectLineDatasetColor(0, '#96CEB4', this)" style="background: #96CEB4"></button>
+                                    </div>
+                                    <input type="hidden" class="line-color" value="#4ECDC4">
+                                </div>
                             </div>
-                            <input type="hidden" id="lineColor" value="#4ECDC4">
+                            <!-- Line 2 -->
+                            <div class="line-dataset" data-line="1">
+                                <h4>Line 2</h4>
+                                <div class="input-group">
+                                    <label>Name:</label>
+                                    <input type="text" class="line-name" value="Series B" onchange="updateLineChart()">
+                                </div>
+                                <div class="input-group">
+                                    <label>Data (comma separated):</label>
+                                    <input type="text" class="line-data" value="30,25,40,35,50,65,60,75,85,80" onchange="updateLineChart()">
+                                </div>
+                                <div class="input-group">
+                                    <label>Color:</label>
+                                    <div class="color-options">
+                                        <button class="color-btn" onclick="selectLineDatasetColor(1, '#4ECDC4', this)" style="background: #4ECDC4"></button>
+                                        <button class="color-btn active" onclick="selectLineDatasetColor(1, '#FF6B6B', this)" style="background: #FF6B6B"></button>
+                                        <button class="color-btn" onclick="selectLineDatasetColor(1, '#45B7D1', this)" style="background: #45B7D1"></button>
+                                        <button class="color-btn" onclick="selectLineDatasetColor(1, '#96CEB4', this)" style="background: #96CEB4"></button>
+                                    </div>
+                                    <input type="hidden" class="line-color" value="#FF6B6B">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

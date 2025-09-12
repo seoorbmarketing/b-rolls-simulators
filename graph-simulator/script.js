@@ -501,6 +501,77 @@ function updatePieChart() {
 
 // Initialize line chart
 function initLineChart() {
+    updateLineCount(); // Initialize line datasets display
+    updateLineChart();
+}
+
+// Update line count and show/hide datasets
+function updateLineCount() {
+    const numLines = parseInt(document.getElementById('numLines').value);
+    const container = document.getElementById('lineDatasets');
+    
+    // Create line datasets if they don't exist
+    for (let i = container.children.length; i < 5; i++) {
+        const colors = ['#4ECDC4', '#FF6B6B', '#45B7D1', '#96CEB4', '#FFA07A'];
+        const names = ['Series C', 'Series D', 'Series E'];
+        const defaultData = [
+            '40,45,35,55,45,60,65,70,75,85',
+            '25,30,35,40,45,50,55,60,65,70',
+            '35,40,45,50,55,60,65,70,75,80'
+        ];
+        
+        const dataset = document.createElement('div');
+        dataset.className = 'line-dataset';
+        dataset.setAttribute('data-line', i);
+        dataset.innerHTML = `
+            <h4>Line ${i + 1}</h4>
+            <div class="input-group">
+                <label>Name:</label>
+                <input type="text" class="line-name" value="${names[i - 2] || 'Series ' + String.fromCharCode(65 + i)}" onchange="updateLineChart()">
+            </div>
+            <div class="input-group">
+                <label>Data (comma separated):</label>
+                <input type="text" class="line-data" value="${defaultData[i - 2] || '50,55,60,65,70,75,80,85,90,95'}" onchange="updateLineChart()">
+            </div>
+            <div class="input-group">
+                <label>Color:</label>
+                <div class="color-options">
+                    ${colors.map((color, idx) => `
+                        <button class="color-btn ${idx === (i % colors.length) ? 'active' : ''}" 
+                                onclick="selectLineDatasetColor(${i}, '${color}', this)" 
+                                style="background: ${color}"></button>
+                    `).join('')}
+                </div>
+                <input type="hidden" class="line-color" value="${colors[i % colors.length]}">
+            </div>
+        `;
+        container.appendChild(dataset);
+    }
+    
+    // Show/hide datasets based on selected count
+    const datasets = container.querySelectorAll('.line-dataset');
+    datasets.forEach((dataset, index) => {
+        if (index < numLines) {
+            dataset.style.display = 'block';
+        } else {
+            dataset.style.display = 'none';
+        }
+    });
+    
+    updateLineChart();
+}
+
+// Select color for specific line dataset
+function selectLineDatasetColor(lineIndex, color, btn) {
+    // Update active state
+    const dataset = document.querySelector(`.line-dataset[data-line="${lineIndex}"]`);
+    dataset.querySelectorAll('.color-btn').forEach(b => {
+        b.classList.remove('active');
+    });
+    btn.classList.add('active');
+    
+    // Update color value
+    dataset.querySelector('.line-color').value = color;
     updateLineChart();
 }
 
@@ -509,12 +580,22 @@ function drawLineChartFrame() {
     const canvas = document.getElementById('lineCanvas');
     const ctx = canvas.getContext('2d');
     
-    // Get data for labels and scaling
-    const dataString = document.getElementById('lineData')?.value || '20,35,30,45,60,55,70,85,80,90';
+    // Get labels
     const labelsString = document.getElementById('lineLabels')?.value || 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct';
-    
-    const data = dataString.split(',').map(v => parseFloat(v.trim()));
     const labels = labelsString.split(',').map(l => l.trim());
+    
+    // Get all datasets to find max value
+    const numLines = parseInt(document.getElementById('numLines').value);
+    let maxValue = 0;
+    
+    for (let i = 0; i < numLines; i++) {
+        const dataset = document.querySelector(`.line-dataset[data-line="${i}"]`);
+        if (dataset && dataset.style.display !== 'none') {
+            const dataString = dataset.querySelector('.line-data').value;
+            const data = dataString.split(',').map(v => parseFloat(v.trim()));
+            maxValue = Math.max(maxValue, ...data);
+        }
+    }
     
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -523,7 +604,6 @@ function drawLineChartFrame() {
     const padding = 60;
     const chartWidth = canvas.width - padding * 2;
     const chartHeight = canvas.height - padding * 2;
-    const maxValue = Math.max(...data);
     
     // Draw axes
     ctx.strokeStyle = '#666';
@@ -590,13 +670,27 @@ function animateLineChart() {
             const canvas = document.getElementById('lineCanvas');
             const ctx = canvas.getContext('2d');
             
-            // Get data
-            const dataString = document.getElementById('lineData')?.value || '20,35,30,45,60,55,70,85,80,90';
+            // Get labels
             const labelsString = document.getElementById('lineLabels')?.value || 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct';
-            const lineColor = document.getElementById('lineColor')?.value || '#4ECDC4';
-            
-            const data = dataString.split(',').map(v => parseFloat(v.trim()));
             const labels = labelsString.split(',').map(l => l.trim());
+            
+            // Get all active line datasets
+            const numLines = parseInt(document.getElementById('numLines').value);
+            const datasets = [];
+            let maxValue = 0;
+            
+            for (let i = 0; i < numLines; i++) {
+                const dataset = document.querySelector(`.line-dataset[data-line="${i}"]`);
+                if (dataset && dataset.style.display !== 'none') {
+                    const name = dataset.querySelector('.line-name').value;
+                    const dataString = dataset.querySelector('.line-data').value;
+                    const color = dataset.querySelector('.line-color').value;
+                    const data = dataString.split(',').map(v => parseFloat(v.trim()));
+                    
+                    datasets.push({ name, data, color });
+                    maxValue = Math.max(maxValue, ...data);
+                }
+            }
             
             // Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -605,7 +699,6 @@ function animateLineChart() {
             const padding = 60;
             const chartWidth = canvas.width - padding * 2;
             const chartHeight = canvas.height - padding * 2;
-            const maxValue = Math.max(...data);
             const minValue = 0;
             
             // Draw axes (always visible)
@@ -647,97 +740,114 @@ function animateLineChart() {
                 ctx.fillText(label, x, canvas.height - padding + 25);
             });
             
-            // Calculate all points first
-            const points = [];
-            for (let i = 0; i < data.length; i++) {
-                const x = padding + xStep * i;
-                const y = canvas.height - padding - ((data[i] - minValue) / (maxValue - minValue)) * chartHeight;
-                points.push({ x, y, value: data[i] });
-            }
-            
-            // Draw the full line path but use clipping to reveal it progressively
-            if (progress > 0 && points.length > 1) {
+            // Draw all lines with animation
+            if (progress > 0) {
                 ctx.save();
                 
-                // Create a clipping region that reveals the line progressively
-                // Add extra padding to ensure the last point is fully visible
+                // Create a clipping region that reveals the lines progressively
                 const clipWidth = padding + (chartWidth * progress) + 10;
                 ctx.beginPath();
                 ctx.rect(0, 0, clipWidth, canvas.height);
                 ctx.clip();
                 
-                // Draw the line exactly like the static version - simple straight segments
-                ctx.shadowColor = lineColor;
-                ctx.shadowBlur = 10;
-                ctx.strokeStyle = lineColor;
-                ctx.lineWidth = 4;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.beginPath();
-                
-                // Simple linear path - no curves
-                points.forEach((point, index) => {
-                    if (index === 0) {
-                        ctx.moveTo(point.x, point.y);
-                    } else {
-                        ctx.lineTo(point.x, point.y);
+                // Draw each dataset
+                datasets.forEach((dataset, datasetIndex) => {
+                    // Calculate points for this dataset
+                    const points = [];
+                    for (let i = 0; i < dataset.data.length; i++) {
+                        const x = padding + xStep * i;
+                        const y = canvas.height - padding - ((dataset.data[i] - minValue) / (maxValue - minValue)) * chartHeight;
+                        points.push({ x, y, value: dataset.data[i] });
                     }
+                    
+                    // Draw line
+                    ctx.shadowColor = dataset.color;
+                    ctx.shadowBlur = 10;
+                    ctx.strokeStyle = dataset.color;
+                    ctx.lineWidth = 3;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.beginPath();
+                    
+                    points.forEach((point, index) => {
+                        if (index === 0) {
+                            ctx.moveTo(point.x, point.y);
+                        } else {
+                            ctx.lineTo(point.x, point.y);
+                        }
+                    });
+                    
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+                    
+                    // Draw points that are within the progress
+                    points.forEach((point, i) => {
+                        const pointProgress = i / (points.length - 1);
+                        if (progress >= 1 || pointProgress <= progress) {
+                            const pointAlpha = progress >= 1 ? 1 : Math.min(1, (progress - pointProgress) * points.length);
+                            
+                            // Save context state
+                            ctx.save();
+                            
+                            // Outer glow
+                            ctx.fillStyle = dataset.color;
+                            ctx.globalAlpha = 0.3 * pointAlpha;
+                            ctx.beginPath();
+                            ctx.arc(point.x, point.y, 6, 0, 2 * Math.PI);
+                            ctx.fill();
+                            
+                            // Inner circle
+                            ctx.globalAlpha = pointAlpha;
+                            ctx.fillStyle = dataset.color;
+                            ctx.beginPath();
+                            ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI);
+                            ctx.fill();
+                            
+                            // White center
+                            ctx.fillStyle = '#fff';
+                            ctx.beginPath();
+                            ctx.arc(point.x, point.y, 2, 0, 2 * Math.PI);
+                            ctx.fill();
+                            
+                            // Restore context state
+                            ctx.restore();
+                        }
+                    });
                 });
-                
-                ctx.stroke();
-                ctx.shadowBlur = 0;
                 
                 ctx.restore();
-                
-                // Draw points that are within the progress
-                points.forEach((point, i) => {
-                    const pointProgress = i / (points.length - 1);
-                    // Ensure all points are drawn when animation is complete
-                    if (progress >= 1 || pointProgress <= progress) {
-                        const pointAlpha = progress >= 1 ? 1 : Math.min(1, (progress - pointProgress) * points.length);
-                        
-                        // Outer glow with fade-in
-                        ctx.fillStyle = lineColor;
-                        ctx.globalAlpha = 0.3 * pointAlpha;
-                        ctx.beginPath();
-                        ctx.arc(point.x, point.y, 8, 0, 2 * Math.PI);
-                        ctx.fill();
-                        
-                        // Inner circle
-                        ctx.globalAlpha = pointAlpha;
-                        ctx.beginPath();
-                        ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
-                        ctx.fill();
-                        
-                        // White center
-                        ctx.fillStyle = '#fff';
-                        ctx.beginPath();
-                        ctx.arc(point.x, point.y, 2, 0, 2 * Math.PI);
-                        ctx.fill();
-                        
-                        // Value labels - clean and simple
-                        if (progress > 0.85) {
-                            const labelAlpha = ((progress - 0.85) / 0.15) * pointAlpha;
-                            ctx.globalAlpha = labelAlpha;
-                            
-                            // Label text with shadow for visibility
-                            ctx.fillStyle = '#fff';
-                            ctx.font = 'bold 14px Poppins';
-                            ctx.textAlign = 'center';
-                            ctx.textBaseline = 'bottom';
-                            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-                            ctx.shadowBlur = 4;
-                            ctx.shadowOffsetX = 1;
-                            ctx.shadowOffsetY = 1;
-                            ctx.fillText(point.value, point.x, point.y - 12);
-                            ctx.shadowBlur = 0;
-                            ctx.shadowOffsetX = 0;
-                            ctx.shadowOffsetY = 0;
-                        }
-                    }
-                });
-                
                 ctx.globalAlpha = 1;
+                
+                // Draw legend after animation starts
+                if (progress > 0.3) {
+                    const legendAlpha = Math.min(1, (progress - 0.3) / 0.3);
+                    ctx.globalAlpha = legendAlpha;
+                    
+                    const legendY = padding - 30;
+                    let legendX = padding;
+                    
+                    datasets.forEach((dataset, index) => {
+                        // Draw legend line
+                        ctx.strokeStyle = dataset.color;
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.moveTo(legendX, legendY);
+                        ctx.lineTo(legendX + 30, legendY);
+                        ctx.stroke();
+                        
+                        // Draw legend text
+                        ctx.fillStyle = '#ccc';
+                        ctx.font = '12px Poppins';
+                        ctx.textAlign = 'left';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(dataset.name, legendX + 35, legendY);
+                        
+                        // Move to next legend item
+                        legendX += ctx.measureText(dataset.name).width + 60;
+                    });
+                    
+                    ctx.globalAlpha = 1;
+                }
             }
             
             if (progress < 1) {
@@ -756,13 +866,27 @@ function updateLineChart() {
     const canvas = document.getElementById('lineCanvas');
     const ctx = canvas.getContext('2d');
     
-    // Get data
-    const dataString = document.getElementById('lineData')?.value || '20,35,30,45,60,55,70,85,80,90';
+    // Get labels
     const labelsString = document.getElementById('lineLabels')?.value || 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct';
-    const lineColor = document.getElementById('lineColor')?.value || '#4ECDC4';
-    
-    const data = dataString.split(',').map(v => parseFloat(v.trim()));
     const labels = labelsString.split(',').map(l => l.trim());
+    
+    // Get all active line datasets
+    const numLines = parseInt(document.getElementById('numLines').value);
+    const datasets = [];
+    let maxValue = 0;
+    
+    for (let i = 0; i < numLines; i++) {
+        const dataset = document.querySelector(`.line-dataset[data-line="${i}"]`);
+        if (dataset && dataset.style.display !== 'none') {
+            const name = dataset.querySelector('.line-name').value;
+            const dataString = dataset.querySelector('.line-data').value;
+            const color = dataset.querySelector('.line-color').value;
+            const data = dataString.split(',').map(v => parseFloat(v.trim()));
+            
+            datasets.push({ name, data, color });
+            maxValue = Math.max(maxValue, ...data);
+        }
+    }
     
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -771,7 +895,6 @@ function updateLineChart() {
     const padding = 60;
     const chartWidth = canvas.width - padding * 2;
     const chartHeight = canvas.height - padding * 2;
-    const maxValue = Math.max(...data);
     const minValue = 0;
     
     // Draw axes with lighter color
@@ -816,79 +939,87 @@ function updateLineChart() {
         ctx.fillText(label, x, canvas.height - padding + 25);
     });
     
-    // Draw line with glow effect
-    ctx.shadowColor = lineColor;
-    ctx.shadowBlur = 10;
-    ctx.strokeStyle = lineColor;
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    
-    data.forEach((value, index) => {
-        const x = padding + xStep * index;
-        const y = canvas.height - padding - ((value - minValue) / (maxValue - minValue)) * chartHeight;
-        
-        if (index === 0) {
-            ctx.moveTo(x, y);
-        } else {
-            ctx.lineTo(x, y);
-        }
-    });
-    ctx.stroke();
-    ctx.shadowBlur = 0;
-    
-    // Draw points with better visibility
-    data.forEach((value, index) => {
-        const x = padding + xStep * index;
-        const y = canvas.height - padding - ((value - minValue) / (maxValue - minValue)) * chartHeight;
-        
-        // Outer glow circle
-        ctx.fillStyle = lineColor;
-        ctx.globalAlpha = 0.3;
+    // Draw each line
+    datasets.forEach((dataset, datasetIndex) => {
+        // Draw line with glow effect
+        ctx.shadowColor = dataset.color;
+        ctx.shadowBlur = 10;
+        ctx.strokeStyle = dataset.color;
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.arc(x, y, 8, 0, 2 * Math.PI);
-        ctx.fill();
         
-        // Inner circle
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = lineColor;
-        ctx.beginPath();
-        ctx.arc(x, y, 5, 0, 2 * Math.PI);
-        ctx.fill();
-        
-        // White center
-        ctx.fillStyle = '#fff';
-        ctx.beginPath();
-        ctx.arc(x, y, 2, 0, 2 * Math.PI);
-        ctx.fill();
-        
-        // Draw value labels - clean and simple
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 14px Poppins';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-        ctx.shadowBlur = 4;
-        ctx.shadowOffsetX = 1;
-        ctx.shadowOffsetY = 1;
-        ctx.fillText(value, x, y - 12);
+        dataset.data.forEach((value, index) => {
+            const x = padding + xStep * index;
+            const y = canvas.height - padding - ((value - minValue) / (maxValue - minValue)) * chartHeight;
+            
+            if (index === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        });
+        ctx.stroke();
         ctx.shadowBlur = 0;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
+        
+        // Draw points with better visibility
+        dataset.data.forEach((value, index) => {
+            const x = padding + xStep * index;
+            const y = canvas.height - padding - ((value - minValue) / (maxValue - minValue)) * chartHeight;
+            
+            // Save context state
+            ctx.save();
+            
+            // Outer glow circle
+            ctx.fillStyle = dataset.color;
+            ctx.globalAlpha = 0.3;
+            ctx.beginPath();
+            ctx.arc(x, y, 6, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Inner circle
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = dataset.color;
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // White center
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Restore context state
+            ctx.restore();
+        });
+    });
+    
+    // Draw legend
+    ctx.globalAlpha = 1;
+    const legendY = padding - 30;
+    let legendX = padding;
+    
+    datasets.forEach((dataset, index) => {
+        // Draw legend line
+        ctx.strokeStyle = dataset.color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(legendX, legendY);
+        ctx.lineTo(legendX + 30, legendY);
+        ctx.stroke();
+        
+        // Draw legend text
+        ctx.fillStyle = '#ccc';
+        ctx.font = '12px Poppins';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(dataset.name, legendX + 35, legendY);
+        
+        // Move to next legend item
+        legendX += ctx.measureText(dataset.name).width + 60;
     });
 }
 
-// Select line color
-function selectLineColor(color, btn) {
-    // Update active state
-    btn.parentElement.querySelectorAll('.color-btn').forEach(b => {
-        b.classList.remove('active');
-    });
-    btn.classList.add('active');
-    
-    // Update color
-    document.getElementById('lineColor').value = color;
-    updateLineChart();
-}
 
 // Export as image
 function exportAsImage() {
