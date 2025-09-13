@@ -1173,25 +1173,33 @@ body.white-background {
 
 .status-color-options input[type="radio"] {
     margin: 0;
+    margin-right: 3px;
+    vertical-align: middle;
 }
 
 .status-dot-preview {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
+    flex-shrink: 0;
 }
 
 .status-dot-preview.green {
-    background: #4CAF50;
+    background-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }
 
 .status-dot-preview.red {
-    background: #F44336;
+    background-color: #F44336;
+    box-shadow: 0 0 0 2px rgba(244, 67, 54, 0.2);
 }
 
 .status-dot-preview.yellow {
-    background: #FFC107;
+    background-color: #FFC107;
+    box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.2);
 }
 
 .control-section:last-child {
