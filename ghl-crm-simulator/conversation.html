@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GHL CRM - Conversation Simulator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="conversation-styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <img src="logo.png" alt="GHL Logo">
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>Calendar</span>
+                </a>
+                <a href="conversation.html" class="nav-item active">
+                    <i class="fas fa-comments"></i>
+                    <span>Conversations</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Contacts</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Opportunities</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>Payments</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Top Navigation -->
+            <div class="top-nav">
+                <div class="nav-tabs">
+                    <button class="nav-tab active">Conversations</button>
+                    <button class="nav-tab">Manual Actions</button>
+                    <button class="nav-tab">Snippets</button>
+                    <button class="nav-tab">Trigger Links <i class="fas fa-chevron-down"></i></button>
+                </div>
+                <div class="nav-actions">
+                    <button class="nav-action-btn"><i class="fas fa-search"></i></button>
+                    <button class="nav-action-btn"><i class="fas fa-bell"></i></button>
+                    <button class="nav-action-btn"><i class="fas fa-user-circle"></i></button>
+                </div>
+            </div>
+
+            <!-- Conversation Container -->
+            <div class="conversation-container">
+                <!-- Left Panel - Conversations List -->
+                <div class="conversations-list">
+                    <div class="list-tabs">
+                        <button class="list-tab active">Unread</button>
+                        <button class="list-tab">Recents</button>
+                        <button class="list-tab">Starred</button>
+                        <button class="list-tab">All</button>
+                    </div>
+                    
+                    <div class="search-filter">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search">
+                        </div>
+                        <div class="filter-dropdown">
+                            <button class="filter-btn">
+                                <i class="fas fa-filter"></i>
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="filter-info">
+                        <span>Latest-All</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+
+                    <div class="results-count">48 RESULTS</div>
+
+                    <!-- Conversation Items -->
+                    <div class="conversation-items">
+                        <div class="conversation-item">
+                            <div class="avatar">RP</div>
+                            <div class="conversation-info">
+                                <div class="conversation-header">
+                                    <span class="contact-name">Robert Paulus</span>
+                                    <span class="time">Aug 20</span>
+                                </div>
+                                <div class="conversation-preview">
+                                    <span class="sender">Hi Robert, Piyush here from Mass</span>
+                                </div>
+                            </div>
+                            <div class="unread-count">1</div>
+                        </div>
+
+                        <div class="conversation-item">
+                            <div class="avatar">JF</div>
+                            <div class="conversation-info">
+                                <div class="conversation-header">
+                                    <span class="contact-name">Julien Fonteyne</span>
+                                    <span class="time">Aug 20</span>
+                                </div>
+                                <div class="conversation-preview">
+                                    <span class="sender">Hi Julien, Piyush here from Massi</span>
+                                </div>
+                            </div>
+                            <div class="unread-count">6</div>
+                        </div>
+
+                        <div class="conversation-item active">
+                            <div class="avatar selected">JS</div>
+                            <div class="conversation-info">
+                                <div class="conversation-header">
+                                    <span class="contact-name">Jamie Smith</span>
+                                    <span class="time">Aug 20</span>
+                                </div>
+                                <div class="conversation-preview">
+                                    <span class="sender">Hi Jamie, Piyush here from Mass</span>
+                                </div>
+                            </div>
+                            <div class="unread-count">1</div>
+                        </div>
+
+                        <div class="conversation-item">
+                            <div class="avatar">PH</div>
+                            <div class="conversation-info">
+                                <div class="conversation-header">
+                                    <span class="contact-name">Phil Harris</span>
+                                    <span class="time">Aug 20</span>
+                                </div>
+                                <div class="conversation-preview">
+                                    <span class="sender">Hi Phil, Piyush here from Massive</span>
+                                </div>
+                            </div>
+                            <div class="unread-count">3</div>
+                        </div>
+
+                        <div class="conversation-item">
+                            <div class="avatar">LH</div>
+                            <div class="conversation-info">
+                                <div class="conversation-header">
+                                    <span class="contact-name">Lex Hubert</span>
+                                    <span class="time">Aug 16</span>
+                                </div>
+                                <div class="conversation-preview">
+                                    <span class="sender">Hey Lex, Quick heads up - RECON</span>
+                                </div>
+                            </div>
+                            <div class="unread-count">7</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Middle Panel - Chat Area -->
+                <div class="chat-panel">
+                    <!-- Chat Header -->
+                    <div class="chat-header">
+                        <div class="chat-contact-info">
+                            <h2>Jamie Smith</h2>
+                            <span class="last-message-time">Aug 11, 2025, 11:42 AM</span>
+                        </div>
+                        <div class="chat-actions">
+                            <button class="action-btn"><i class="fas fa-star"></i></button>
+                            <button class="action-btn"><i class="fas fa-envelope"></i></button>
+                            <button class="action-btn"><i class="fas fa-trash"></i></button>
+                            <button class="action-btn"><i class="fas fa-filter"></i></button>
+                            <button class="action-btn"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Messages Area -->
+                    <div class="messages-area">
+                        <!-- Date Divider -->
+                        <div class="date-divider">
+                            <span>18th Aug, 2025</span>
+                        </div>
+
+                        <!-- Outgoing Message -->
+                        <div class="message-group outgoing">
+                            <div class="message-bubble">
+                                <div class="message-header">
+                                    <span class="label">Automate My Agency</span>
+                                    <span class="message-text">Recon'25 starts tomorrow, are you coming?</span>
+                                    <span class="subtext">- Hey Jamie,...</span>
+                                </div>
+                                <div class="message-time">Aug 18, 2025, 7:00 PM</div>
+                            </div>
+                            <div class="avatar-small">AM</div>
+                        </div>
+
+                        <!-- Date Divider -->
+                        <div class="date-divider">
+                            <span>20th Aug, 2025</span>
+                        </div>
+
+                        <!-- Outgoing Message -->
+                        <div class="message-group outgoing">
+                            <div class="message-bubble">
+                                <div class="message-header">
+                                    <span class="label">Automate My Agency</span>
+                                    <span class="message-text">A common pain I found amongst people at RECON'25</span>
+                                    <span class="subtext">- H...</span>
+                                </div>
+                                <div class="message-time">Aug 20, 2025, 7:13 PM</div>
+                            </div>
+                            <div class="avatar-small">AM</div>
+                        </div>
+                    </div>
+
+                    <!-- Message Input Area -->
+                    <div class="message-input-area">
+                        <div class="message-tabs">
+                            <button class="message-tab active">SMS</button>
+                            <button class="message-tab">WhatsApp</button>
+                            <button class="message-tab">EMAIL</button>
+                            <button class="message-tab">-</button>
+                            <button class="internal-comment-btn">Internal Comment</button>
+                        </div>
+                        
+                        <div class="message-compose">
+                            <div class="phone-numbers">
+                                <div class="phone-from">
+                                    <span>From:</span>
+                                    <select>
+                                        <option>+1 307-683-0225</option>
+                                    </select>
+                                </div>
+                                <div class="phone-to">
+                                    <span>To:</span>
+                                    <select>
+                                        <option>+1 904-382-0486</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="message-input-wrapper">
+                                <textarea placeholder="Type a message" class="message-input"></textarea>
+                                <div class="message-footer">
+                                    <div class="message-tools">
+                                        <button class="tool-btn"><i class="fas fa-paperclip"></i></button>
+                                        <button class="tool-btn"><i class="far fa-smile"></i></button>
+                                        <button class="tool-btn"><i class="fas fa-dollar-sign"></i></button>
+                                        <button class="tool-btn"><i class="fas fa-plus"></i></button>
+                                    </div>
+                                    <div class="message-actions">
+                                        <span class="char-count">Chars: 0, Segs: 0</span>
+                                        <button class="clear-btn">Clear</button>
+                                        <button class="send-btn">
+                                            Send
+                                            <i class="fas fa-clock"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Panel - Contact Details -->
+                <div class="contact-details-panel">
+                    <div class="contact-header">
+                        <div class="contact-avatar">JS</div>
+                        <h3>Jamie Smith</h3>
+                        <button class="external-link"><i class="fas fa-external-link-alt"></i></button>
+                    </div>
+
+                    <div class="contact-actions">
+                        <button class="contact-action-btn"><i class="fas fa-phone"></i></button>
+                        <button class="contact-action-btn"><i class="fas fa-envelope"></i></button>
+                        <button class="contact-action-btn"><i class="fas fa-calendar"></i></button>
+                    </div>
+
+                    <!-- Contact Section -->
+                    <div class="details-section">
+                        <div class="section-header">
+                            <h4>Contact</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="section-content">
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>Email</span>
+                                <button class="add-btn">+</button>
+                            </div>
+                            <div class="detail-value">escapememobile@gmail.com</div>
+                            
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <span>Phone</span>
+                                <button class="add-btn">+</button>
+                            </div>
+                            <div class="detail-value">(904) 382-0486</div>
+                        </div>
+                    </div>
+
+                    <!-- Owner Section -->
+                    <div class="details-section">
+                        <div class="section-header">
+                            <h4>Owner (Assigned to)</h4>
+                        </div>
+                        <div class="section-content">
+                            <select class="owner-select">
+                                <option>Unassigned</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Followers Section -->
+                    <div class="details-section">
+                        <div class="section-header">
+                            <h4>Followers</h4>
+                        </div>
+                        <div class="section-content">
+                            <input type="text" placeholder="Search followers" class="search-input">
+                        </div>
+                    </div>
+
+                    <!-- Tags Section -->
+                    <div class="details-section">
+                        <div class="section-header">
+                            <h4>Tags</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+
+                    <!-- Active Automations Section -->
+                    <div class="details-section">
+                        <div class="section-header">
+                            <h4>Active Automations</h4>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+
+                    <!-- DND Section -->
+                    <div class="details-section">
+                        <div class="section-header">
+                            <h4>DND</h4>
+                            <div class="toggle-switch">
+                                <span>OFF</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <div class="dnd-options">
+                                <label class="checkbox-label">
+                                    <input type="checkbox">
+                                    <span>DND All</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox">
+                                    <span>DND Calls & Voicemails</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <h2>Conversation Controls</h2>
+            
+            <div class="control-section">
+                <h3>Message Simulation</h3>
+                <button class="control-btn">Send Incoming Message</button>
+                <button class="control-btn">Send Outgoing Message</button>
+                <button class="control-btn">Mark as Read</button>
+                <button class="control-btn">Mark as Unread</button>
+            </div>
+
+            <div class="control-section">
+                <h3>Contact Actions</h3>
+                <button class="control-btn">Change Contact</button>
+                <button class="control-btn">Update Status</button>
+                <button class="control-btn">Add Tag</button>
+                <button class="control-btn">Toggle DND</button>
+            </div>
+
+            <div class="control-section">
+                <h3>Quick Actions</h3>
+                <button class="control-btn">Load Sample Conversation</button>
+                <button class="control-btn">Clear Messages</button>
+                <button class="control-btn">Reset All</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="conversation-script.js"></script>
+</body>
+</html>

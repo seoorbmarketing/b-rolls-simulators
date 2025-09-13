@@ -1,5 +1,99 @@
 // Calendar functionality
 document.addEventListener('DOMContentLoaded', function() {
+    // Get common elements
+    const calendarScreen = document.getElementById('calendar-screen');
+    const conversationsScreen = document.getElementById('conversations-screen');
+    const rightPanel = document.querySelector('.right-panel');
+    const navItems = document.querySelectorAll('.nav-item[data-screen]');
+    
+    // Control Panel Screen Switching
+    const screenSwitchBtns = document.querySelectorAll('.screen-switch-btn');
+    const calendarControls = document.getElementById('calendar-controls');
+    const conversationControls = document.getElementById('conversation-controls');
+    
+    screenSwitchBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const panel = this.getAttribute('data-panel');
+            
+            // Update button states
+            screenSwitchBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Switch control panels AND main screens
+            if (panel === 'calendar') {
+                // Switch control panels
+                calendarControls.style.display = 'block';
+                conversationControls.style.display = 'none';
+                
+                // Switch main screens
+                calendarScreen.style.display = 'block';
+                conversationsScreen.style.display = 'none';
+                if (rightPanel) rightPanel.style.display = 'block';
+                
+                // Update nav items
+                navItems.forEach(nav => nav.classList.remove('active'));
+                const calendarNav = document.querySelector('.nav-item[data-screen="calendar"]');
+                if (calendarNav) calendarNav.classList.add('active');
+                
+            } else if (panel === 'conversation') {
+                // Switch control panels
+                calendarControls.style.display = 'none';
+                conversationControls.style.display = 'block';
+                
+                // Switch main screens
+                calendarScreen.style.display = 'none';
+                conversationsScreen.style.display = 'block';
+                if (rightPanel) rightPanel.style.display = 'none';
+                
+                // Update nav items
+                navItems.forEach(nav => nav.classList.remove('active'));
+                const conversationNav = document.querySelector('.nav-item[data-screen="conversations"]');
+                if (conversationNav) conversationNav.classList.add('active');
+                
+                // Initialize conversations if needed
+                if (!window.conversationsInitialized) {
+                    initializeConversations();
+                    window.conversationsInitialized = true;
+                }
+            }
+        });
+    });
+    
+    // Screen switching functionality
+    navItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const screen = this.getAttribute('data-screen');
+            
+            // Update active state
+            navItems.forEach(nav => nav.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Switch screens
+            if (screen === 'calendar') {
+                calendarScreen.style.display = 'block';
+                conversationsScreen.style.display = 'none';
+                if (rightPanel) rightPanel.style.display = 'block';
+                
+                // Switch control panel too
+                screenSwitchBtns[0].click(); // Calendar button
+            } else if (screen === 'conversations') {
+                calendarScreen.style.display = 'none';
+                conversationsScreen.style.display = 'block';
+                if (rightPanel) rightPanel.style.display = 'none';
+                
+                // Initialize conversation functionality if not already done
+                if (!window.conversationsInitialized) {
+                    initializeConversations();
+                    window.conversationsInitialized = true;
+                }
+                
+                // Switch control panel too
+                screenSwitchBtns[1].click(); // Conversation button
+            }
+        });
+    });
+    
     // Sidebar toggle functionality
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebarToggle');
@@ -1836,3 +1930,1237 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// =====================================================
+// Conversation Screen Functionality
+// =====================================================
+
+let currentConversation = null;
+let conversationMessageIdCounter = 1;
+let conversations = {};
+
+// Initialize the conversation simulator
+function initializeConversations() {
+    initializeSampleConversations();
+    setupConversationEventListeners();
+    selectFirstConversation();
+}
+
+// Initialize sample conversations
+function initializeSampleConversations() {
+    // Sample conversation data
+    const sampleConversations = [
+        {
+            id: 'conv-1',
+            name: 'Robert Paulus',
+            initials: 'RP',
+            lastMessage: 'Hi Robert, Piyush here from Mass',
+            time: 'Aug 20',
+            unread: 1,
+            messages: []
+        },
+        {
+            id: 'conv-2',
+            name: 'Julien Fonteyne',
+            initials: 'JF',
+            lastMessage: 'Hi Julien, Piyush here from Massi',
+            time: 'Aug 20',
+            unread: 6,
+            messages: []
+        },
+        {
+            id: 'conv-3',
+            name: 'Jamie Smith',
+            initials: 'JS',
+            lastMessage: 'Hi Jamie, Piyush here from Mass',
+            time: 'Aug 20',
+            unread: 1,
+            messages: [
+                {
+                    id: 'msg-1',
+                    type: 'outgoing',
+                    sender: 'AutomateMyBiz.pro',
+                    text: "Recon'25 starts tomorrow, are you coming?",
+                    subtext: '- Hey Jamie,...',
+                    date: '18th Aug, 2025',
+                    time: 'Aug 18, 2025, 7:00 PM'
+                },
+                {
+                    id: 'msg-2',
+                    type: 'outgoing',
+                    sender: 'AutomateMyBiz.pro',
+                    text: "A common pain I found amongst people at RECON'25",
+                    subtext: '- H...',
+                    date: '20th Aug, 2025',
+                    time: 'Aug 20, 2025, 7:13 PM'
+                }
+            ]
+        },
+        {
+            id: 'conv-4',
+            name: 'Phil Harris',
+            initials: 'PH',
+            lastMessage: 'Hi Phil, Piyush here from Massive',
+            time: 'Aug 20',
+            unread: 3,
+            messages: []
+        },
+        {
+            id: 'conv-5',
+            name: 'Lex Hubert',
+            initials: 'LH',
+            lastMessage: 'Hey Lex, Quick heads up - RECON',
+            time: 'Aug 16',
+            unread: 7,
+            messages: []
+        },
+        {
+            id: 'conv-6',
+            name: 'Michael Chen',
+            initials: 'MC',
+            lastMessage: 'Thanks for reaching out! I am interested',
+            time: 'Aug 19',
+            unread: 0,
+            messages: []
+        },
+        {
+            id: 'conv-7',
+            name: 'Sarah Williams',
+            initials: 'SW',
+            lastMessage: 'Can we schedule a call next week?',
+            time: 'Aug 18',
+            unread: 2,
+            messages: []
+        },
+        {
+            id: 'conv-8',
+            name: 'David Thompson',
+            initials: 'DT',
+            lastMessage: 'Perfect! See you at the event',
+            time: 'Aug 17',
+            unread: 0,
+            messages: []
+        }
+    ];
+
+    // Store conversations
+    sampleConversations.forEach(conv => {
+        conversations[conv.id] = conv;
+    });
+}
+
+// Setup event listeners for conversation screen
+function setupConversationEventListeners() {
+    // List tabs
+    document.querySelectorAll('.list-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.list-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // Message tabs
+    document.querySelectorAll('.message-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            if (this.textContent !== '-') {
+                document.querySelectorAll('.message-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            }
+        });
+    });
+
+    // Conversation items click
+    document.querySelectorAll('.conversation-item').forEach((item, index) => {
+        item.addEventListener('click', function() {
+            selectConversation(index);
+        });
+    });
+
+    // Send button
+    const sendBtn = document.querySelector('.send-btn');
+    if (sendBtn) {
+        sendBtn.addEventListener('click', sendConversationMessage);
+    }
+
+    // Clear button
+    const clearBtn = document.querySelector('.clear-btn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', clearConversationMessageInput);
+    }
+
+    // Message input character count
+    const messageInput = document.querySelector('.message-input');
+    if (messageInput) {
+        messageInput.addEventListener('input', updateConversationCharCount);
+    }
+}
+
+// Select a conversation
+function selectConversation(index) {
+    // Update active states
+    document.querySelectorAll('.conversation-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    document.querySelectorAll('.conversation-item .avatar').forEach(avatar => {
+        avatar.classList.remove('selected');
+    });
+
+    const selectedItem = document.querySelectorAll('.conversation-item')[index];
+    if (selectedItem) {
+        selectedItem.classList.add('active');
+        selectedItem.querySelector('.avatar').classList.add('selected');
+
+        // Update current conversation
+        const convId = Object.keys(conversations)[index];
+        currentConversation = conversations[convId];
+
+        // Update chat header
+        updateConversationChatHeader();
+
+        // Load messages
+        loadConversationMessages();
+
+        // Update contact details
+        updateConversationContactDetails();
+
+        // Mark as read
+        if (currentConversation && currentConversation.unread > 0) {
+            currentConversation.unread = 0;
+            updateConversationUnreadCount(selectedItem);
+        }
+    }
+}
+
+// Select first conversation on load
+function selectFirstConversation() {
+    selectConversation(2); // Select Jamie Smith by default
+}
+
+// Update chat header
+function updateConversationChatHeader() {
+    if (!currentConversation) return;
+
+    const contactInfo = document.querySelector('.chat-contact-info');
+    if (contactInfo) {
+        const h2 = contactInfo.querySelector('h2');
+        if (h2) h2.textContent = currentConversation.name;
+        const timeSpan = contactInfo.querySelector('.last-message-time');
+        if (timeSpan) timeSpan.textContent = 'Aug 11, 2025, 11:42 AM';
+    }
+}
+
+// Load messages for current conversation
+function loadConversationMessages() {
+    if (!currentConversation) return;
+
+    const messagesArea = document.querySelector('.messages-area');
+    if (!messagesArea) return;
+    
+    messagesArea.innerHTML = '';
+
+    if (currentConversation.messages.length === 0) {
+        messagesArea.innerHTML = '<div style="text-align: center; color: #999; padding: 50px;">No messages yet</div>';
+        return;
+    }
+
+    let currentDate = null;
+    currentConversation.messages.forEach(msg => {
+        // Add date divider if needed
+        if (msg.date !== currentDate) {
+            currentDate = msg.date;
+            const dateDivider = document.createElement('div');
+            dateDivider.className = 'date-divider';
+            dateDivider.innerHTML = `<span>${currentDate}</span>`;
+            messagesArea.appendChild(dateDivider);
+        }
+
+        // Add message
+        const messageGroup = createConversationMessageElement(msg);
+        messagesArea.appendChild(messageGroup);
+    });
+
+    // Scroll to bottom
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+}
+
+// Create message element
+function createConversationMessageElement(message) {
+    const messageGroup = document.createElement('div');
+    messageGroup.className = `message-group ${message.type}`;
+
+    if (message.type === 'outgoing') {
+        messageGroup.innerHTML = `
+            <div class="message-bubble">
+                <div class="message-header">
+                    <span class="label">${message.sender}</span>
+                    <span class="message-text">${message.text}</span>
+                    ${message.subtext ? `<span class="subtext">${message.subtext}</span>` : ''}
+                </div>
+                <div class="message-time">${message.time}</div>
+            </div>
+            <div class="avatar-small">AI</div>
+        `;
+    } else {
+        messageGroup.innerHTML = `
+            <div class="avatar-small">${currentConversation.initials}</div>
+            <div class="message-bubble">
+                <div class="message-header">
+                    <span class="message-text">${message.text}</span>
+                </div>
+                <div class="message-time">${message.time}</div>
+            </div>
+        `;
+    }
+
+    return messageGroup;
+}
+
+// Update contact details panel
+function updateConversationContactDetails() {
+    if (!currentConversation) return;
+
+    const contactAvatar = document.querySelector('.contact-avatar');
+    if (contactAvatar) {
+        contactAvatar.textContent = currentConversation.initials;
+        contactAvatar.style.background = '#5e72e4';
+    }
+    
+    const contactName = document.querySelector('.contact-details-panel h3');
+    if (contactName) contactName.textContent = currentConversation.name;
+    
+    // Update email if available
+    if (currentConversation.email) {
+        const emailValue = document.querySelector('.detail-value');
+        if (emailValue) emailValue.textContent = currentConversation.email;
+    }
+    
+    // Update phone if available
+    if (currentConversation.phone) {
+        const phoneValues = document.querySelectorAll('.detail-value');
+        if (phoneValues[1]) phoneValues[1].textContent = currentConversation.phone;
+    }
+    
+    // Update tags if available
+    if (currentConversation.tag) {
+        const tagBadges = document.getElementById('contactTags');
+        if (tagBadges) {
+            tagBadges.innerHTML = '';
+            const tagBadge = document.createElement('span');
+            tagBadge.className = 'tag-badge';
+            tagBadge.innerHTML = `<i class="fas fa-tag"></i>${currentConversation.tag}`;
+            tagBadges.appendChild(tagBadge);
+        }
+    }
+}
+
+// Send message
+function sendConversationMessage() {
+    const messageInput = document.querySelector('.message-input');
+    if (!messageInput) return;
+    
+    const messageText = messageInput.value.trim();
+
+    if (!messageText || !currentConversation) return;
+
+    // Create new message
+    const now = new Date();
+    const newMessage = {
+        id: `msg-${conversationMessageIdCounter++}`,
+        type: 'outgoing',
+        sender: 'AutomateMyBiz.pro',
+        text: messageText,
+        date: formatConversationDate(now),
+        time: formatConversationTime(now)
+    };
+
+    // Add to conversation
+    currentConversation.messages.push(newMessage);
+
+    // Reload messages
+    loadConversationMessages();
+
+    // Clear input
+    clearConversationMessageInput();
+
+    // Update last message in conversation list
+    updateConversationPreview();
+}
+
+// Clear message input
+function clearConversationMessageInput() {
+    const messageInput = document.querySelector('.message-input');
+    if (messageInput) {
+        messageInput.value = '';
+        updateConversationCharCount();
+    }
+}
+
+// Update character count
+function updateConversationCharCount() {
+    const messageInput = document.querySelector('.message-input');
+    const charCountSpan = document.querySelector('.char-count');
+    if (messageInput && charCountSpan) {
+        const charCount = messageInput.value.length;
+        const segments = Math.ceil(charCount / 160) || 0;
+        charCountSpan.textContent = `Chars: ${charCount}, Segs: ${segments}`;
+    }
+}
+
+// Update conversation preview in list
+function updateConversationPreview() {
+    if (!currentConversation) return;
+
+    const index = Object.keys(conversations).indexOf(Object.keys(conversations).find(key => conversations[key] === currentConversation));
+    const conversationItem = document.querySelectorAll('.conversation-item')[index];
+    
+    if (conversationItem && currentConversation.messages.length > 0) {
+        const lastMessage = currentConversation.messages[currentConversation.messages.length - 1];
+        const preview = conversationItem.querySelector('.conversation-preview .sender');
+        if (preview) {
+            preview.textContent = lastMessage.text.substring(0, 30) + (lastMessage.text.length > 30 ? '...' : '');
+        }
+    }
+}
+
+// Update unread count
+function updateConversationUnreadCount(conversationItem) {
+    if (!conversationItem) return;
+    
+    const unreadElement = conversationItem.querySelector('.unread-count');
+    if (unreadElement) {
+        if (currentConversation && currentConversation.unread > 0) {
+            unreadElement.textContent = currentConversation.unread;
+            unreadElement.style.display = 'flex';
+        } else {
+            unreadElement.style.display = 'none';
+        }
+    }
+}
+
+// Format date for conversations
+function formatConversationDate(date) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${date.getDate()}${getConversationOrdinalSuffix(date.getDate())} ${months[date.getMonth()]}, ${date.getFullYear()}`;
+}
+
+// Format time for conversations
+function formatConversationTime(date) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+    return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}, ${hours}:${minutesStr} ${ampm}`;
+}
+
+// Get ordinal suffix for conversations
+function getConversationOrdinalSuffix(day) {
+    if (day > 3 && day < 21) return 'th';
+    switch (day % 10) {
+        case 1: return 'st';
+        case 2: return 'nd';
+        case 3: return 'rd';
+        default: return 'th';
+    }
+}
+
+// =====================================================
+// Contact Adding Animation
+// =====================================================
+
+function startAddContactAnimation() {
+    // Get input values
+    const name = document.getElementById('newContactName').value || 'Sarah Johnson';
+    const phone = document.getElementById('newContactPhone').value || '(555) 987-6543';
+    const email = document.getElementById('newContactEmail').value || 'sarah.johnson@email.com';
+    const tagName = document.getElementById('newContactTag').value || 'VIP Client';
+    
+    // Create initials from name
+    const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+    
+    // Start animation sequence (no cursor)
+    animateNewContactAddition(name, initials, phone, email, tagName);
+}
+
+async function animateNewContactAddition(name, initials, phone, email, tagName) {
+    // First, ensure we're on the conversations screen
+    const conversationNav = document.querySelector('.nav-item[data-screen="conversations"]');
+    if (conversationNav && !conversationNav.classList.contains('active')) {
+        conversationNav.click();
+        await sleep(300);
+    }
+    
+    // Create a new conversation object and add it to the beginning
+    const newConvId = 'conv-new-' + Date.now();
+    const newConversation = {
+        id: newConvId,
+        name: name,
+        initials: initials,
+        lastMessage: 'New contact added',
+        time: 'Just now',
+        unread: 1,
+        messages: [],
+        phone: phone,
+        email: email,
+        tag: tagName
+    };
+    
+    // Add to conversations object at the beginning
+    const oldConversations = {...conversations};
+    conversations = {};
+    conversations[newConvId] = newConversation;
+    Object.assign(conversations, oldConversations);
+    
+    const conversationItems = document.querySelector('.conversation-items');
+    const firstItem = conversationItems.querySelector('.conversation-item');
+    
+    if (firstItem) {
+        // Create new contact element
+        const newContact = document.createElement('div');
+        newContact.className = 'conversation-item';
+        newContact.style.opacity = '0';
+        newContact.style.transform = 'translateY(-20px)';
+        newContact.innerHTML = `
+            <div class="avatar">${initials}</div>
+            <div class="conversation-info">
+                <div class="conversation-header">
+                    <span class="contact-name">${name}</span>
+                    <span class="time">Just now</span>
+                </div>
+                <div class="conversation-preview">
+                    <span class="sender">New contact added</span>
+                </div>
+            </div>
+            <div class="unread-count" style="width: auto; padding: 0 4px; font-size: 8px; min-width: 16px;">NEW</div>
+        `;
+        
+        // Insert at the top of the list
+        conversationItems.insertBefore(newContact, firstItem);
+        
+        // Select the new contact BEFORE rebinding handlers
+        newContact.classList.add('active');
+        newContact.querySelector('.avatar').classList.add('selected');
+        
+        // Re-bind click handlers for ALL conversation items with correct indices
+        document.querySelectorAll('.conversation-item').forEach((item, index) => {
+            // Remove any existing click listeners by cloning
+            const newItem = item.cloneNode(true);
+            item.parentNode.replaceChild(newItem, item);
+            
+            // Add new click listener with correct index
+            newItem.addEventListener('click', function() {
+                selectConversation(index);
+            });
+            
+            // If this is the first item (our new contact), keep it selected and visible
+            if (index === 0) {
+                newItem.classList.add('active');
+                newItem.querySelector('.avatar').classList.add('selected');
+                // Make sure it's visible
+                newItem.style.opacity = '1';
+                newItem.style.transform = 'translateY(0)';
+                newItem.style.transition = 'all 0.5s ease';
+            }
+        });
+        
+        // Clear existing active states for all items except the first one (our new contact)
+        document.querySelectorAll('.conversation-item').forEach((item, index) => {
+            if (index !== 0) {
+                item.classList.remove('active');
+                item.querySelector('.avatar')?.classList.remove('selected');
+            }
+        });
+        
+        // UPDATE ALL 3 SECTIONS AT ONCE
+        
+        // 1. Update chat header
+        const chatHeader = document.querySelector('.chat-contact-info h2');
+        if (chatHeader) chatHeader.textContent = name;
+        
+        // Clear messages area
+        const messagesArea = document.querySelector('.messages-area');
+        if (messagesArea) {
+            messagesArea.innerHTML = '<div style="text-align: center; color: #999; padding: 50px;">Start a conversation with ' + name + '</div>';
+        }
+        
+        // 2. Update contact details panel
+        const contactAvatar = document.querySelector('.contact-avatar');
+        const contactNameH3 = document.querySelector('.contact-details-panel h3');
+        if (contactAvatar) {
+            contactAvatar.textContent = initials;
+            contactAvatar.style.background = '#5e72e4';
+        }
+        if (contactNameH3) contactNameH3.textContent = name;
+        
+        // Update email
+        const emailValue = document.querySelector('.detail-value');
+        if (emailValue) emailValue.textContent = email;
+        
+        // Update phone
+        const phoneValues = document.querySelectorAll('.detail-value');
+        if (phoneValues[1]) phoneValues[1].textContent = phone;
+        
+        // Update currentConversation to the new one
+        currentConversation = newConversation;
+        
+        // 3. Add tag
+        const tagBadges = document.getElementById('contactTags');
+        if (tagBadges) {
+            // Clear existing tags
+            tagBadges.innerHTML = '';
+            
+            // Add the new tag
+            const tagBadge = document.createElement('span');
+            tagBadge.className = 'tag-badge';
+            tagBadge.innerHTML = `<i class="fas fa-tag"></i>${tagName}`;
+            tagBadges.appendChild(tagBadge);
+        }
+        
+        // Play contact creation sound after a brief delay
+        await sleep(100);
+        playContactSound();
+        
+        // Update unread count after a brief delay
+        await sleep(500);
+        const firstContactItem = document.querySelector('.conversation-item');
+        const unreadBadge = firstContactItem?.querySelector('.unread-count');
+        if (unreadBadge) {
+            unreadBadge.textContent = '1';
+            unreadBadge.style.background = '#5e72e4';
+        }
+    }
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function playClickSound() {
+    const audio = document.getElementById('clickSound');
+    if (audio) {
+        audio.currentTime = 0;
+        audio.play().catch(e => console.log('Audio play failed:', e));
+    }
+}
+
+function playSuccessSound() {
+    const audio = document.getElementById('chachingSound');
+    if (audio) {
+        audio.currentTime = 0;
+        audio.volume = 0.3;
+        audio.play().catch(e => console.log('Audio play failed:', e));
+    }
+}
+
+function playMessageSound() {
+    const audio = document.getElementById('messageNotification');
+    if (audio) {
+        audio.currentTime = 0;
+        audio.volume = 0.5;
+        audio.play().catch(e => console.log('Message notification play failed:', e));
+    }
+}
+
+function playContactSound() {
+    const audio = document.getElementById('contactNotification');
+    if (audio) {
+        audio.currentTime = 0;
+        audio.volume = 0.5;
+        audio.play().catch(e => console.log('Contact notification play failed:', e));
+    }
+}
+
+// Scenario Management
+let scenarioSteps = [];
+let isScenarioPlaying = false;
+let scenarioTimeout = null;
+
+// Add Scenario Step
+function addScenarioStep() {
+    const stepType = document.getElementById('stepType').value;
+    const stepContent = document.getElementById('stepContent').value;
+    
+    if (!stepContent && stepType !== 'typing') {
+        alert('Please enter content for this step');
+        return;
+    }
+    
+    const step = {
+        id: Date.now(),
+        type: stepType,
+        content: stepContent || '',
+        delay: stepType === 'delay' ? parseInt(stepContent) || 1000 : 1000
+    };
+    
+    scenarioSteps.push(step);
+    renderScenarioList();
+    
+    // Clear input
+    document.getElementById('stepContent').value = '';
+}
+
+// Render Scenario List
+function renderScenarioList() {
+    const listElement = document.getElementById('scenarioStepsList');
+    
+    if (scenarioSteps.length === 0) {
+        listElement.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">No steps added yet</div>';
+        return;
+    }
+    
+    listElement.innerHTML = scenarioSteps.map((step, index) => {
+        let displayText = '';
+        let icon = '';
+        
+        switch(step.type) {
+            case 'incoming':
+                icon = '📥';
+                displayText = step.content;
+                break;
+            case 'outgoing':
+                icon = '📤';
+                displayText = step.content;
+                break;
+            case 'typing':
+                icon = '⌨️';
+                displayText = 'Show typing indicator';
+                break;
+            case 'delay':
+                icon = '⏱️';
+                displayText = `Wait ${step.content}ms`;
+                break;
+        }
+        
+        return `
+            <div class="scenario-step">
+                <div class="step-info">
+                    <span class="step-number">${index + 1}.</span>
+                    <span class="step-type">${icon} ${step.type.toUpperCase()}</span>
+                    <span class="step-content">${displayText}</span>
+                </div>
+                <div class="step-actions">
+                    ${index > 0 ? `<button onclick="moveStep(${index}, -1)">↑</button>` : ''}
+                    ${index < scenarioSteps.length - 1 ? `<button onclick="moveStep(${index}, 1)">↓</button>` : ''}
+                    <button onclick="removeStep(${index})">×</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Move Step
+function moveStep(index, direction) {
+    const newIndex = index + direction;
+    if (newIndex >= 0 && newIndex < scenarioSteps.length) {
+        const temp = scenarioSteps[index];
+        scenarioSteps[index] = scenarioSteps[newIndex];
+        scenarioSteps[newIndex] = temp;
+        renderScenarioList();
+    }
+}
+
+// Remove Step
+function removeStep(index) {
+    scenarioSteps.splice(index, 1);
+    renderScenarioList();
+}
+
+// Clear Scenario
+function clearScenario() {
+    if (isScenarioPlaying) {
+        stopScenario();
+    }
+    scenarioSteps = [];
+    renderScenarioList();
+}
+
+// Get Speed Multiplier
+function getSpeedMultiplier() {
+    const speed = document.getElementById('playbackSpeed').value;
+    switch(speed) {
+        case 'slow':
+            return 1.5;
+        case 'fast':
+            return 0.5;
+        case 'normal':
+        default:
+            return 1;
+    }
+}
+
+// Play Scenario
+async function playScenario() {
+    if (scenarioSteps.length === 0) {
+        alert('Please add steps to the scenario first');
+        return;
+    }
+    
+    if (isScenarioPlaying) {
+        alert('Scenario is already playing');
+        return;
+    }
+    
+    // Ensure we're on conversations screen
+    const conversationNav = document.querySelector('.nav-item[data-screen="conversations"]');
+    if (conversationNav && !conversationNav.classList.contains('active')) {
+        conversationNav.click();
+        await sleep(300);
+    }
+    
+    // Ensure a conversation is selected
+    if (!currentConversation) {
+        const firstConversationItem = document.querySelector('.conversation-item');
+        if (firstConversationItem) {
+            firstConversationItem.click();
+            await sleep(300);
+        }
+    }
+    
+    if (!currentConversation) {
+        alert('Please select a conversation first');
+        return;
+    }
+    
+    isScenarioPlaying = true;
+    
+    // Clear existing messages and the messages area
+    currentConversation.messages = [];
+    const messagesArea = document.querySelector('.messages-area');
+    if (messagesArea) {
+        messagesArea.innerHTML = '';
+    }
+    
+    const playBtn = document.querySelector('.control-btn.primary[onclick="playScenario()"]');
+    if (playBtn) {
+        playBtn.innerHTML = '<i class="fas fa-pause"></i> Playing...';
+        playBtn.disabled = true;
+    }
+    
+    const speedMultiplier = getSpeedMultiplier();
+    
+    // Play each step
+    for (let i = 0; i < scenarioSteps.length; i++) {
+        if (!isScenarioPlaying) break;
+        
+        const step = scenarioSteps[i];
+        
+        switch(step.type) {
+            case 'incoming':
+                await showTypingIndicator('incoming', 1500 * speedMultiplier);
+                await addAnimatedMessage('incoming', step.content);
+                break;
+                
+            case 'outgoing':
+                await showTypingIndicator('outgoing', 1000 * speedMultiplier);
+                await addAnimatedMessage('outgoing', step.content);
+                break;
+                
+            case 'typing':
+                await showTypingIndicator('incoming', 2000 * speedMultiplier);
+                break;
+                
+            case 'delay':
+                await sleep((step.delay || parseInt(step.content)) * speedMultiplier);
+                break;
+        }
+        
+        // Default delay between steps
+        if (step.type !== 'delay' && i < scenarioSteps.length - 1) {
+            await sleep(500 * speedMultiplier);
+        }
+    }
+    
+    isScenarioPlaying = false;
+    if (playBtn) {
+        playBtn.innerHTML = '<i class="fas fa-play"></i> Play';
+        playBtn.disabled = false;
+    }
+    
+    // Update conversation preview
+    updateConversationPreview();
+    
+    // Success sound removed per request
+}
+
+// Stop Scenario
+function stopScenario() {
+    isScenarioPlaying = false;
+    if (scenarioTimeout) {
+        clearTimeout(scenarioTimeout);
+        scenarioTimeout = null;
+    }
+    
+    const playBtn = document.querySelector('.control-btn.primary[onclick="playScenario()"]');
+    if (playBtn) {
+        playBtn.innerHTML = '<i class="fas fa-play"></i> Play';
+        playBtn.disabled = false;
+    }
+}
+
+// Load Scenario Template
+function loadScenarioTemplate() {
+    const template = document.getElementById('scenarioTemplate').value;
+    if (!template) return;
+    
+    scenarioSteps = [];
+    
+    switch(template) {
+        case 'greeting':
+            scenarioSteps = [
+                { id: 1, type: 'incoming', content: 'Hi there! 👋', delay: 1000 },
+                { id: 2, type: 'delay', content: '1500', delay: 1500 },
+                { id: 3, type: 'outgoing', content: 'Hello! Welcome to our business. How can I help you today?', delay: 1000 },
+                { id: 4, type: 'incoming', content: 'I saw your ad online', delay: 1000 },
+                { id: 5, type: 'outgoing', content: 'Great! Which service are you interested in?', delay: 1000 }
+            ];
+            break;
+            
+        case 'inquiry':
+            scenarioSteps = [
+                { id: 1, type: 'incoming', content: 'Do you have this product in stock?', delay: 1000 },
+                { id: 2, type: 'outgoing', content: 'Let me check that for you right away!', delay: 1000 },
+                { id: 3, type: 'typing', content: '', delay: 2000 },
+                { id: 4, type: 'outgoing', content: 'Yes, we have it available!', delay: 1000 },
+                { id: 5, type: 'outgoing', content: 'Would you like to place an order?', delay: 800 },
+                { id: 6, type: 'incoming', content: 'Yes, please!', delay: 1000 }
+            ];
+            break;
+            
+        case 'support':
+            scenarioSteps = [
+                { id: 1, type: 'incoming', content: 'I need help with my recent order', delay: 1000 },
+                { id: 2, type: 'outgoing', content: "I'm sorry to hear you're having issues. Can you provide your order number?", delay: 1000 },
+                { id: 3, type: 'incoming', content: 'Order #12345', delay: 1500 },
+                { id: 4, type: 'typing', content: '', delay: 2000 },
+                { id: 5, type: 'outgoing', content: "I've found your order. What seems to be the problem?", delay: 1000 },
+                { id: 6, type: 'incoming', content: "It hasn't arrived yet", delay: 1000 },
+                { id: 7, type: 'outgoing', content: "Let me track that for you. One moment please...", delay: 1000 }
+            ];
+            break;
+            
+        case 'booking':
+            scenarioSteps = [
+                { id: 1, type: 'incoming', content: "I'd like to book an appointment", delay: 1000 },
+                { id: 2, type: 'outgoing', content: 'Of course! What service would you like to book?', delay: 1000 },
+                { id: 3, type: 'incoming', content: 'A consultation please', delay: 1000 },
+                { id: 4, type: 'outgoing', content: 'Perfect! We have availability this week. When works best for you?', delay: 1000 },
+                { id: 5, type: 'incoming', content: 'Thursday afternoon would be great', delay: 1000 },
+                { id: 6, type: 'outgoing', content: 'I have 2:00 PM and 3:30 PM available on Thursday. Which do you prefer?', delay: 1000 },
+                { id: 7, type: 'incoming', content: '2:00 PM works perfectly', delay: 1000 },
+                { id: 8, type: 'outgoing', content: "Great! You're all set for Thursday at 2:00 PM. I'll send you a confirmation email.", delay: 1000 }
+            ];
+            break;
+            
+        case 'followup':
+            scenarioSteps = [
+                { id: 1, type: 'outgoing', content: 'Hi! Just following up on our conversation from yesterday.', delay: 1000 },
+                { id: 2, type: 'outgoing', content: 'Have you had a chance to think about our proposal?', delay: 1200 },
+                { id: 3, type: 'delay', content: '3000', delay: 3000 },
+                { id: 4, type: 'incoming', content: 'Yes, I have some questions', delay: 1000 },
+                { id: 5, type: 'outgoing', content: "I'd be happy to answer them! What would you like to know?", delay: 1000 }
+            ];
+            break;
+    }
+    
+    renderScenarioList();
+    document.getElementById('scenarioTemplate').value = '';
+}
+
+// Save Custom Scenario
+function saveCustomScenario() {
+    const name = document.getElementById('scenarioName').value.trim();
+    
+    if (!name) {
+        alert('Please enter a scenario name');
+        return;
+    }
+    
+    if (scenarioSteps.length === 0) {
+        alert('Please add steps to the scenario first');
+        return;
+    }
+    
+    let savedScenarios = JSON.parse(localStorage.getItem('ghlScenarios') || '{}');
+    savedScenarios[name] = {
+        name: name,
+        steps: scenarioSteps,
+        createdAt: new Date().toISOString()
+    };
+    
+    localStorage.setItem('ghlScenarios', JSON.stringify(savedScenarios));
+    document.getElementById('scenarioName').value = '';
+    loadSavedScenarios();
+    alert(`Scenario "${name}" saved successfully!`);
+}
+
+// Load Saved Scenarios
+function loadSavedScenarios() {
+    const savedScenarios = JSON.parse(localStorage.getItem('ghlScenarios') || '{}');
+    const container = document.getElementById('savedScenariosList');
+    
+    if (!container) return;
+    
+    const scenarios = Object.values(savedScenarios);
+    if (scenarios.length === 0) {
+        container.innerHTML = '<div style="text-align: center; color: #999; padding: 10px; font-size: 11px;">No saved scenarios yet</div>';
+        return;
+    }
+    
+    container.innerHTML = scenarios.map(scenario => `
+        <div class="saved-scenario-item">
+            <span>${scenario.name}</span>
+            <div>
+                <button onclick="loadCustomScenario('${scenario.name}')">Load</button>
+                <button onclick="deleteCustomScenario('${scenario.name}')">Delete</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Load Custom Scenario
+function loadCustomScenario(name) {
+    const savedScenarios = JSON.parse(localStorage.getItem('ghlScenarios') || '{}');
+    const scenario = savedScenarios[name];
+    
+    if (scenario) {
+        scenarioSteps = scenario.steps;
+        renderScenarioList();
+        alert(`Loaded scenario "${name}"`);
+    }
+}
+
+// Delete Custom Scenario
+function deleteCustomScenario(name) {
+    if (confirm(`Delete scenario "${name}"?`)) {
+        const savedScenarios = JSON.parse(localStorage.getItem('ghlScenarios') || '{}');
+        delete savedScenarios[name];
+        localStorage.setItem('ghlScenarios', JSON.stringify(savedScenarios));
+        loadSavedScenarios();
+    }
+}
+
+// Load saved scenarios on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadSavedScenarios();
+});
+
+// Messaging Animation Function (Deprecated - Use Scenario Builder instead)
+async function startMessagingAnimation() {
+    // First, ensure we're on the conversations screen
+    const conversationNav = document.querySelector('.nav-item[data-screen="conversations"]');
+    if (conversationNav && !conversationNav.classList.contains('active')) {
+        conversationNav.click();
+        await sleep(300);
+    }
+    
+    // Get animation settings
+    const outgoingMessagesText = document.getElementById('outgoingMessages').value;
+    const incomingMessagesText = document.getElementById('incomingMessages').value;
+    const messageDelay = parseInt(document.getElementById('messageDelay').value) || 2000;
+    const typingDuration = parseInt(document.getElementById('typingDuration').value) || 1500;
+    
+    // Parse messages
+    const outgoingMessages = outgoingMessagesText.split('\n').filter(msg => msg.trim());
+    const incomingMessages = incomingMessagesText.split('\n').filter(msg => msg.trim());
+    
+    // Ensure a conversation is selected
+    if (!currentConversation) {
+        // Select the first conversation if none is selected
+        const firstConversationItem = document.querySelector('.conversation-item');
+        if (firstConversationItem) {
+            firstConversationItem.click();
+            await sleep(300);
+        }
+    }
+    
+    if (!currentConversation) {
+        alert('Please select a conversation first');
+        return;
+    }
+    
+    // Clear existing messages
+    currentConversation.messages = [];
+    loadConversationMessages();
+    
+    // Create message sequence (alternating between incoming and outgoing)
+    const messageSequence = [];
+    const maxMessages = Math.max(outgoingMessages.length, incomingMessages.length);
+    
+    for (let i = 0; i < maxMessages; i++) {
+        if (i < incomingMessages.length) {
+            messageSequence.push({ type: 'incoming', text: incomingMessages[i] });
+        }
+        if (i < outgoingMessages.length) {
+            messageSequence.push({ type: 'outgoing', text: outgoingMessages[i] });
+        }
+    }
+    
+    // Animate messages
+    for (const msgData of messageSequence) {
+        // Show typing indicator
+        await showTypingIndicator(msgData.type, typingDuration);
+        
+        // Add message
+        await addAnimatedMessage(msgData.type, msgData.text);
+        
+        // Wait before next message
+        await sleep(messageDelay);
+    }
+    
+    // Update conversation preview
+    updateConversationPreview();
+    
+    // Success sound removed per request
+}
+
+async function showTypingIndicator(type, duration) {
+    const messagesArea = document.querySelector('.messages-area');
+    if (!messagesArea) return;
+    
+    // Create typing indicator using same structure as messages
+    const typingIndicator = document.createElement('div');
+    typingIndicator.className = `message-group ${type} typing-indicator`;
+    
+    if (type === 'outgoing') {
+        typingIndicator.innerHTML = `
+            <div class="message-bubble">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="avatar-small">AI</div>
+        `;
+    } else {
+        typingIndicator.innerHTML = `
+            <div class="avatar-small">${currentConversation?.initials || 'U'}</div>
+            <div class="message-bubble">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        `;
+    }
+    
+    messagesArea.appendChild(typingIndicator);
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+    
+    await sleep(duration);
+    
+    // Remove typing indicator
+    typingIndicator.remove();
+}
+
+async function addAnimatedMessage(type, text) {
+    const now = new Date();
+    const newMessage = {
+        id: `msg-${conversationMessageIdCounter++}`,
+        type: type,
+        sender: type === 'outgoing' ? 'AutomateMyBiz.pro' : currentConversation.name,
+        text: text,
+        date: formatConversationDate(now),
+        time: formatConversationTime(now)
+    };
+    
+    // Add to conversation
+    currentConversation.messages.push(newMessage);
+    
+    // Create message element
+    const messagesArea = document.querySelector('.messages-area');
+    if (!messagesArea) return;
+    
+    // Check if we need a date separator
+    const lastMessageGroup = messagesArea.querySelector('.message-group:last-child');
+    const lastDate = lastMessageGroup?.dataset?.date;
+    
+    if (!lastDate || lastDate !== newMessage.date) {
+        const dateDivider = document.createElement('div');
+        dateDivider.className = 'date-divider';
+        dateDivider.innerHTML = `<span>${newMessage.date}</span>`;
+        messagesArea.appendChild(dateDivider);
+    }
+    
+    // Create message using the same structure as default messages
+    const messageGroup = document.createElement('div');
+    messageGroup.className = `message-group ${type}`;
+    messageGroup.dataset.date = newMessage.date;
+    messageGroup.style.opacity = '0';
+    messageGroup.style.transform = 'translateY(10px)';
+    
+    if (type === 'outgoing') {
+        messageGroup.innerHTML = `
+            <div class="message-bubble">
+                <div class="message-header">
+                    <span class="label">${newMessage.sender}</span>
+                    <span class="message-text">${text}</span>
+                </div>
+                <div class="message-time">${newMessage.time}</div>
+            </div>
+            <div class="avatar-small">AI</div>
+        `;
+    } else {
+        messageGroup.innerHTML = `
+            <div class="avatar-small">${currentConversation.initials}</div>
+            <div class="message-bubble">
+                <div class="message-header">
+                    <span class="message-text">${text}</span>
+                </div>
+                <div class="message-time">${newMessage.time}</div>
+            </div>
+        `;
+    }
+    
+    messagesArea.appendChild(messageGroup);
+    
+    // Animate message appearance
+    await sleep(50);
+    messageGroup.style.transition = 'all 0.3s ease';
+    messageGroup.style.opacity = '1';
+    messageGroup.style.transform = 'translateY(0)';
+    
+    // Scroll to bottom
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+    
+    // Play message notification sound
+    playMessageSound();
+}
+
+// Additional conversation control functions
+function sendTestMessage() {
+    if (currentConversation) {
+        const testMessage = {
+            id: `msg-${conversationMessageIdCounter++}`,
+            type: 'incoming',
+            text: 'This is a test message from the control panel!',
+            date: formatConversationDate(new Date()),
+            time: formatConversationTime(new Date())
+        };
+        currentConversation.messages.push(testMessage);
+        loadConversationMessages();
+    }
+}
+
+function markAllRead() {
+    document.querySelectorAll('.unread-count').forEach(badge => {
+        badge.style.display = 'none';
+    });
+    Object.keys(conversations).forEach(key => {
+        conversations[key].unread = 0;
+    });
+}
+
+function clearConversations() {
+    if (confirm('Clear all conversations?')) {
+        Object.keys(conversations).forEach(key => {
+            conversations[key].messages = [];
+        });
+        if (currentConversation) {
+            loadConversationMessages();
+        }
+    }
+}
