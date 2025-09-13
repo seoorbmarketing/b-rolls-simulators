@@ -227,19 +227,19 @@ function startBookingAnimation() {
                 const timeHour = parseInt(timePart);
                 
                 // Parse time and calculate the correct slot index
-                // Calendar starts at 11AM (index 0) and goes to 12AM (index 13)
+                // Calendar starts at 11AM (index 0) and goes to 7PM (index 8)
                 if (timePart === '11AM') {
                     slotIndex = 0;
                 } else if (timePart === '12PM') {
                     slotIndex = 1;
-                } else if (timePart === '12AM') {
-                    slotIndex = 13;
                 } else if (timePart.includes('PM')) {
-                    // PM times (1PM-11PM)
-                    slotIndex = timeHour + 1; // 1PM = index 2, 2PM = index 3, etc.
-                } else if (timePart.includes('AM') && timeHour < 11) {
-                    // Should not happen with our calendar (starts at 11AM)
-                    slotIndex = 0;
+                    // PM times (1PM-7PM)
+                    // 1PM = index 2, 2PM = index 3, 3PM = index 4, etc.
+                    slotIndex = timeHour + 1; // This works for 1PM-7PM
+                    if (timeHour > 7) {
+                        // For times beyond 7PM, cap at last available slot
+                        slotIndex = 8; // Use the last slot (7PM)
+                    }
                 }
                 
                 // Get the specific slot
@@ -313,7 +313,7 @@ function startBookingAnimation() {
         
         // Start auto-filling animation
         setTimeout(() => {
-            autoFillBookingForm();
+            autoFillBookingForm(targetSlot);
         }, 500);
     }, 2000);
 }
@@ -359,7 +359,7 @@ function smoothScrollTo(element, targetPosition, duration) {
     requestAnimationFrame(scroll);
 }
 
-function autoFillBookingForm() {
+function autoFillBookingForm(targetSlot) {
     // Get values from control panel or use defaults
     const calendarName = document.getElementById('animCalendarName').value || 'Main Calendar';
     const contactName = document.getElementById('animContactName').value || getRandomContact();
@@ -460,18 +460,10 @@ function autoFillBookingForm() {
         
         // Calculate end time based on duration
         const durationMinutes = parseInt(duration);
-        const [time, period] = startTime.split(' ');
-        const [hours, minutes] = time.split(':').map(num => parseInt(num) || 0);
-        let endHours = hours;
-        let endMinutes = (minutes || 0) + durationMinutes;
         
-        if (endMinutes >= 60) {
-            endHours += Math.floor(endMinutes / 60);
-            endMinutes = endMinutes % 60;
-        }
-        
-        const startTimeValue = `${dateValue} ${startTime}`;
-        const endTimeValue = `${dateValue} ${endHours}:${endMinutes.toString().padStart(2, '0')} ${period}`;
+        // Create properly formatted time values
+        const startTimeValue = `${dateValue} at ${startTime}`;
+        const endTimeValue = calculateEndTime(startTimeValue, durationMinutes);
         
         // Smooth scroll to time fields first
         if (modal && startTimeInput) {
@@ -564,7 +556,12 @@ function autoFillBookingForm() {
                 cursor.style.transform = 'scale(1)';
                 bookBtn.style.transform = 'scale(1)';
                 cursor.style.display = 'none';
-                confirmBooking();
+                
+                // Store the target slot globally for confirmBooking to use
+                animationTargetSlot = targetSlot;
+                
+                // Actually click the button to trigger its onclick
+                bookBtn.click();
             }, 200);
         }, 300);
         }, 600); // Close the new setTimeout for scroll delay
@@ -593,6 +590,7 @@ let currentSlotInfo = null;
 let pickerMode = null; // 'date' or 'time' or null
 let selectedAppointment = null; // For rescheduling
 let rescheduleTargetSlot = null;
+let animationTargetSlot = null; // For animation to pass slot to confirmBooking
 
 // Open date/time picker
 function openDateTimePicker() {
@@ -1133,7 +1131,7 @@ function loadBusinessTemplate(type) {
     }, 350); // Wait for clear animation to complete
 }
 
-function confirmBooking() {
+function confirmBooking(targetSlot) {
     // Get the filled data
     const contact = document.getElementById('contactSearch').value;
     const title = document.getElementById('appointmentTitle').value;
@@ -1147,14 +1145,40 @@ function confirmBooking() {
         // Get selected color
         const selectedColor = document.querySelector('input[name="appointmentColor"]:checked')?.value || '#5643ce';
         
-        // Find a random slot and add booking
-        const dayColumns = document.querySelectorAll('.day-column');
-        const randomDay = dayColumns[Math.floor(Math.random() * 5) + 1];
-        const hourSlots = randomDay.querySelectorAll('.hour-slot');
-        const randomSlot = hourSlots[Math.floor(Math.random() * 6) + 2];
+        // Priority: animation slot > current slot (from manual click) > provided target slot
+        let slotToUse = animationTargetSlot || currentSlot || targetSlot;
+        
+        // Clear the animation target slot after using it
+        if (animationTargetSlot) {
+            animationTargetSlot = null;
+        }
+        
+        // Clear current slot after using it
+        if (currentSlot) {
+            currentSlot = null;
+        }
+        
+        if (!slotToUse) {
+            // Fallback to random slot if no target provided
+            const dayColumns = document.querySelectorAll('.day-column');
+            const randomDay = dayColumns[Math.floor(Math.random() * 5) + 1];
+            const hourSlots = randomDay.querySelectorAll('.hour-slot');
+            slotToUse = hourSlots[Math.floor(Math.random() * 6) + 2];
+        }
         
         // Check if slot already has appointment
-        if (randomSlot.classList.contains('has-appointment')) {
+        if (!slotToUse || slotToUse.classList.contains('has-appointment')) {
+            // Find another available slot if this one is taken
+            const allSlots = document.querySelectorAll('.hour-slot');
+            for (let slot of allSlots) {
+                if (!slot.classList.contains('has-appointment')) {
+                    slotToUse = slot;
+                    break;
+                }
+            }
+        }
+        
+        if (!slotToUse) {
             return;
         }
         
@@ -1183,9 +1207,9 @@ function confirmBooking() {
             <div style="font-size: 9px; opacity: 0.8;">Confirmed</div>
         `;
         
-        randomSlot.style.position = 'relative';
-        randomSlot.appendChild(booking);
-        randomSlot.classList.add('has-appointment');
+        slotToUse.style.position = 'relative';
+        slotToUse.appendChild(booking);
+        slotToUse.classList.add('has-appointment');
         
         // Animate appearance
         setTimeout(() => {
@@ -1508,12 +1532,14 @@ function calculateEndTime(startDateTime, durationMinutes) {
     if (period === 'PM' && startHour !== 12) startHour += 12;
     if (period === 'AM' && startHour === 12) startHour = 0;
     
-    // Add duration
-    let endHour = startHour;
-    let endMinutes = durationMinutes;
-    if (endMinutes >= 60) {
-        endHour += Math.floor(endMinutes / 60);
-        endMinutes = endMinutes % 60;
+    // Add duration (assuming we're adding minutes to the hour)
+    let totalMinutes = startHour * 60 + durationMinutes;
+    let endHour = Math.floor(totalMinutes / 60);
+    let endMinutes = totalMinutes % 60;
+    
+    // Handle day overflow
+    if (endHour >= 24) {
+        endHour = endHour % 24;
     }
     
     // Format end time
@@ -1521,9 +1547,10 @@ function calculateEndTime(startDateTime, durationMinutes) {
     let displayHour = endHour;
     if (endHour > 12) displayHour = endHour - 12;
     if (endHour === 0) displayHour = 12;
+    if (endHour === 12) displayHour = 12;
     
-    const timeStr = endMinutes > 0 ? `${displayHour}:${endMinutes.toString().padStart(2, '0')}` : `${displayHour}:30`;
-    return `${month} ${day}, ${year} at ${timeStr}${endPeriod}`;
+    const timeStr = endMinutes > 0 ? `${displayHour}:${endMinutes.toString().padStart(2, '0')}${endPeriod}` : `${displayHour}${endPeriod}`;
+    return `${month} ${day}, ${year} at ${timeStr}`;
 }
 
 // Start reschedule animation
