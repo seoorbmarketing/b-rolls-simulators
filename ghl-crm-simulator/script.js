@@ -2476,122 +2476,142 @@ async function animateNewContactAddition(name, initials, phone, email, tagName) 
     Object.assign(conversations, oldConversations);
     
     const conversationItems = document.querySelector('.conversation-items');
-    const firstItem = conversationItems.querySelector('.conversation-item');
-    
-    if (firstItem) {
-        // Create new contact element
-        const newContact = document.createElement('div');
-        newContact.className = 'conversation-item';
-        newContact.style.opacity = '0';
-        newContact.style.transform = 'translateY(-20px)';
-        newContact.innerHTML = `
-            <div class="avatar">${initials}</div>
-            <div class="conversation-info">
-                <div class="conversation-header">
-                    <span class="contact-name">${name}</span>
-                    <span class="time">Just now</span>
-                </div>
-                <div class="conversation-preview">
-                    <span class="sender">New contact added</span>
-                </div>
+    let firstItem = conversationItems.querySelector('.conversation-item');
+
+    // If no conversation items exist (list was cleared), remove the "No contacts" message
+    if (!firstItem) {
+        // Check if there's a "No contacts yet" message and remove it
+        const divs = conversationItems.querySelectorAll('div');
+        divs.forEach(div => {
+            if (div.textContent.includes('No contacts yet')) {
+                div.remove();
+            }
+        });
+        // Also clear if it's the only content
+        if (conversationItems.textContent.includes('No contacts yet')) {
+            conversationItems.innerHTML = '';
+        }
+    }
+
+    // Re-check for first item after potentially clearing the message
+    firstItem = conversationItems.querySelector('.conversation-item');
+
+    // Create new contact element
+    const newContact = document.createElement('div');
+    newContact.className = 'conversation-item';
+    newContact.style.opacity = '0';
+    newContact.style.transform = 'translateY(-20px)';
+    newContact.innerHTML = `
+        <div class="avatar">${initials}</div>
+        <div class="conversation-info">
+            <div class="conversation-header">
+                <span class="contact-name">${name}</span>
+                <span class="time">Just now</span>
             </div>
-            <div class="unread-count" style="width: auto; padding: 0 4px; font-size: 8px; min-width: 16px;">NEW</div>
-        `;
-        
-        // Insert at the top of the list
+            <div class="conversation-preview">
+                <span class="sender">New contact added</span>
+            </div>
+        </div>
+        <div class="unread-count" style="width: auto; padding: 0 4px; font-size: 8px; min-width: 16px;">NEW</div>
+    `;
+
+    // Insert at the top of the list (or as first item if list was empty)
+    if (firstItem) {
         conversationItems.insertBefore(newContact, firstItem);
-        
-        // Select the new contact BEFORE rebinding handlers
-        newContact.classList.add('active');
-        newContact.querySelector('.avatar').classList.add('selected');
-        
-        // Re-bind click handlers for ALL conversation items with correct indices
-        document.querySelectorAll('.conversation-item').forEach((item, index) => {
-            // Remove any existing click listeners by cloning
-            const newItem = item.cloneNode(true);
-            item.parentNode.replaceChild(newItem, item);
-            
-            // Add new click listener with correct index
-            newItem.addEventListener('click', function() {
-                selectConversation(index);
-            });
-            
-            // If this is the first item (our new contact), keep it selected and visible
-            if (index === 0) {
-                newItem.classList.add('active');
-                newItem.querySelector('.avatar').classList.add('selected');
-                // Make sure it's visible
-                newItem.style.opacity = '1';
-                newItem.style.transform = 'translateY(0)';
-                newItem.style.transition = 'all 0.5s ease';
-            }
+    } else {
+        conversationItems.appendChild(newContact);
+    }
+
+    // Select the new contact BEFORE rebinding handlers
+    newContact.classList.add('active');
+    newContact.querySelector('.avatar').classList.add('selected');
+
+    // Re-bind click handlers for ALL conversation items with correct indices
+    document.querySelectorAll('.conversation-item').forEach((item, index) => {
+        // Remove any existing click listeners by cloning
+        const newItem = item.cloneNode(true);
+        item.parentNode.replaceChild(newItem, item);
+
+        // Add new click listener with correct index
+        newItem.addEventListener('click', function() {
+            selectConversation(index);
         });
-        
-        // Clear existing active states for all items except the first one (our new contact)
-        document.querySelectorAll('.conversation-item').forEach((item, index) => {
-            if (index !== 0) {
-                item.classList.remove('active');
-                item.querySelector('.avatar')?.classList.remove('selected');
-            }
-        });
-        
-        // UPDATE ALL 3 SECTIONS AT ONCE
-        
-        // 1. Update chat header
-        const chatHeader = document.querySelector('.chat-contact-info h2');
-        if (chatHeader) chatHeader.textContent = name;
-        
-        // Clear messages area
-        const messagesArea = document.querySelector('.messages-area');
-        if (messagesArea) {
-            messagesArea.innerHTML = '<div style="text-align: center; color: #999; padding: 50px;">Start a conversation with ' + name + '</div>';
+
+        // If this is the first item (our new contact), keep it selected and visible
+        if (index === 0) {
+            newItem.classList.add('active');
+            newItem.querySelector('.avatar').classList.add('selected');
+            // Make sure it's visible
+            newItem.style.opacity = '1';
+            newItem.style.transform = 'translateY(0)';
+            newItem.style.transition = 'all 0.5s ease';
         }
-        
-        // 2. Update contact details panel
-        const contactAvatar = document.querySelector('.contact-avatar');
-        const contactNameH3 = document.querySelector('.contact-details-panel h3');
-        if (contactAvatar) {
-            contactAvatar.textContent = initials;
-            contactAvatar.style.background = '#5e72e4';
+    });
+
+    // Clear existing active states for all items except the first one (our new contact)
+    document.querySelectorAll('.conversation-item').forEach((item, index) => {
+        if (index !== 0) {
+            item.classList.remove('active');
+            item.querySelector('.avatar')?.classList.remove('selected');
         }
-        if (contactNameH3) contactNameH3.textContent = name;
-        
-        // Update email
-        const emailValue = document.querySelector('.detail-value');
-        if (emailValue) emailValue.textContent = email;
-        
-        // Update phone
-        const phoneValues = document.querySelectorAll('.detail-value');
-        if (phoneValues[1]) phoneValues[1].textContent = phone;
-        
-        // Update currentConversation to the new one
-        currentConversation = newConversation;
-        
-        // 3. Add tag
-        const tagBadges = document.getElementById('contactTags');
-        if (tagBadges) {
-            // Clear existing tags
-            tagBadges.innerHTML = '';
-            
-            // Add the new tag
-            const tagBadge = document.createElement('span');
-            tagBadge.className = 'tag-badge';
-            tagBadge.innerHTML = `<i class="fas fa-tag"></i>${tagName}`;
-            tagBadges.appendChild(tagBadge);
-        }
-        
-        // Play contact creation sound after a brief delay
-        await sleep(100);
-        playContactSound();
-        
-        // Update unread count after a brief delay
-        await sleep(500);
-        const firstContactItem = document.querySelector('.conversation-item');
-        const unreadBadge = firstContactItem?.querySelector('.unread-count');
-        if (unreadBadge) {
-            unreadBadge.textContent = '1';
-            unreadBadge.style.background = '#5e72e4';
-        }
+    });
+
+    // UPDATE ALL 3 SECTIONS AT ONCE
+
+    // 1. Update chat header
+    const chatHeader = document.querySelector('.chat-contact-info h2');
+    if (chatHeader) chatHeader.textContent = name;
+
+    // Clear messages area
+    const messagesArea = document.querySelector('.messages-area');
+    if (messagesArea) {
+        messagesArea.innerHTML = '<div style="text-align: center; color: #999; padding: 50px;">Start a conversation with ' + name + '</div>';
+    }
+
+    // 2. Update contact details panel
+    const contactAvatar = document.querySelector('.contact-avatar');
+    const contactNameH3 = document.querySelector('.contact-details-panel h3');
+    if (contactAvatar) {
+        contactAvatar.textContent = initials;
+        contactAvatar.style.background = '#5e72e4';
+    }
+    if (contactNameH3) contactNameH3.textContent = name;
+
+    // Update email
+    const emailValue = document.querySelector('.detail-value');
+    if (emailValue) emailValue.textContent = email;
+
+    // Update phone
+    const phoneValues = document.querySelectorAll('.detail-value');
+    if (phoneValues[1]) phoneValues[1].textContent = phone;
+
+    // Update currentConversation to the new one
+    currentConversation = newConversation;
+
+    // 3. Add tag
+    const tagBadges = document.getElementById('contactTags');
+    if (tagBadges) {
+        // Clear existing tags
+        tagBadges.innerHTML = '';
+
+        // Add the new tag
+        const tagBadge = document.createElement('span');
+        tagBadge.className = 'tag-badge';
+        tagBadge.innerHTML = `<i class="fas fa-tag"></i>${tagName}`;
+        tagBadges.appendChild(tagBadge);
+    }
+
+    // Play contact creation sound after a brief delay
+    await sleep(100);
+    playContactSound();
+
+    // Update unread count after a brief delay
+    await sleep(500);
+    const firstContactItem = document.querySelector('.conversation-item');
+    const unreadBadge = firstContactItem?.querySelector('.unread-count');
+    if (unreadBadge) {
+        unreadBadge.textContent = '1';
+        unreadBadge.style.background = '#5e72e4';
     }
 }
 
