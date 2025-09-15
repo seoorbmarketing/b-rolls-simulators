@@ -1970,14 +1970,25 @@ function initializeConversations() {
 
 // Initialize sample conversations
 function initializeSampleConversations() {
-    // Sample conversation data
+    // Generate recent dates for a more realistic feel
+    const today = new Date();
+    const currentMonth = today.toLocaleString('en-US', { month: 'short' });
+
+    // Helper to get a date X days ago
+    function getRecentDate(daysAgo) {
+        const date = new Date();
+        date.setDate(date.getDate() - daysAgo);
+        return date.toLocaleString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    // Sample conversation data with recent dates
     const sampleConversations = [
         {
             id: 'conv-1',
             name: 'Robert Paulus',
             initials: 'RP',
             lastMessage: 'Hi Robert, Piyush here from Mass',
-            time: 'Aug 20',
+            time: getRecentDate(0), // Today
             unread: 1,
             messages: []
         },
@@ -1986,7 +1997,7 @@ function initializeSampleConversations() {
             name: 'Julien Fonteyne',
             initials: 'JF',
             lastMessage: 'Hi Julien, Piyush here from Massi',
-            time: 'Aug 20',
+            time: getRecentDate(0), // Today
             unread: 6,
             messages: []
         },
@@ -1995,7 +2006,7 @@ function initializeSampleConversations() {
             name: 'Jamie Smith',
             initials: 'JS',
             lastMessage: 'Hi Jamie, Piyush here from Mass',
-            time: 'Aug 20',
+            time: getRecentDate(1), // Yesterday
             unread: 1,
             messages: [
                 {
@@ -2004,8 +2015,8 @@ function initializeSampleConversations() {
                     sender: 'AutomateMyBiz.pro',
                     text: "Recon'25 starts tomorrow, are you coming?",
                     subtext: '- Hey Jamie,...',
-                    date: '18th Aug, 2025',
-                    time: 'Aug 18, 2025, 7:00 PM'
+                    date: '18th ' + currentMonth + ', 2025',
+                    time: currentMonth + ' 18, 2025, 7:00 PM'
                 },
                 {
                     id: 'msg-2',
@@ -2013,8 +2024,8 @@ function initializeSampleConversations() {
                     sender: 'AutomateMyBiz.pro',
                     text: "A common pain I found amongst people at RECON'25",
                     subtext: '- H...',
-                    date: '20th Aug, 2025',
-                    time: 'Aug 20, 2025, 7:13 PM'
+                    date: '20th ' + currentMonth + ', 2025',
+                    time: currentMonth + ' 20, 2025, 7:13 PM'
                 }
             ]
         },
@@ -2023,7 +2034,7 @@ function initializeSampleConversations() {
             name: 'Phil Harris',
             initials: 'PH',
             lastMessage: 'Hi Phil, Piyush here from Massive',
-            time: 'Aug 20',
+            time: getRecentDate(1), // Yesterday
             unread: 3,
             messages: []
         },
@@ -2032,7 +2043,7 @@ function initializeSampleConversations() {
             name: 'Lex Hubert',
             initials: 'LH',
             lastMessage: 'Hey Lex, Quick heads up - RECON',
-            time: 'Aug 16',
+            time: getRecentDate(3), // 3 days ago
             unread: 7,
             messages: []
         },
@@ -2041,7 +2052,7 @@ function initializeSampleConversations() {
             name: 'Michael Chen',
             initials: 'MC',
             lastMessage: 'Thanks for reaching out! I am interested',
-            time: 'Aug 19',
+            time: getRecentDate(2), // 2 days ago
             unread: 0,
             messages: []
         },
@@ -2050,7 +2061,7 @@ function initializeSampleConversations() {
             name: 'Sarah Williams',
             initials: 'SW',
             lastMessage: 'Can we schedule a call next week?',
-            time: 'Aug 18',
+            time: getRecentDate(2), // 2 days ago
             unread: 2,
             messages: []
         },
@@ -2059,7 +2070,7 @@ function initializeSampleConversations() {
             name: 'David Thompson',
             initials: 'DT',
             lastMessage: 'Perfect! See you at the event',
-            time: 'Aug 17',
+            time: getRecentDate(4), // 4 days ago
             unread: 0,
             messages: []
         }
@@ -3181,12 +3192,37 @@ function markAllRead() {
 }
 
 function clearConversations() {
-    if (confirm('Clear all conversations?')) {
-        Object.keys(conversations).forEach(key => {
-            conversations[key].messages = [];
-        });
-        if (currentConversation) {
-            loadConversationMessages();
+    if (confirm('Are you sure you want to clear all contacts and their conversations?')) {
+        // Clear all conversations from the object
+        conversations = {};
+        currentConversation = null;
+
+        // Clear the conversation list UI
+        const conversationItems = document.querySelector('.conversation-items');
+        if (conversationItems) {
+            conversationItems.innerHTML = '<div style="text-align: center; color: #999; padding: 50px;">No contacts yet</div>';
+        }
+
+        // Clear the messages area
+        const messagesArea = document.querySelector('.messages-area');
+        if (messagesArea) {
+            messagesArea.innerHTML = '<div style="text-align: center; color: #999; padding: 50px;">No conversation selected</div>';
+        }
+
+        // Update chat header
+        const chatHeader = document.querySelector('.chat-contact-info h2');
+        if (chatHeader) {
+            chatHeader.textContent = 'Select a contact';
+        }
+
+        // Clear contact details
+        const contactAvatar = document.querySelector('.contact-avatar');
+        if (contactAvatar) {
+            contactAvatar.textContent = '';
+        }
+        const contactName = document.querySelector('.contact-details-panel h3');
+        if (contactName) {
+            contactName.textContent = 'No contact selected';
         }
     }
 }
