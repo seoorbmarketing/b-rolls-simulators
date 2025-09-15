@@ -253,6 +253,12 @@ document.addEventListener('DOMContentLoaded', function() {
         chatTimeSpan.textContent = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}, ${hours}:${minutesStr} ${ampm}`;
     }
 
+    // Initialize conversation sample data immediately to get correct dates
+    if (!window.conversationsInitialized) {
+        initializeSampleConversations();
+        // Don't set conversationsInitialized to true here, let the normal flow handle that
+    }
+
     // New appointment button
     const newBtn = document.querySelector('.new-btn');
     if (newBtn) {
@@ -2079,6 +2085,25 @@ function initializeSampleConversations() {
     // Store conversations
     sampleConversations.forEach(conv => {
         conversations[conv.id] = conv;
+    });
+
+    // Update the HTML conversation list with the new dates
+    updateConversationListDates();
+}
+
+// Update conversation list dates in the UI
+function updateConversationListDates() {
+    const conversationItems = document.querySelectorAll('.conversation-item');
+    const convKeys = Object.keys(conversations);
+
+    conversationItems.forEach((item, index) => {
+        if (index < convKeys.length) {
+            const conv = conversations[convKeys[index]];
+            const timeSpan = item.querySelector('.time');
+            if (timeSpan && conv) {
+                timeSpan.textContent = conv.time;
+            }
+        }
     });
 }
 
