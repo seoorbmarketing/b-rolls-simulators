@@ -237,7 +237,22 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize date range
     updateDateRange();
-    
+
+    // Initialize conversation chat header time with current time
+    const chatTimeSpan = document.querySelector('.last-message-time');
+    if (chatTimeSpan) {
+        // Set initial time display to current time
+        const now = new Date();
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        let hours = now.getHours();
+        const minutes = now.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+        chatTimeSpan.textContent = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}, ${hours}:${minutesStr} ${ampm}`;
+    }
+
     // New appointment button
     const newBtn = document.querySelector('.new-btn');
     if (newBtn) {
@@ -245,7 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('New appointment functionality would open here');
         });
     }
-    
+
     // Chat widget
     const chatWidget = document.querySelector('.chat-widget');
     if (chatWidget) {
@@ -1944,6 +1959,13 @@ function initializeConversations() {
     initializeSampleConversations();
     setupConversationEventListeners();
     selectFirstConversation();
+
+    // Update the initial date/time display
+    const timeSpan = document.querySelector('.last-message-time');
+    if (timeSpan) {
+        const now = new Date();
+        timeSpan.textContent = formatConversationTime(now);
+    }
 }
 
 // Initialize sample conversations
@@ -2145,7 +2167,11 @@ function updateConversationChatHeader() {
         const h2 = contactInfo.querySelector('h2');
         if (h2) h2.textContent = currentConversation.name;
         const timeSpan = contactInfo.querySelector('.last-message-time');
-        if (timeSpan) timeSpan.textContent = 'Aug 11, 2025, 11:42 AM';
+        if (timeSpan) {
+            // Use current date and time instead of hardcoded value
+            const now = new Date();
+            timeSpan.textContent = formatConversationTime(now);
+        }
     }
 }
 
@@ -2732,7 +2758,7 @@ async function playScenario() {
         messagesArea.innerHTML = '';
     }
     
-    const playBtn = document.querySelector('.control-btn.primary[onclick="playScenario()"]');
+    const playBtn = document.querySelector('.playback-btn.primary[onclick="playScenario()"]');
     if (playBtn) {
         playBtn.innerHTML = '<i class="fas fa-pause"></i> Playing...';
         playBtn.disabled = true;
@@ -2792,7 +2818,7 @@ function stopScenario() {
         scenarioTimeout = null;
     }
     
-    const playBtn = document.querySelector('.control-btn.primary[onclick="playScenario()"]');
+    const playBtn = document.querySelector('.playback-btn.primary[onclick="playScenario()"]');
     if (playBtn) {
         playBtn.innerHTML = '<i class="fas fa-play"></i> Play';
         playBtn.disabled = false;

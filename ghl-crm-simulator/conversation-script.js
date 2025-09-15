@@ -174,7 +174,9 @@ function updateChatHeader() {
 
     const contactInfo = document.querySelector('.chat-contact-info');
     contactInfo.querySelector('h2').textContent = currentConversation.name;
-    contactInfo.querySelector('.last-message-time').textContent = 'Aug 11, 2025, 11:42 AM';
+    // Use current date and time instead of hardcoded value
+    const now = new Date();
+    contactInfo.querySelector('.last-message-time').textContent = formatTime(now);
 }
 
 // Load messages for current conversation

@@ -1017,12 +1017,66 @@ body {
 /* Scenario Builder Styles */
 .scenario-controls {
     display: flex;
-    gap: 8px;
+    flex-direction: column;
+    gap: 10px;
     margin-bottom: 10px;
 }
 
-.scenario-controls .control-input {
+.scenario-controls .control-input-group {
+    margin-bottom: 0;
+}
+
+.scenario-controls .control-input-group label {
+    font-size: 10px;
+    margin-bottom: 4px;
+}
+
+.scenario-controls .control-btn {
+    width: 100%;
+}
+
+/* Playback Buttons */
+.playback-buttons {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.playback-btn {
     flex: 1;
+    padding: 6px 8px;
+    font-size: 10px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.playback-btn i {
+    font-size: 10px;
+}
+
+.playback-btn:hover {
+    background: #f5f5f5;
+    border-color: #bbb;
+}
+
+.playback-btn.primary {
+    background: #5643ce;
+    color: white;
+    border-color: #5643ce;
+}
+
+.playback-btn.primary:hover {
+    background: #4532b5;
+    border-color: #4532b5;
 }
 
 .scenario-list {
@@ -1090,10 +1144,43 @@ body {
     margin-bottom: 15px;
 }
 
-.custom-scenarios .control-input-group {
+/* Save Scenario Section */
+.save-scenario-group {
+    margin-bottom: 10px;
+}
+
+.save-scenario-group label {
+    display: block;
+    font-size: 10px;
+    color: #666;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.save-scenario-controls {
     display: flex;
-    gap: 8px;
-    align-items: flex-end;
+    gap: 6px;
+    align-items: stretch;
+}
+
+.save-scenario-controls .control-input {
+    flex: 1;
+    margin: 0;
+    min-width: 0;
+    width: 100%;
+}
+
+.save-scenario-controls .save-btn {
+    flex: 0 0 auto;
+    padding: 7px;
+    font-size: 12px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .saved-scenarios-list {

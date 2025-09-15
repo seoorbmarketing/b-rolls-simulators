@@ -571,7 +571,7 @@
                         <div class="chat-header">
                             <div class="chat-contact-info">
                                 <h2>Jamie Smith</h2>
-                                <span class="last-message-time">Aug 11, 2025, 11:42 AM</span>
+                                <span class="last-message-time">Loading...</span>
                             </div>
                             <div class="chat-actions">
                                 <button class="action-btn"><i class="fas fa-star"></i></button>
@@ -1119,13 +1119,19 @@
                         
                         <!-- Add Step Controls -->
                         <div class="scenario-controls">
-                            <select class="control-input" id="stepType">
-                                <option value="incoming">Incoming (Customer)</option>
-                                <option value="outgoing">Outgoing (Business)</option>
-                                <option value="typing">Show Typing</option>
-                                <option value="delay">Add Delay</option>
-                            </select>
-                            <input type="text" class="control-input" id="stepContent" placeholder="Message text or delay (ms)">
+                            <div class="control-input-group">
+                                <label>Step Type</label>
+                                <select class="control-input" id="stepType">
+                                    <option value="incoming">Incoming (Customer)</option>
+                                    <option value="outgoing">Outgoing (Business)</option>
+                                    <option value="typing">Show Typing</option>
+                                    <option value="delay">Add Delay</option>
+                                </select>
+                            </div>
+                            <div class="control-input-group">
+                                <label>Message/Delay</label>
+                                <input type="text" class="control-input" id="stepContent" placeholder="Message text or delay (ms)">
+                            </div>
                             <button class="control-btn" onclick="addScenarioStep()">
                                 <i class="fas fa-plus"></i> Add Step
                             </button>
@@ -1147,14 +1153,14 @@
                                 </select>
                             </div>
                             
-                            <div style="display: flex; gap: 8px;">
-                                <button class="control-btn primary" onclick="playScenario()">
+                            <div class="playback-buttons">
+                                <button class="playback-btn primary" onclick="playScenario()">
                                     <i class="fas fa-play"></i> Play
                                 </button>
-                                <button class="control-btn" onclick="stopScenario()">
+                                <button class="playback-btn" onclick="stopScenario()">
                                     <i class="fas fa-stop"></i> Stop
                                 </button>
-                                <button class="control-btn" onclick="clearScenario()">
+                                <button class="playback-btn" onclick="clearScenario()">
                                     <i class="fas fa-trash"></i> Clear
                                 </button>
                             </div>
@@ -1162,12 +1168,14 @@
                         
                         <!-- Save/Load Custom Scenarios -->
                         <div class="custom-scenarios" style="margin-top: 15px;">
-                            <div class="control-input-group">
+                            <div class="save-scenario-group">
                                 <label>Save Current Scenario</label>
-                                <input type="text" class="control-input" id="scenarioName" placeholder="Enter scenario name...">
-                                <button class="control-btn" onclick="saveCustomScenario()">
-                                    <i class="fas fa-save"></i> Save
-                                </button>
+                                <div class="save-scenario-controls">
+                                    <input type="text" class="control-input" id="scenarioName" placeholder="Enter scenario name...">
+                                    <button class="control-btn save-btn" onclick="saveCustomScenario()" title="Save Scenario">
+                                        <i class="fas fa-save"></i>
+                                    </button>
+                                </div>
                             </div>
                             
                             <div id="savedScenariosList" class="saved-scenarios-list">
