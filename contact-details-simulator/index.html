@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Details Simulator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Browser Container -->
+        <div class="browser-wrapper">
+            <div class="browser-frame">
+                <!-- Browser Top Bar -->
+                <div class="browser-top-bar">
+                    <div class="browser-controls">
+                        <span class="browser-button close"></span>
+                        <span class="browser-button minimize"></span>
+                        <span class="browser-button maximize"></span>
+                    </div>
+                    <div class="browser-url-bar">
+                        <i class="fas fa-lock"></i>
+                        <span>app.automatemybiz.pro/contacts/detail</span>
+                    </div>
+                    <div class="browser-actions">
+                        <i class="fas fa-redo"></i>
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                </div>
+
+                <!-- Contact Card Content -->
+                <div class="contact-content">
+                    <div class="content-wrapper">
+                        <!-- Header with back arrow -->
+                        <div class="card-header">
+                            <i class="fas fa-chevron-left"></i>
+                        </div>
+
+                        <!-- Profile Section -->
+                        <div class="profile-section">
+                            <div class="avatar-container">
+                                <div class="avatar" id="contactAvatar">
+                                    <span id="avatarInitials"></span>
+                                </div>
+                            </div>
+                            <div class="contact-name" id="contactName"></div>
+                            <div class="contact-actions">
+                                <button class="action-btn">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                                <button class="action-btn">
+                                    <i class="fas fa-envelope"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Contact Details Section -->
+                        <div class="details-section">
+                            <div class="section-title">Contact</div>
+
+                            <!-- Email -->
+                            <div class="contact-item expandable">
+                                <div class="item-header" onclick="toggleExpand(this)">
+                                    <div class="item-left">
+                                        <i class="fas fa-envelope item-icon"></i>
+                                        <span class="item-label">Email</span>
+                                    </div>
+                                    <i class="fas fa-plus expand-icon"></i>
+                                </div>
+                                <div class="item-content">
+                                    <div class="email-value animated-field" id="emailValue"></div>
+                                </div>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="contact-item expandable">
+                                <div class="item-header" onclick="toggleExpand(this)">
+                                    <div class="item-left">
+                                        <i class="fas fa-phone item-icon"></i>
+                                        <span class="item-label">Phone</span>
+                                    </div>
+                                    <i class="fas fa-plus expand-icon"></i>
+                                </div>
+                                <div class="item-content">
+                                    <div class="phone-value animated-field" id="phoneValue"></div>
+                                </div>
+                            </div>
+
+                            <!-- Owner -->
+                            <div class="contact-item">
+                                <div class="item-header">
+                                    <div class="item-left">
+                                        <i class="fas fa-user item-icon"></i>
+                                        <span class="item-label">Owner (Assigned to)</span>
+                                    </div>
+                                </div>
+                                <div class="item-static">
+                                    <span class="unassigned">Unassigned</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+
+                            <!-- Followers -->
+                            <div class="contact-item">
+                                <div class="item-header">
+                                    <div class="item-left">
+                                        <i class="fas fa-users item-icon"></i>
+                                        <span class="item-label">Followers</span>
+                                    </div>
+                                </div>
+                                <div class="item-static">
+                                    <span class="search-text">Search followers</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tags Section -->
+                        <div class="details-section">
+                            <div class="section-title expandable-title" onclick="toggleSection(this)">
+                                <span>Tags</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="section-content" style="display: none;">
+                                <div class="tags-container" id="tagsContainer">
+                                    <!-- Tags will be added here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Automations Section -->
+                        <div class="details-section">
+                            <div class="section-title expandable-title" onclick="toggleSection(this)">
+                                <span>Active Automations</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="section-content" style="display: none;">
+                                <div class="automation-list">
+                                    <!-- Automation items will be added here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DND Section -->
+                        <div class="details-section">
+                            <div class="section-title expandable-title">
+                                <span>DND</span>
+                                <div class="toggle-switch">
+                                    <span class="toggle-label">OFF</span>
+                                    <i class="fas fa-chevron-up"></i>
+                                </div>
+                            </div>
+                            <div class="section-content">
+                                <div class="dnd-item">
+                                    <i class="fas fa-ban"></i>
+                                    <span>DND All</span>
+                                    <input type="checkbox" class="checkbox">
+                                </div>
+                                <div class="dnd-item">
+                                    <i class="fas fa-phone-slash"></i>
+                                    <span>DND Calls & Voicemails</span>
+                                    <input type="checkbox" class="checkbox">
+                                </div>
+                                <div class="dnd-item">
+                                    <i class="fas fa-comment-slash"></i>
+                                    <span>DND Text Messages</span>
+                                    <input type="checkbox" class="checkbox">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-panel-header">
+                <h2>Contact Simulator Controls</h2>
+                <button class="reset-btn" onclick="resetSimulator()" title="Reset">
+                    <i class="fas fa-redo"></i>
+                    <span>Reset</span>
+                </button>
+            </div>
+
+            <div class="control-panel-content">
+                <!-- Animation Controls -->
+                <div class="control-section animation-section">
+                    <h3>🎬 Animation Controls</h3>
+                    <div class="preset-fields">
+                        <div class="input-group">
+                            <label for="presetName">Name</label>
+                            <input type="text" id="presetName" placeholder="Enter name for animation" value="John Smith">
+                        </div>
+                        <div class="input-group">
+                            <label for="presetEmail">Email</label>
+                            <input type="email" id="presetEmail" placeholder="Enter email for animation" value="john.smith@company.com">
+                        </div>
+                        <div class="input-group">
+                            <label for="presetPhone">Phone</label>
+                            <input type="tel" id="presetPhone" placeholder="Enter phone for animation" value="+1 (555) 123-4567">
+                        </div>
+                    </div>
+
+                    <div class="animation-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="typewriterEffect" checked>
+                            Use typewriter effect
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="expandSections" checked>
+                            Auto-expand sections
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="addTags" checked>
+                            Add tags after contact info
+                        </label>
+                    </div>
+
+                    <div class="animation-speed">
+                        <label>Animation Speed</label>
+                        <select id="animationSpeed">
+                            <option value="slow">Slow</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="fast">Fast</option>
+                        </select>
+                    </div>
+
+                    <button onclick="startAnimation()" class="start-animation-btn">
+                        <i class="fas fa-play"></i> Start Animation
+                    </button>
+                    <button onclick="clearAllFields()" class="clear-btn">
+                        <i class="fas fa-eraser"></i> Clear All Fields
+                    </button>
+                </div>
+
+                <!-- Avatar Settings -->
+                <div class="control-section">
+                    <h3>Avatar Settings</h3>
+                    <div class="avatar-options">
+                        <div class="color-selector">
+                            <label>Avatar Color</label>
+                            <div class="color-grid">
+                                <button class="color-option active" data-color="#FF6B35" style="background: #FF6B35;" onclick="selectAvatarColor('#FF6B35')"></button>
+                                <button class="color-option" data-color="#4ECDC4" style="background: #4ECDC4;" onclick="selectAvatarColor('#4ECDC4')"></button>
+                                <button class="color-option" data-color="#556270" style="background: #556270;" onclick="selectAvatarColor('#556270')"></button>
+                                <button class="color-option" data-color="#95E1D3" style="background: #95E1D3;" onclick="selectAvatarColor('#95E1D3')"></button>
+                                <button class="color-option" data-color="#F38181" style="background: #F38181;" onclick="selectAvatarColor('#F38181')"></button>
+                                <button class="color-option" data-color="#AA96DA" style="background: #AA96DA;" onclick="selectAvatarColor('#AA96DA')"></button>
+                                <button class="color-option" data-color="#8785A2" style="background: #8785A2;" onclick="selectAvatarColor('#8785A2')"></button>
+                                <button class="color-option" data-color="#FC6C85" style="background: #FC6C85;" onclick="selectAvatarColor('#FC6C85')"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Templates -->
+                <div class="control-section">
+                    <h3>Quick Templates</h3>
+                    <div class="template-buttons">
+                        <button onclick="loadTemplate('customer')">Customer</button>
+                        <button onclick="loadTemplate('lead')">Lead</button>
+                        <button onclick="loadTemplate('vip')">VIP Client</button>
+                        <button onclick="loadTemplate('support')">Support Contact</button>
+                    </div>
+                </div>
+
+                <!-- Tags for Animation -->
+                <div class="control-section">
+                    <h3>Tags for Animation</h3>
+                    <div class="preset-tags">
+                        <input type="text" id="animationTags" placeholder="Enter tags separated by commas" value="New Lead, Hot, Priority">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
