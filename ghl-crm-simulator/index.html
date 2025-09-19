@@ -624,15 +624,14 @@
                         <!-- Message Input Area -->
                         <div class="message-input-area">
                             <div class="message-tabs">
-                                <button class="message-tab active">SMS</button>
-                                <button class="message-tab">WhatsApp</button>
-                                <button class="message-tab">EMAIL</button>
-                                <button class="message-tab">-</button>
-                                <button class="internal-comment-btn">Internal Comment</button>
+                                <button class="message-tab active" data-tab="sms">SMS</button>
+                                <button class="message-tab" data-tab="whatsapp">WhatsApp</button>
+                                <button class="message-tab" data-tab="email">EMAIL</button>
+                                <button class="message-tab" data-tab="facebook">Facebook</button>
                             </div>
                             
                             <div class="message-compose">
-                                <div class="phone-numbers">
+                                <div class="phone-numbers" id="phoneNumbersSection">
                                     <div class="phone-from">
                                         <span>From:</span>
                                         <select>
@@ -641,9 +640,7 @@
                                     </div>
                                     <div class="phone-to">
                                         <span>To:</span>
-                                        <select>
-                                            <option>+1 904-382-0486</option>
-                                        </select>
+                                        <span class="phone-number-fixed">+1 904-382-0486</span>
                                     </div>
                                 </div>
                                 

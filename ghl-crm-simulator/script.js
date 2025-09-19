@@ -2262,9 +2262,19 @@ function setupConversationEventListeners() {
     // Message tabs
     document.querySelectorAll('.message-tab').forEach(tab => {
         tab.addEventListener('click', function() {
-            if (this.textContent !== '-') {
-                document.querySelectorAll('.message-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
+            document.querySelectorAll('.message-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+
+            // Show/hide phone numbers based on selected tab
+            const phoneNumbersSection = document.getElementById('phoneNumbersSection');
+            const selectedTab = this.getAttribute('data-tab');
+
+            if (phoneNumbersSection) {
+                if (selectedTab === 'sms') {
+                    phoneNumbersSection.style.display = 'flex';
+                } else {
+                    phoneNumbersSection.style.display = 'none';
+                }
             }
         });
     });
