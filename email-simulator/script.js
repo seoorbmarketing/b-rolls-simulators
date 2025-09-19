@@ -42,7 +42,12 @@ function initializeDefaultEmails() {
             avatar: { type: 'initial', text: 'H', color: '#1DB584' },
             unread: true,
             starred: true,
-            category: 'primary'
+            category: 'primary',
+            attachment: {
+                name: 'LevelUp2025_Agenda.pdf',
+                type: 'pdf',
+                size: '3.2 MB'
+            }
         },
         {
             id: emailIdCounter++,
@@ -108,7 +113,10 @@ function renderEmailList() {
                     <div class="email-sender">${email.sender}</div>
                     <div class="email-time">${email.time}</div>
                 </div>
-                <div class="email-subject">${email.subject}</div>
+                <div class="email-subject">
+                    ${email.subject}
+                    ${email.attachment ? '<i class="fas fa-paperclip attachment-icon"></i>' : ''}
+                </div>
                 <div class="email-preview">${email.preview}</div>
             </div>
             <i class="fas fa-star email-star ${email.starred ? 'starred' : ''}" onclick="toggleStar(event, ${email.id})"></i>
@@ -126,6 +134,29 @@ function toggleStar(event, emailId) {
         email.starred = !email.starred;
         renderEmailList();
     }
+}
+
+// Get attachment icon based on file type
+function getAttachmentIcon(type) {
+    const iconMap = {
+        'pdf': '<i class="fas fa-file-pdf" style="color: #EA4335;"></i>',
+        'doc': '<i class="fas fa-file-word" style="color: #4285F4;"></i>',
+        'xls': '<i class="fas fa-file-excel" style="color: #34A853;"></i>',
+        'ppt': '<i class="fas fa-file-powerpoint" style="color: #FF6D00;"></i>',
+        'image': '<i class="fas fa-file-image" style="color: #9C27B0;"></i>',
+        'zip': '<i class="fas fa-file-archive" style="color: #795548;"></i>',
+        'video': '<i class="fas fa-file-video" style="color: #F4511E;"></i>',
+        'audio': '<i class="fas fa-file-audio" style="color: #00ACC1;"></i>',
+        'txt': '<i class="fas fa-file-alt" style="color: #5F6368;"></i>',
+        'csv': '<i class="fas fa-file-csv" style="color: #0F9D58;"></i>'
+    };
+    return iconMap[type] || '<i class="fas fa-file" style="color: #5F6368;"></i>';
+}
+
+// Process email body to format links
+function processEmailBody(body) {
+    // Replace <link>text</link> with styled link
+    return body.replace(/<link>(.*?)<\/link>/g, '<span class="email-link">$1</span>');
 }
 
 // Open email detail
@@ -157,8 +188,23 @@ function openEmail(emailId) {
                 <div class="email-detail-time">${email.time}</div>
             </div>
         </div>
-        <div class="email-detail-body">${email.body}</div>
-        
+        <div class="email-detail-body">${processEmailBody(email.body)}</div>
+
+        ${email.attachment ? `
+            <div class="attachment-box">
+                <div class="attachment-icon">
+                    ${getAttachmentIcon(email.attachment.type)}
+                </div>
+                <div class="attachment-details">
+                    <div class="attachment-filename">${email.attachment.name}</div>
+                    <div class="attachment-size">${email.attachment.size}</div>
+                </div>
+                <div class="attachment-download">
+                    <i class="fas fa-download"></i>
+                </div>
+            </div>
+        ` : ''}
+
         <!-- Reply Actions Bar -->
         <div class="reply-actions-bar">
             <button class="reply-btn">
@@ -226,12 +272,17 @@ function addEmail() {
     const avatarType = document.getElementById('avatarType').value;
     const avatarInitial = document.getElementById('avatarInitial').value || senderName.charAt(0).toUpperCase();
     const avatarColor = document.getElementById('avatarColor').value;
-    
+
+    // Get attachment info
+    const attachmentName = document.getElementById('attachmentName').value;
+    const attachmentType = document.getElementById('attachmentType').value;
+    const attachmentSize = document.getElementById('attachmentSize').value;
+
     if (!senderName || !subject) {
         alert('Please enter sender name and subject');
         return;
     }
-    
+
     const newEmail = {
         id: emailIdCounter++,
         sender: senderName,
@@ -249,11 +300,20 @@ function addEmail() {
         starred: document.getElementById('starEmails').checked,
         category: 'primary'
     };
-    
+
+    // Add attachment if provided
+    if (attachmentType && attachmentName) {
+        newEmail.attachment = {
+            name: attachmentName,
+            type: attachmentType,
+            size: attachmentSize || '1.2 MB'
+        };
+    }
+
     // Add to beginning of array for newest first
     emails.unshift(newEmail);
     renderEmailList();
-    
+
     // Clear form
     document.getElementById('senderName').value = '';
     document.getElementById('senderEmail').value = '';
@@ -261,6 +321,9 @@ function addEmail() {
     document.getElementById('emailBody').value = '';
     document.getElementById('emailTime').value = '';
     document.getElementById('avatarInitial').value = '';
+    document.getElementById('attachmentName').value = '';
+    document.getElementById('attachmentType').value = '';
+    document.getElementById('attachmentSize').value = '';
 }
 
 // Load email template
@@ -269,7 +332,7 @@ function loadTemplate(type) {
         case 'promotion':
             document.getElementById('senderName').value = 'Amazon';
             document.getElementById('emailSubject').value = '🎉 Your order has been delivered!';
-            document.getElementById('emailBody').value = 'Your package has been delivered to your address.\n\nOrder #123-4567890\nDelivered to: Front door\n\nThank you for shopping with Amazon!';
+            document.getElementById('emailBody').value = 'Your package has been delivered to your address.\n\nOrder #123-4567890\nDelivered to: Front door\n\n<link>Track Package</link> | <link>Leave Feedback</link>\n\nThank you for shopping with Amazon!';
             document.getElementById('emailTime').value = '10:30 AM';
             document.getElementById('avatarInitial').value = 'A';
             document.getElementById('avatarColor').value = '#FF9900';
@@ -305,7 +368,7 @@ function loadTemplate(type) {
         case 'lead':
             document.getElementById('senderName').value = 'Marketing Team';
             document.getElementById('emailSubject').value = 'New Lead: Enterprise Client Interested in Your Services';
-            document.getElementById('emailBody').value = "Great news! A new lead has come through our website.\n\nLead Details:\n• Company: TechCorp Solutions\n• Contact: Michael Chen, CTO\n• Budget: $50,000+\n• Timeline: Q1 2025\n\nThey're interested in our premium package and requested a demo.\n\nPriority: HIGH\nNext Step: Schedule call within 24 hours";
+            document.getElementById('emailBody').value = "Great news! A new lead has come through our website.\n\nLead Details:\n• Company: TechCorp Solutions\n• Contact: Michael Chen, CTO\n• Budget: $50,000+\n• Timeline: Q1 2025\n\nThey're interested in our premium package and requested a demo.\n\nPriority: HIGH\nNext Step: Schedule call within 24 hours\n\n<link>View Lead in CRM</link> | <link>Schedule Demo Call</link>";
             document.getElementById('emailTime').value = 'Just now';
             document.getElementById('avatarInitial').value = 'MT';
             document.getElementById('avatarColor').value = '#EA4335';
@@ -314,10 +377,13 @@ function loadTemplate(type) {
         case 'invoice':
             document.getElementById('senderName').value = 'QuickBooks';
             document.getElementById('emailSubject').value = 'Invoice #INV-2024-1547 - Payment Due';
-            document.getElementById('emailBody').value = "Invoice from ABC Services Inc.\n\nInvoice Number: INV-2024-1547\nDate: December 15, 2024\nDue Date: December 30, 2024\n\nServices Rendered:\n• HVAC System Repair - $450.00\n• Parts & Materials - $185.00\n• Emergency Service Fee - $75.00\n\nSubtotal: $710.00\nTax (8%): $56.80\nTotal Due: $766.80\n\nPayment Methods:\n• Online: Pay via QuickBooks\n• Check: Mail to 123 Business St.\n• Wire Transfer: Contact accounting\n\nThank you for your business!";
+            document.getElementById('emailBody').value = "Hi there,\n\nYour invoice is ready:\n\nInvoice #INV-2024-1547\nAmount Due: $766.80\nDue Date: December 30, 2024\n\nService: Website Development & Maintenance\n\n<link>Pay Invoice Online →</link>\n\nThank you for your business!\n\nBest regards,\nABC Services Inc.";
             document.getElementById('emailTime').value = '9:15 AM';
             document.getElementById('avatarInitial').value = 'QB';
             document.getElementById('avatarColor').value = '#2CA01C';
+            document.getElementById('attachmentName').value = 'Invoice_INV-2024-1547.pdf';
+            document.getElementById('attachmentType').value = 'pdf';
+            document.getElementById('attachmentSize').value = '245 KB';
             break;
             
         case 'quotation':
@@ -327,6 +393,9 @@ function loadTemplate(type) {
             document.getElementById('emailTime').value = '2:30 PM';
             document.getElementById('avatarInitial').value = 'ST';
             document.getElementById('avatarColor').value = '#4285F4';
+            document.getElementById('attachmentName').value = 'Quote_Q-2024-3892_Kitchen_Remodel.pdf';
+            document.getElementById('attachmentType').value = 'pdf';
+            document.getElementById('attachmentSize').value = '1.8 MB';
             break;
     }
 }

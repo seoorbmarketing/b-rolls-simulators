@@ -848,7 +848,22 @@ body.white-background {
     background: transparent;
     font-size: 12px;
     outline: none;
-    padding: 4px 0;
+    padding: 4px 8px 4px 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    max-width: calc(100% - 40px);
+}
+
+/* Hide scrollbar but keep functionality */
+#chatInput::-webkit-scrollbar {
+    height: 0;
+    display: none;
+}
+
+#chatInput {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
 #chatInput::placeholder {
@@ -858,6 +873,7 @@ body.white-background {
 .send-button {
     width: 28px;
     height: 28px;
+    min-width: 28px;
     border-radius: 50%;
     background: #2196F3;
     color: white;
@@ -867,6 +883,7 @@ body.white-background {
     align-items: center;
     justify-content: center;
     transition: background 0.2s;
+    flex-shrink: 0;
 }
 
 .send-button:hover {

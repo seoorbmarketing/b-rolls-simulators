@@ -417,6 +417,93 @@ body {
     white-space: pre-wrap;
 }
 
+/* Email Link Styling */
+.email-link {
+    color: #1A73E8;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.email-link:hover {
+    color: #1557B0;
+    text-decoration: underline;
+}
+
+/* Attachment Styles */
+.attachment-icon {
+    color: #5F6368;
+    font-size: 13px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+.attachment-box {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    margin: 16px 0;
+    background: #F8F9FA;
+    border: 1px solid #DADCE0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.attachment-box:hover {
+    background: #F1F3F4;
+}
+
+.attachment-box .attachment-icon {
+    font-size: 24px;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.attachment-details {
+    flex: 1;
+}
+
+.attachment-filename {
+    font-size: 14px;
+    font-weight: 500;
+    color: #202124;
+    margin-bottom: 2px;
+}
+
+.attachment-size {
+    font-size: 12px;
+    color: #5F6368;
+}
+
+.attachment-download {
+    color: #5F6368;
+    font-size: 16px;
+    padding: 8px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.attachment-download:hover {
+    color: #1A73E8;
+}
+
+/* Attachment Controls in Control Panel */
+.attachment-section {
+    margin-top: 16px;
+    margin-bottom: 12px;
+}
+
+.attachment-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 /* Reply Actions Bar */
 .reply-actions-bar {
     display: flex;

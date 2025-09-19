@@ -219,7 +219,28 @@
                     <input type="text" id="emailSubject" placeholder="Email Subject">
                     <textarea id="emailBody" placeholder="Email Body (first line will be preview)" rows="4"></textarea>
                     <input type="text" id="emailTime" placeholder="Time (e.g., 2:03 AM, Sep 8)">
-                    
+
+                    <div class="attachment-section">
+                        <label class="section-label">Attachment (Optional)</label>
+                        <div class="attachment-controls">
+                            <input type="text" id="attachmentName" placeholder="File name (e.g., invoice.pdf, report.docx)">
+                            <select id="attachmentType">
+                                <option value="">No Attachment</option>
+                                <option value="pdf">PDF Document</option>
+                                <option value="doc">Word Document</option>
+                                <option value="xls">Excel Spreadsheet</option>
+                                <option value="ppt">PowerPoint</option>
+                                <option value="image">Image (JPG/PNG)</option>
+                                <option value="zip">ZIP Archive</option>
+                                <option value="video">Video File</option>
+                                <option value="audio">Audio File</option>
+                                <option value="txt">Text File</option>
+                                <option value="csv">CSV File</option>
+                            </select>
+                            <input type="text" id="attachmentSize" placeholder="File size (e.g., 2.5 MB, 156 KB)">
+                        </div>
+                    </div>
+
                     <div class="avatar-section">
                         <label class="section-label">Sender Avatar</label>
                         <select id="avatarType">

@@ -313,8 +313,10 @@ function simulateUserTyping(text, callback) {
         if (index < text.length) {
             chatInput.value += text[index];
             index++;
-            // Scroll input into view if needed
-            chatInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            // Keep the input field scrolled to the end to show the latest typed character
+            chatInput.scrollLeft = chatInput.scrollWidth;
+            // Also ensure the caret position is at the end
+            chatInput.setSelectionRange(chatInput.value.length, chatInput.value.length);
             setTimeout(typeChar, typingSpeed);
         } else {
             // After typing is complete, simulate clicking send button
