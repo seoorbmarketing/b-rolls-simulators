@@ -8,9 +8,12 @@ A comprehensive suite of mobile app simulators for creating realistic demo video
 - **Instagram Chat Simulator** - Realistic Instagram DM interface with typing indicators and message sounds
 - **SMS Simulator** - iMessage-style SMS conversations with delivery receipts
 - **Calling UI Simulator** - Incoming call interface with custom ringtones and call duration
-- **Gmail Simulator** - Full Gmail mobile interface with inbox, compose, and email management
+- **Email Simulator** - Full Gmail mobile interface with inbox, compose, attachments, and email management
 - **Notification System** - iOS-style push notifications with custom apps and messages
-- **Web Chat Simulator** - Website live chat widget simulation
+- **Web Chat Simulator** - Website live chat widget with typing animations
+- **WhatsApp Simulator** - WhatsApp chat interface with voice messages, images, and status indicators
+- **GHL CRM Simulator** - GoHighLevel CRM with calendar, conversations, and opportunities management
+- **Contact Details Simulator** - Mobile contact card with call, message, and video options
 
 ## 🚀 Getting Started
 
@@ -66,13 +69,16 @@ http://localhost/b-rolls-simulators/
 - Call duration timer with custom start time
 - Call summary screen
 
-### Gmail Simulator
+### Email Simulator (Gmail)
 - Inbox with email list
-- Email detail view
+- Email detail view with attachments
 - Compose functionality
 - Sidebar navigation
-- Custom avatars
+- Custom avatars and colors
 - Star/unread indicators
+- File attachments with multiple types (PDF, DOC, XLS, etc.)
+- Link formatting in emails
+- Quick templates (invoices, quotations, etc.)
 
 ### Notification System
 - iOS-style notifications
@@ -81,11 +87,41 @@ http://localhost/b-rolls-simulators/
 - Auto-dismiss functionality
 - Sound effects
 
+### WhatsApp Simulator
+- Realistic WhatsApp interface
+- Text messages with timestamps
+- Voice messages with duration
+- Image sharing with captions
+- Read receipts (blue ticks)
+- Online/typing status
+- Scenario automation
+- Multiple contact management
+
+### GHL CRM Simulator
+- **Calendar View**: Appointment scheduling with drag & drop rescheduling
+- **Conversations**: Multi-channel messaging (SMS, WhatsApp, Email, Facebook)
+- **Opportunities**: Kanban-style pipeline with drag & drop cards
+- Business templates for different industries
+- Contact management with animations
+- Dynamic URL updates
+- Preset animation scenarios for screen recording
+
+### Contact Details Simulator
+- Mobile contact card interface
+- Profile photo with status indicator
+- Quick action buttons (call, message, video, email)
+- Contact information display
+- Recent interactions
+- Shared media gallery
+
 ### Web Chat Simulator
 - Customer support chat interface
-- Automated responses
-- Typing indicators
+- Automated responses with scenarios
+- Realistic typing animations with auto-scroll
+- Multiple agent profiles
 - Chat history
+- Quick reply suggestions
+- File upload interface
 
 ## 🎨 Customization
 
