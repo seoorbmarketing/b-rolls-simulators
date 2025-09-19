@@ -1,4 +1,82 @@
 // Calendar functionality
+
+// Global function to switch screens - defined before DOMContentLoaded
+function switchToScreen(screenName) {
+    console.log("switchToScreen called with:", screenName);
+
+    // Get all necessary elements
+    const calendarScreen = document.getElementById("calendar-screen");
+    const conversationsScreen = document.getElementById("conversations-screen");
+    const opportunitiesScreen = document.getElementById("opportunities-screen");
+    const rightPanel = document.querySelector(".right-panel");
+    const navItems = document.querySelectorAll(".nav-item[data-screen]");
+    const screenSwitchBtns = document.querySelectorAll(".screen-switch-btn");
+
+    // Hide all screens
+    if (calendarScreen) calendarScreen.style.display = "none";
+    if (conversationsScreen) conversationsScreen.style.display = "none";
+    if (opportunitiesScreen) opportunitiesScreen.style.display = "none";
+
+    // Update nav items
+    navItems.forEach(nav => nav.classList.remove("active"));
+
+    // Switch to the requested screen
+    if (screenName === "calendar") {
+        if (calendarScreen) calendarScreen.style.display = "block";
+        if (rightPanel) rightPanel.style.display = "block";
+        const calendarNav = document.querySelector('.nav-item[data-screen="calendar"]');
+        if (calendarNav) calendarNav.classList.add("active");
+    } else if (screenName === "conversations") {
+        if (conversationsScreen) conversationsScreen.style.display = "block";
+        if (rightPanel) rightPanel.style.display = "none";
+        const conversationNav = document.querySelector('.nav-item[data-screen="conversations"]');
+        if (conversationNav) conversationNav.classList.add("active");
+        // Initialize if needed
+        if (!window.conversationsInitialized) {
+            if (typeof initializeConversations === "function") {
+                initializeConversations();
+                window.conversationsInitialized = true;
+            }
+        }
+    } else if (screenName === "opportunities") {
+        if (opportunitiesScreen) opportunitiesScreen.style.display = "block";
+        if (rightPanel) rightPanel.style.display = "none";
+        const opportunitiesNav = document.querySelector('.nav-item[data-screen="opportunities"]');
+        if (opportunitiesNav) opportunitiesNav.classList.add("active");
+        // Initialize if needed
+        if (!window.opportunitiesInitialized) {
+            if (typeof initializeOpportunities === "function") {
+                initializeOpportunities();
+                window.opportunitiesInitialized = true;
+            }
+        }
+    }
+
+    // Update control panels
+    const calendarControls = document.getElementById("calendar-controls");
+    const conversationControls = document.getElementById("conversation-controls");
+    const opportunitiesControls = document.getElementById("opportunities-controls");
+
+    if (calendarControls) calendarControls.style.display = screenName === "calendar" ? "block" : "none";
+    if (conversationControls) conversationControls.style.display = screenName === "conversations" ? "block" : "none";
+    if (opportunitiesControls) opportunitiesControls.style.display = screenName === "opportunities" ? "block" : "none";
+
+    // Update control panel buttons
+    screenSwitchBtns.forEach((btn, index) => {
+        if (screenName === "calendar" && index === 0) btn.classList.add("active");
+        else if (screenName === "conversations" && index === 1) btn.classList.add("active");
+        else if (screenName === "opportunities" && index === 2) btn.classList.add("active");
+        else btn.classList.remove("active");
+    });
+}
+
+// Make functions globally available
+window.switchToScreen = switchToScreen;
+window.renderOpportunityCards = renderOpportunityCards;
+window.updateStageCounters = updateStageCounters;
+window.initializeOpportunities = initializeOpportunities;
+window.startAnimatedMove = startAnimatedMove;
+
 document.addEventListener('DOMContentLoaded', function() {
     // Get common elements
     const calendarScreen = document.getElementById('calendar-screen');
@@ -10,6 +88,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const screenSwitchBtns = document.querySelectorAll('.screen-switch-btn');
     const calendarControls = document.getElementById('calendar-controls');
     const conversationControls = document.getElementById('conversation-controls');
+    const opportunitiesControls = document.getElementById('opportunities-controls');
+    const opportunitiesScreen = document.getElementById('opportunities-screen');
     
     screenSwitchBtns.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -24,10 +104,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Switch control panels
                 calendarControls.style.display = 'block';
                 conversationControls.style.display = 'none';
-                
+                if (opportunitiesControls) opportunitiesControls.style.display = 'none';
+
                 // Switch main screens
                 calendarScreen.style.display = 'block';
                 conversationsScreen.style.display = 'none';
+                if (opportunitiesScreen) opportunitiesScreen.style.display = 'none';
                 if (rightPanel) rightPanel.style.display = 'block';
                 
                 // Update nav items
@@ -39,21 +121,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Switch control panels
                 calendarControls.style.display = 'none';
                 conversationControls.style.display = 'block';
-                
+                if (opportunitiesControls) opportunitiesControls.style.display = 'none';
+
                 // Switch main screens
                 calendarScreen.style.display = 'none';
                 conversationsScreen.style.display = 'block';
+                if (opportunitiesScreen) opportunitiesScreen.style.display = 'none';
                 if (rightPanel) rightPanel.style.display = 'none';
-                
+
                 // Update nav items
                 navItems.forEach(nav => nav.classList.remove('active'));
                 const conversationNav = document.querySelector('.nav-item[data-screen="conversations"]');
                 if (conversationNav) conversationNav.classList.add('active');
-                
+
                 // Initialize conversations if needed
                 if (!window.conversationsInitialized) {
                     initializeConversations();
                     window.conversationsInitialized = true;
+                }
+            } else if (panel === 'opportunities') {
+                // Switch control panels
+                calendarControls.style.display = 'none';
+                conversationControls.style.display = 'none';
+                if (opportunitiesControls) opportunitiesControls.style.display = 'block';
+
+                // Switch main screens
+                calendarScreen.style.display = 'none';
+                conversationsScreen.style.display = 'none';
+                if (opportunitiesScreen) opportunitiesScreen.style.display = 'block';
+                if (rightPanel) rightPanel.style.display = 'none';
+
+                // Update nav items
+                navItems.forEach(nav => nav.classList.remove('active'));
+                const opportunitiesNav = document.querySelector('.nav-item[data-screen="opportunities"]');
+                if (opportunitiesNav) opportunitiesNav.classList.add('active');
+
+                // Initialize opportunities if needed
+                if (!window.opportunitiesInitialized) {
+                    initializeOpportunities();
+                    window.opportunitiesInitialized = true;
                 }
             }
         });
@@ -63,33 +169,66 @@ document.addEventListener('DOMContentLoaded', function() {
     navItems.forEach(item => {
         item.addEventListener('click', function(e) {
             e.preventDefault();
-            const screen = this.getAttribute('data-screen');
-            
-            // Update active state
-            navItems.forEach(nav => nav.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Switch screens
-            if (screen === 'calendar') {
-                calendarScreen.style.display = 'block';
-                conversationsScreen.style.display = 'none';
-                if (rightPanel) rightPanel.style.display = 'block';
-                
-                // Switch control panel too
-                screenSwitchBtns[0].click(); // Calendar button
-            } else if (screen === 'conversations') {
-                calendarScreen.style.display = 'none';
-                conversationsScreen.style.display = 'block';
-                if (rightPanel) rightPanel.style.display = 'none';
-                
-                // Initialize conversation functionality if not already done
-                if (!window.conversationsInitialized) {
-                    initializeConversations();
-                    window.conversationsInitialized = true;
+            e.stopPropagation();
+
+            try {
+                const screen = this.getAttribute('data-screen');
+                console.log('Nav click - Switching to screen:', screen);
+
+                // Update active state
+                navItems.forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+
+                // Hide all screens first
+                if (calendarScreen) calendarScreen.style.display = 'none';
+                if (conversationsScreen) conversationsScreen.style.display = 'none';
+                if (opportunitiesScreen) opportunitiesScreen.style.display = 'none';
+
+                // Switch screens
+                if (screen === 'calendar') {
+                    console.log('Showing calendar screen');
+                    if (calendarScreen) calendarScreen.style.display = 'block';
+                    if (rightPanel) rightPanel.style.display = 'block';
+
+                    // Switch control panel too
+                    if (screenSwitchBtns && screenSwitchBtns[0]) {
+                        screenSwitchBtns[0].click();
+                    }
+                } else if (screen === 'conversations') {
+                    console.log('Showing conversations screen');
+                    if (conversationsScreen) conversationsScreen.style.display = 'block';
+                    if (rightPanel) rightPanel.style.display = 'none';
+
+                    // Initialize conversation functionality if not already done
+                    if (!window.conversationsInitialized) {
+                        console.log('Initializing conversations');
+                        initializeConversations();
+                        window.conversationsInitialized = true;
+                    }
+
+                    // Switch control panel too
+                    if (screenSwitchBtns && screenSwitchBtns[1]) {
+                        screenSwitchBtns[1].click();
+                    }
+                } else if (screen === 'opportunities') {
+                    console.log('Showing opportunities screen');
+                    if (opportunitiesScreen) opportunitiesScreen.style.display = 'block';
+                    if (rightPanel) rightPanel.style.display = 'none';
+
+                    // Initialize opportunities functionality if not already done
+                    if (!window.opportunitiesInitialized) {
+                        console.log('Initializing opportunities');
+                        initializeOpportunities();
+                        window.opportunitiesInitialized = true;
+                    }
+
+                    // Switch control panel too
+                    if (screenSwitchBtns && screenSwitchBtns[2]) {
+                        screenSwitchBtns[2].click();
+                    }
                 }
-                
-                // Switch control panel too
-                screenSwitchBtns[1].click(); // Conversation button
+            } catch (error) {
+                console.error('Error switching screens:', error);
             }
         });
     });
@@ -274,6 +413,9 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Chat support would open here');
         });
     }
+
+    // Initialize card animation controls for opportunities
+    initializeCardAnimationControls();
 });
 
 // Search functionality
@@ -2772,502 +2914,1502 @@ function getSpeedMultiplier() {
     }
 }
 
-// Play Scenario
-async function playScenario() {
-    if (scenarioSteps.length === 0) {
-        alert('Please add steps to the scenario first');
-        return;
-    }
-    
-    if (isScenarioPlaying) {
-        alert('Scenario is already playing');
-        return;
-    }
-    
-    // Ensure we're on conversations screen
-    const conversationNav = document.querySelector('.nav-item[data-screen="conversations"]');
-    if (conversationNav && !conversationNav.classList.contains('active')) {
-        conversationNav.click();
-        await sleep(300);
-    }
-    
-    // Ensure a conversation is selected
-    if (!currentConversation) {
-        const firstConversationItem = document.querySelector('.conversation-item');
-        if (firstConversationItem) {
-            firstConversationItem.click();
-            await sleep(300);
+// Opportunities Screen Functionality
+let opportunityAnimationInterval = null;
+// Make opportunityCards global
+if (!window.opportunityCards) {
+    window.window.window.opportunityCards = [];
+}
+let opportunityCards = window.opportunityCards;
+
+// Initialize Opportunities
+function initializeOpportunities() {
+    // Start with empty pipeline
+    window.window.window.opportunityCards = [];
+    opportunityCards = window.opportunityCards;
+
+    renderOpportunityCards();
+    initializeDragAndDrop();
+    updateStageCounters();
+}
+
+// Render Opportunity Cards
+function renderOpportunityCards() {
+    // Use global opportunityCards
+    const cards = window.opportunityCards || [];
+    console.log('Rendering opportunity cards:', cards);
+
+    // Clear all stages first
+    const stages = ['demo-requested', 'demo-scheduled', 'demo-no-show', 'demo-converted', 'client-not-converted'];
+
+    stages.forEach(stageId => {
+        const stageCards = document.getElementById(`${stageId}-cards`);
+        if (stageCards) {
+            stageCards.innerHTML = '';
+        } else {
+            console.log(`Stage cards not found: ${stageId}-cards`);
         }
-    }
-    
-    if (!currentConversation) {
-        alert('Please select a conversation first');
-        return;
-    }
-    
-    isScenarioPlaying = true;
-    
-    // Clear existing messages and the messages area
-    currentConversation.messages = [];
-    const messagesArea = document.querySelector('.messages-area');
-    if (messagesArea) {
-        messagesArea.innerHTML = '';
-    }
-    
-    const playBtn = document.querySelector('.playback-btn.primary[onclick="playScenario()"]');
-    if (playBtn) {
-        playBtn.innerHTML = '<i class="fas fa-pause"></i> Playing...';
-        playBtn.disabled = true;
-    }
-    
-    const speedMultiplier = getSpeedMultiplier();
-    
-    // Play each step
-    for (let i = 0; i < scenarioSteps.length; i++) {
-        if (!isScenarioPlaying) break;
-        
-        const step = scenarioSteps[i];
-        
-        switch(step.type) {
-            case 'incoming':
-                await showTypingIndicator('incoming', 1500 * speedMultiplier);
-                await addAnimatedMessage('incoming', step.content);
-                break;
-                
-            case 'outgoing':
-                await showTypingIndicator('outgoing', 1000 * speedMultiplier);
-                await addAnimatedMessage('outgoing', step.content);
-                break;
-                
-            case 'typing':
-                await showTypingIndicator('incoming', 2000 * speedMultiplier);
-                break;
-                
-            case 'delay':
-                await sleep((step.delay || parseInt(step.content)) * speedMultiplier);
-                break;
+    });
+
+    // Add cards to their respective stages
+    cards.forEach(card => {
+        const stageCards = document.getElementById(`${card.stage}-cards`);
+        if (stageCards) {
+            const cardElement = createOpportunityCard(card);
+            stageCards.appendChild(cardElement);
+            console.log(`Added card to stage ${card.stage}:`, card.name);
+        } else {
+            console.log(`Could not find stage cards for: ${card.stage}-cards`);
         }
-        
-        // Default delay between steps
-        if (step.type !== 'delay' && i < scenarioSteps.length - 1) {
-            await sleep(500 * speedMultiplier);
-        }
-    }
-    
-    isScenarioPlaying = false;
-    if (playBtn) {
-        playBtn.innerHTML = '<i class="fas fa-play"></i> Play';
-        playBtn.disabled = false;
-    }
-    
-    // Update conversation preview
-    updateConversationPreview();
-    
-    // Success sound removed per request
+    });
 }
 
-// Stop Scenario
-function stopScenario() {
-    isScenarioPlaying = false;
-    if (scenarioTimeout) {
-        clearTimeout(scenarioTimeout);
-        scenarioTimeout = null;
-    }
-    
-    const playBtn = document.querySelector('.playback-btn.primary[onclick="playScenario()"]');
-    if (playBtn) {
-        playBtn.innerHTML = '<i class="fas fa-play"></i> Play';
-        playBtn.disabled = false;
-    }
-}
+// Create Opportunity Card Element
+function createOpportunityCard(card) {
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'opportunity-card';
+    cardDiv.draggable = true;
+    cardDiv.dataset.cardId = card.id;
 
-// Load Scenario Template
-function loadScenarioTemplate() {
-    const template = document.getElementById('scenarioTemplate').value;
-    if (!template) return;
-    
-    scenarioSteps = [];
-    
-    switch(template) {
-        case 'greeting':
-            scenarioSteps = [
-                { id: 1, type: 'incoming', content: 'Hi there! 👋', delay: 1000 },
-                { id: 2, type: 'delay', content: '1500', delay: 1500 },
-                { id: 3, type: 'outgoing', content: 'Hello! Welcome to our business. How can I help you today?', delay: 1000 },
-                { id: 4, type: 'incoming', content: 'I saw your ad online', delay: 1000 },
-                { id: 5, type: 'outgoing', content: 'Great! Which service are you interested in?', delay: 1000 }
-            ];
-            break;
-            
-        case 'inquiry':
-            scenarioSteps = [
-                { id: 1, type: 'incoming', content: 'Do you have this product in stock?', delay: 1000 },
-                { id: 2, type: 'outgoing', content: 'Let me check that for you right away!', delay: 1000 },
-                { id: 3, type: 'typing', content: '', delay: 2000 },
-                { id: 4, type: 'outgoing', content: 'Yes, we have it available!', delay: 1000 },
-                { id: 5, type: 'outgoing', content: 'Would you like to place an order?', delay: 800 },
-                { id: 6, type: 'incoming', content: 'Yes, please!', delay: 1000 }
-            ];
-            break;
-            
-        case 'support':
-            scenarioSteps = [
-                { id: 1, type: 'incoming', content: 'I need help with my recent order', delay: 1000 },
-                { id: 2, type: 'outgoing', content: "I'm sorry to hear you're having issues. Can you provide your order number?", delay: 1000 },
-                { id: 3, type: 'incoming', content: 'Order #12345', delay: 1500 },
-                { id: 4, type: 'typing', content: '', delay: 2000 },
-                { id: 5, type: 'outgoing', content: "I've found your order. What seems to be the problem?", delay: 1000 },
-                { id: 6, type: 'incoming', content: "It hasn't arrived yet", delay: 1000 },
-                { id: 7, type: 'outgoing', content: "Let me track that for you. One moment please...", delay: 1000 }
-            ];
-            break;
-            
-        case 'booking':
-            scenarioSteps = [
-                { id: 1, type: 'incoming', content: "I'd like to book an appointment", delay: 1000 },
-                { id: 2, type: 'outgoing', content: 'Of course! What service would you like to book?', delay: 1000 },
-                { id: 3, type: 'incoming', content: 'A consultation please', delay: 1000 },
-                { id: 4, type: 'outgoing', content: 'Perfect! We have availability this week. When works best for you?', delay: 1000 },
-                { id: 5, type: 'incoming', content: 'Thursday afternoon would be great', delay: 1000 },
-                { id: 6, type: 'outgoing', content: 'I have 2:00 PM and 3:30 PM available on Thursday. Which do you prefer?', delay: 1000 },
-                { id: 7, type: 'incoming', content: '2:00 PM works perfectly', delay: 1000 },
-                { id: 8, type: 'outgoing', content: "Great! You're all set for Thursday at 2:00 PM. I'll send you a confirmation email.", delay: 1000 }
-            ];
-            break;
-            
-        case 'followup':
-            scenarioSteps = [
-                { id: 1, type: 'outgoing', content: 'Hi! Just following up on our conversation from yesterday.', delay: 1000 },
-                { id: 2, type: 'outgoing', content: 'Have you had a chance to think about our proposal?', delay: 1200 },
-                { id: 3, type: 'delay', content: '3000', delay: 3000 },
-                { id: 4, type: 'incoming', content: 'Yes, I have some questions', delay: 1000 },
-                { id: 5, type: 'outgoing', content: "I'd be happy to answer them! What would you like to know?", delay: 1000 }
-            ];
-            break;
-    }
-    
-    renderScenarioList();
-    document.getElementById('scenarioTemplate').value = '';
-}
-
-// Save Custom Scenario
-function saveCustomScenario() {
-    const name = document.getElementById('scenarioName').value.trim();
-    
-    if (!name) {
-        alert('Please enter a scenario name');
-        return;
-    }
-    
-    if (scenarioSteps.length === 0) {
-        alert('Please add steps to the scenario first');
-        return;
-    }
-    
-    let savedScenarios = JSON.parse(localStorage.getItem('ghlScenarios') || '{}');
-    savedScenarios[name] = {
-        name: name,
-        steps: scenarioSteps,
-        createdAt: new Date().toISOString()
-    };
-    
-    localStorage.setItem('ghlScenarios', JSON.stringify(savedScenarios));
-    document.getElementById('scenarioName').value = '';
-    loadSavedScenarios();
-    alert(`Scenario "${name}" saved successfully!`);
-}
-
-// Load Saved Scenarios
-function loadSavedScenarios() {
-    const savedScenarios = JSON.parse(localStorage.getItem('ghlScenarios') || '{}');
-    const container = document.getElementById('savedScenariosList');
-    
-    if (!container) return;
-    
-    const scenarios = Object.values(savedScenarios);
-    if (scenarios.length === 0) {
-        container.innerHTML = '<div style="text-align: center; color: #999; padding: 10px; font-size: 11px;">No saved scenarios yet</div>';
-        return;
-    }
-    
-    container.innerHTML = scenarios.map(scenario => `
-        <div class="saved-scenario-item">
-            <span>${scenario.name}</span>
-            <div>
-                <button onclick="loadCustomScenario('${scenario.name}')">Load</button>
-                <button onclick="deleteCustomScenario('${scenario.name}')">Delete</button>
+    // Format the card based on new design
+    cardDiv.innerHTML = `
+        <div class="card-main-header">
+            <div class="card-title">${card.name}</div>
+            <div class="card-avatar-circle">${card.avatar || 'PA'}</div>
+        </div>
+        <div class="card-details">
+            <div class="card-detail-row">
+                <span class="detail-label">Opportunity Source:</span>
+                <span class="detail-value">${card.source || 'Automate My Biz - AI...'}</span>
+            </div>
+            <div class="card-detail-row">
+                <span class="detail-label">Opportunity Value:</span>
+                <span class="detail-value">$${card.value}</span>
             </div>
         </div>
-    `).join('');
+        <div class="card-actions-row">
+            <button class="card-icon-btn" title="Call"><i class="fas fa-phone"></i></button>
+            <button class="card-icon-btn" title="WhatsApp"><i class="fas fa-comment"></i></button>
+            <button class="card-icon-btn" title="Favorite"><i class="fas fa-heart"></i></button>
+            <button class="card-icon-btn" title="Task"><i class="fas fa-check-square"></i></button>
+            <button class="card-icon-btn" title="Calendar"><i class="fas fa-calendar-alt"></i></button>
+            <button class="card-icon-btn card-delete-icon" title="Delete"><i class="fas fa-trash"></i></button>
+        </div>
+    `;
+
+    // Add drag event listeners
+    cardDiv.addEventListener('dragstart', handleDragStart);
+    cardDiv.addEventListener('dragend', handleDragEnd);
+
+    // Add click event listener for delete button after DOM is ready
+    setTimeout(() => {
+        const deleteBtn = cardDiv.querySelector('.card-delete-icon');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                deleteOpportunityCard(card.id);
+            });
+        }
+    }, 0);
+
+    return cardDiv;
 }
 
-// Load Custom Scenario
-function loadCustomScenario(name) {
-    const savedScenarios = JSON.parse(localStorage.getItem('ghlScenarios') || '{}');
-    const scenario = savedScenarios[name];
-    
-    if (scenario) {
-        scenarioSteps = scenario.steps;
-        renderScenarioList();
-        alert(`Loaded scenario "${name}"`);
+// Initialize Drag and Drop
+function initializeDragAndDrop() {
+    const stageColumns = document.querySelectorAll('.stage-column');
+
+    stageColumns.forEach(stage => {
+        const stageCards = stage.querySelector('.stage-cards');
+
+        if (stageCards) {
+            stageCards.addEventListener('dragover', handleDragOver);
+            stageCards.addEventListener('drop', handleDrop);
+            stageCards.addEventListener('dragenter', handleDragEnter);
+            stageCards.addEventListener('dragleave', handleDragLeave);
+        }
+    });
+}
+
+// Drag and Drop Handlers
+let draggedCard = null;
+let dropIndicator = null;
+
+function handleDragStart(e) {
+    draggedCard = e.target.closest('.opportunity-card');
+    if (draggedCard) {
+        draggedCard.style.opacity = '0.5';
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', draggedCard.innerHTML);
     }
 }
 
-// Delete Custom Scenario
-function deleteCustomScenario(name) {
-    if (confirm(`Delete scenario "${name}"?`)) {
-        const savedScenarios = JSON.parse(localStorage.getItem('ghlScenarios') || '{}');
-        delete savedScenarios[name];
-        localStorage.setItem('ghlScenarios', JSON.stringify(savedScenarios));
-        loadSavedScenarios();
+function handleDragEnd(e) {
+    if (draggedCard) {
+        draggedCard.style.opacity = '';
     }
+    draggedCard = null;
+
+    // Remove drop indicator if it exists
+    if (dropIndicator) {
+        dropIndicator.remove();
+        dropIndicator = null;
+    }
+
+    // Remove all drag-over classes and placeholders
+    document.querySelectorAll('.stage-cards').forEach(stage => {
+        stage.classList.remove('drag-over');
+    });
+    document.querySelectorAll('.drop-placeholder').forEach(p => p.remove());
 }
 
-// Load saved scenarios on page load
-document.addEventListener('DOMContentLoaded', function() {
-    loadSavedScenarios();
-});
-
-// Messaging Animation Function (Deprecated - Use Scenario Builder instead)
-async function startMessagingAnimation() {
-    // First, ensure we're on the conversations screen
-    const conversationNav = document.querySelector('.nav-item[data-screen="conversations"]');
-    if (conversationNav && !conversationNav.classList.contains('active')) {
-        conversationNav.click();
-        await sleep(300);
+function handleDragOver(e) {
+    if (e.preventDefault) {
+        e.preventDefault();
     }
-    
-    // Get animation settings
-    const outgoingMessagesText = document.getElementById('outgoingMessages').value;
-    const incomingMessagesText = document.getElementById('incomingMessages').value;
-    const messageDelay = parseInt(document.getElementById('messageDelay').value) || 2000;
-    const typingDuration = parseInt(document.getElementById('typingDuration').value) || 1500;
-    
-    // Parse messages
-    const outgoingMessages = outgoingMessagesText.split('\n').filter(msg => msg.trim());
-    const incomingMessages = incomingMessagesText.split('\n').filter(msg => msg.trim());
-    
-    // Ensure a conversation is selected
-    if (!currentConversation) {
-        // Select the first conversation if none is selected
-        const firstConversationItem = document.querySelector('.conversation-item');
-        if (firstConversationItem) {
-            firstConversationItem.click();
-            await sleep(300);
+    e.dataTransfer.dropEffect = 'move';
+
+    const afterElement = getDragAfterElement(e.currentTarget, e.clientY);
+    const stageCards = e.currentTarget;
+
+    // Remove existing placeholder
+    const existingPlaceholder = stageCards.querySelector('.drop-placeholder');
+    if (existingPlaceholder) {
+        existingPlaceholder.remove();
+    }
+
+    // Create and insert placeholder
+    if (draggedCard && stageCards.classList.contains('stage-cards')) {
+        const placeholder = createDropPlaceholder();
+
+        if (afterElement == null) {
+            stageCards.appendChild(placeholder);
+        } else {
+            stageCards.insertBefore(placeholder, afterElement);
         }
     }
-    
-    if (!currentConversation) {
-        alert('Please select a conversation first');
+
+    return false;
+}
+
+function handleDragEnter(e) {
+    if (e.currentTarget.classList.contains('stage-cards')) {
+        e.currentTarget.classList.add('drag-over');
+    }
+}
+
+function handleDragLeave(e) {
+    if (e.currentTarget.classList.contains('stage-cards')) {
+        // Only remove if we're actually leaving the container
+        const rect = e.currentTarget.getBoundingClientRect();
+        if (e.clientX < rect.left || e.clientX > rect.right ||
+            e.clientY < rect.top || e.clientY > rect.bottom) {
+            e.currentTarget.classList.remove('drag-over');
+            const placeholder = e.currentTarget.querySelector('.drop-placeholder');
+            if (placeholder) {
+                placeholder.remove();
+            }
+        }
+    }
+}
+
+function handleDrop(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation();
+    }
+
+    const stageCards = e.currentTarget;
+    const placeholder = stageCards.querySelector('.drop-placeholder');
+
+    if (draggedCard && stageCards.classList.contains('stage-cards')) {
+        // Find where to insert the card
+        if (placeholder) {
+            placeholder.replaceWith(draggedCard);
+        } else {
+            const afterElement = getDragAfterElement(stageCards, e.clientY);
+            if (afterElement == null) {
+                stageCards.appendChild(draggedCard);
+            } else {
+                stageCards.insertBefore(draggedCard, afterElement);
+            }
+        }
+
+        // Update the card data
+        const cardId = parseInt(draggedCard.dataset.cardId);
+        const stageColumn = stageCards.closest('.stage-column');
+        const newStage = stageColumn ? stageColumn.getAttribute('data-stage') : null;
+
+        if (newStage) {
+            const card = window.opportunityCards.find(c => c.id === cardId);
+            if (card) {
+                card.stage = newStage;
+            }
+        }
+
+        // Update counters
+        updateStageCounters();
+
+        // Remove drag-over class
+        stageCards.classList.remove('drag-over');
+    }
+
+    // Clean up any remaining placeholders
+    document.querySelectorAll('.drop-placeholder').forEach(p => p.remove());
+
+    return false;
+}
+
+// Helper function to determine where to insert the dragged element
+function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.opportunity-card:not(.dragging)')];
+
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+// Create a placeholder element
+function createDropPlaceholder() {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'drop-placeholder';
+    return placeholder;
+}
+
+// Update Stage Counters and Values
+function updateStageCounters() {
+    const stages = ['demo-requested', 'demo-scheduled', 'demo-no-show', 'demo-converted', 'client-not-converted'];
+
+    stages.forEach(stageId => {
+        const stageColumn = document.querySelector(`[data-stage="${stageId}"]`);
+        if (stageColumn) {
+            const counter = stageColumn.querySelector('.stage-count');
+            const valueElement = stageColumn.querySelector('.stage-value');
+            const stageCards = document.getElementById(`${stageId}-cards`);
+            const cards = stageCards ? stageCards.querySelectorAll('.opportunity-card') : [];
+
+            // Update count
+            const count = cards.length;
+            if (counter) {
+                counter.textContent = count + (count === 1 ? ' Opportunity' : ' Opportunities');
+            }
+
+            // Calculate total value for this stage
+            let totalValue = 0;
+            const cardsInStage = window.opportunityCards.filter(c => c.stage === stageId);
+            cardsInStage.forEach(card => {
+                // Parse value removing $ and commas
+                const value = parseFloat(card.value.replace(/[$,]/g, '')) || 0;
+                totalValue += value;
+            });
+
+            // Update value display
+            if (valueElement) {
+                valueElement.textContent = '$' + totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+        }
+    });
+}
+
+// Start Opportunity Animation
+function startOpportunityAnimation() {
+    if (opportunityAnimationInterval) {
+        clearInterval(opportunityAnimationInterval);
+    }
+
+    const stages = ['demo-requested', 'demo-scheduled', 'demo-no-show', 'demo-converted', 'client-not-converted'];
+    let currentStageIndex = 0;
+
+    // Get a random card from demo-requested
+    const demoRequestedCards = window.opportunityCards.filter(c => c.stage === 'demo-requested');
+    if (demoRequestedCards.length === 0) {
+        // Reset some cards back to demo-requested if all have moved
+        opportunityCards.forEach((card, index) => {
+            if (index < 3) {
+                card.stage = 'demo-requested';
+            }
+        });
+        renderOpportunityCards();
+        updateStageCounters();
         return;
     }
-    
-    // Clear existing messages
-    currentConversation.messages = [];
-    loadConversationMessages();
-    
-    // Create message sequence (alternating between incoming and outgoing)
-    const messageSequence = [];
-    const maxMessages = Math.max(outgoingMessages.length, incomingMessages.length);
-    
-    for (let i = 0; i < maxMessages; i++) {
-        if (i < incomingMessages.length) {
-            messageSequence.push({ type: 'incoming', text: incomingMessages[i] });
+
+    const cardToMove = demoRequestedCards[Math.floor(Math.random() * demoRequestedCards.length)];
+
+    opportunityAnimationInterval = setInterval(() => {
+        if (currentStageIndex < stages.length - 1) {
+            currentStageIndex++;
+            cardToMove.stage = stages[currentStageIndex];
+
+            // Animate the movement
+            renderOpportunityCards();
+            updateStageCounters();
+
+            // Highlight the moved card
+            setTimeout(() => {
+                const movedCard = document.querySelector(`[data-card-id="${cardToMove.id}"]`);
+                if (movedCard) {
+                    movedCard.classList.add('highlight');
+                    setTimeout(() => {
+                        movedCard.classList.remove('highlight');
+                    }, 500);
+                }
+            }, 100);
+
+            // Stop at a random stage sometimes
+            if (Math.random() > 0.6 && currentStageIndex > 1) {
+                clearInterval(opportunityAnimationInterval);
+                opportunityAnimationInterval = null;
+            }
+        } else {
+            clearInterval(opportunityAnimationInterval);
+            opportunityAnimationInterval = null;
         }
-        if (i < outgoingMessages.length) {
-            messageSequence.push({ type: 'outgoing', text: outgoingMessages[i] });
-        }
-    }
-    
-    // Animate messages
-    for (const msgData of messageSequence) {
-        // Show typing indicator
-        await showTypingIndicator(msgData.type, typingDuration);
-        
-        // Add message
-        await addAnimatedMessage(msgData.type, msgData.text);
-        
-        // Wait before next message
-        await sleep(messageDelay);
-    }
-    
-    // Update conversation preview
-    updateConversationPreview();
-    
-    // Success sound removed per request
+    }, 2000);
 }
 
-async function showTypingIndicator(type, duration) {
-    const messagesArea = document.querySelector('.messages-area');
-    if (!messagesArea) return;
-    
-    // Create typing indicator using same structure as messages
-    const typingIndicator = document.createElement('div');
-    typingIndicator.className = `message-group ${type} typing-indicator`;
-    
-    if (type === 'outgoing') {
-        typingIndicator.innerHTML = `
-            <div class="message-bubble">
-                <div class="typing-dots">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-            <div class="avatar-small">AI</div>
-        `;
-    } else {
-        typingIndicator.innerHTML = `
-            <div class="avatar-small">${currentConversation?.initials || 'U'}</div>
-            <div class="message-bubble">
-                <div class="typing-dots">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-        `;
+// Stop Opportunity Animation
+function stopOpportunityAnimation() {
+    if (opportunityAnimationInterval) {
+        clearInterval(opportunityAnimationInterval);
+        opportunityAnimationInterval = null;
     }
-    
-    messagesArea.appendChild(typingIndicator);
-    messagesArea.scrollTop = messagesArea.scrollHeight;
-    
-    await sleep(duration);
-    
-    // Remove typing indicator
-    typingIndicator.remove();
 }
 
-async function addAnimatedMessage(type, text) {
-    const now = new Date();
-    const newMessage = {
-        id: `msg-${conversationMessageIdCounter++}`,
-        type: type,
-        sender: type === 'outgoing' ? 'AutomateMyBiz.pro' : currentConversation.name,
-        text: text,
-        date: formatConversationDate(now),
-        time: formatConversationTime(now)
-    };
-    
-    // Add to conversation
-    currentConversation.messages.push(newMessage);
-    
-    // Create message element
-    const messagesArea = document.querySelector('.messages-area');
-    if (!messagesArea) return;
-    
-    // Check if we need a date separator
-    const lastMessageGroup = messagesArea.querySelector('.message-group:last-child');
-    const lastDate = lastMessageGroup?.dataset?.date;
-    
-    if (!lastDate || lastDate !== newMessage.date) {
-        const dateDivider = document.createElement('div');
-        dateDivider.className = 'date-divider';
-        dateDivider.innerHTML = `<span>${newMessage.date}</span>`;
-        messagesArea.appendChild(dateDivider);
+// Add Contact Opportunity from Control Panel
+function addContactOpportunity() {
+    console.log('addContactOpportunity called');
+    // Initialize opportunities if not already initialized
+    if (!window.opportunitiesInitialized) {
+        initializeOpportunities();
+        window.opportunitiesInitialized = true;
     }
-    
-    // Create message using the same structure as default messages
-    const messageGroup = document.createElement('div');
-    messageGroup.className = `message-group ${type}`;
-    messageGroup.dataset.date = newMessage.date;
-    messageGroup.style.opacity = '0';
-    messageGroup.style.transform = 'translateY(10px)';
-    
-    if (type === 'outgoing') {
-        messageGroup.innerHTML = `
-            <div class="message-bubble">
-                <div class="message-header">
-                    <span class="label">${newMessage.sender}</span>
-                    <span class="message-text">${text}</span>
-                </div>
-                <div class="message-time">${newMessage.time}</div>
-            </div>
-            <div class="avatar-small">AI</div>
-        `;
-    } else {
-        messageGroup.innerHTML = `
-            <div class="avatar-small">${currentConversation.initials}</div>
-            <div class="message-bubble">
-                <div class="message-header">
-                    <span class="message-text">${text}</span>
-                </div>
-                <div class="message-time">${newMessage.time}</div>
-            </div>
-        `;
-    }
-    
-    messagesArea.appendChild(messageGroup);
-    
-    // Animate message appearance
-    await sleep(50);
-    messageGroup.style.transition = 'all 0.3s ease';
-    messageGroup.style.opacity = '1';
-    messageGroup.style.transform = 'translateY(0)';
-    
-    // Scroll to bottom
-    messagesArea.scrollTop = messagesArea.scrollHeight;
-    
-    // Play message notification sound
-    playMessageSound();
-}
 
-// Additional conversation control functions
-function sendTestMessage() {
-    if (currentConversation) {
-        const testMessage = {
-            id: `msg-${conversationMessageIdCounter++}`,
-            type: 'incoming',
-            text: 'This is a test message from the control panel!',
-            date: formatConversationDate(new Date()),
-            time: formatConversationTime(new Date())
+    const nameInput = document.getElementById('contactName');
+    const valueInput = document.getElementById('opportunityValue');
+    const sourceInput = document.getElementById('opportunitySource');
+    const stageSelect = document.getElementById('targetStageSelect');
+
+    if (nameInput && valueInput) {
+        const name = nameInput.value || 'New Contact';
+        const value = parseFloat(valueInput.value) || 0;
+        const source = sourceInput.value || 'Direct';
+        const stage = stageSelect.value;
+
+        // Generate initials from name
+        const nameParts = name.split(' ');
+        const initials = nameParts.length >= 2
+            ? nameParts[0][0].toUpperCase() + nameParts[1][0].toUpperCase()
+            : nameParts[0].substring(0, 2).toUpperCase();
+
+        const newCard = {
+            id: Date.now(),
+            name: name,
+            value: value.toFixed(2),
+            source: source,
+            stage: stage,
+            avatar: initials
         };
-        currentConversation.messages.push(testMessage);
-        loadConversationMessages();
+
+        window.opportunityCards.push(newCard);
+
+        console.log('Adding card:', newCard);
+        console.log('Total cards:', window.opportunityCards.length);
+
+        // Make sure the opportunities screen is visible
+        const opportunitiesScreen = document.getElementById('opportunities-screen');
+        const calendarScreen = document.getElementById('calendar-screen');
+        const conversationsScreen = document.getElementById('conversations-screen');
+
+        if (opportunitiesScreen) {
+            opportunitiesScreen.style.display = 'block';
+        }
+        if (calendarScreen) {
+            calendarScreen.style.display = 'none';
+        }
+        if (conversationsScreen) {
+            conversationsScreen.style.display = 'none';
+        }
+
+        // Update nav
+        const navItems = document.querySelectorAll('.nav-item[data-screen]');
+        navItems.forEach(nav => nav.classList.remove('active'));
+        const opportunitiesNav = document.querySelector('.nav-item[data-screen="opportunities"]');
+        if (opportunitiesNav) opportunitiesNav.classList.add('active');
+
+        renderOpportunityCards();
+        updateStageCounters();
+
+        // Clear inputs
+        nameInput.value = '';
+        valueInput.value = '';
+        sourceInput.value = '';
+
+        // Highlight the new card
+        setTimeout(() => {
+            const addedCard = document.querySelector(`[data-card-id="${newCard.id}"]`);
+            if (addedCard) {
+                addedCard.classList.add('highlight');
+                setTimeout(() => {
+                    addedCard.classList.remove('highlight');
+                }, 1000);
+            }
+        }, 100);
+    } else {
+        alert('Please enter at least a contact name to add an opportunity.');
     }
 }
 
-function markAllRead() {
-    document.querySelectorAll('.unread-count').forEach(badge => {
-        badge.style.display = 'none';
-    });
-    Object.keys(conversations).forEach(key => {
-        conversations[key].unread = 0;
-    });
+// Add New Opportunity
+function addNewOpportunity() {
+    const names = [
+        'Alex Thompson', 'Jordan Lee', 'Taylor Brown', 'Casey Miller',
+        'Morgan Davis', 'Riley Johnson', 'Avery Wilson', 'Quinn Anderson'
+    ];
+    const companies = [
+        'techstart', 'bizpro', 'salesmax', 'growthco', 'innovate', 'nexgen', 'future', 'digital'
+    ];
+    const domains = ['.com', '.io', '.net', '.co', '.biz'];
+
+    const randomName = names[Math.floor(Math.random() * names.length)];
+    const randomCompany = companies[Math.floor(Math.random() * companies.length)];
+    const randomDomain = domains[Math.floor(Math.random() * domains.length)];
+    const randomValue = Math.floor(Math.random() * 15000) + 2000;
+
+    const newCard = {
+        id: Date.now(),
+        name: randomName,
+        email: `${randomName.toLowerCase().replace(' ', '.')}@${randomCompany}${randomDomain}`,
+        value: `$${randomValue.toLocaleString()}`,
+        stage: 'demo-requested',
+        avatar: '👤'
+    };
+
+    window.opportunityCards.push(newCard);
+    renderOpportunityCards();
+    updateStageCounters();
+
+    // Highlight the new card
+    setTimeout(() => {
+        const addedCard = document.querySelector(`[data-card-id="${newCard.id}"]`);
+        if (addedCard) {
+            addedCard.classList.add('highlight');
+            setTimeout(() => {
+                addedCard.classList.remove('highlight');
+            }, 1000);
+        }
+    }, 100);
 }
 
-function clearConversations() {
-    if (confirm('Are you sure you want to clear all contacts and their conversations?')) {
-        // Clear all conversations from the object
-        conversations = {};
-        currentConversation = null;
+// Move Card to Stage
+function moveCardToStage(targetStage) {
+    // Get cards from earlier stages
+    const stages = ['demo-requested', 'demo-scheduled', 'demo-no-show', 'demo-converted', 'client-not-converted'];
+    const targetIndex = stages.indexOf(targetStage);
 
-        // Clear the conversation list UI
-        const conversationItems = document.querySelector('.conversation-items');
-        if (conversationItems) {
-            conversationItems.innerHTML = '<div style="text-align: center; color: #999; padding: 50px;">No contacts yet</div>';
-        }
+    let cardToMove = null;
 
-        // Clear the messages area
-        const messagesArea = document.querySelector('.messages-area');
-        if (messagesArea) {
-            messagesArea.innerHTML = '<div style="text-align: center; color: #999; padding: 50px;">No conversation selected</div>';
-        }
-
-        // Update chat header
-        const chatHeader = document.querySelector('.chat-contact-info h2');
-        if (chatHeader) {
-            chatHeader.textContent = 'Select a contact';
-        }
-
-        // Clear contact details
-        const contactAvatar = document.querySelector('.contact-avatar');
-        if (contactAvatar) {
-            contactAvatar.textContent = '';
-        }
-        const contactName = document.querySelector('.contact-details-panel h3');
-        if (contactName) {
-            contactName.textContent = 'No contact selected';
+    // Find a card from an earlier stage
+    for (let i = 0; i < targetIndex; i++) {
+        const cardsInStage = window.opportunityCards.filter(c => c.stage === stages[i]);
+        if (cardsInStage.length > 0) {
+            cardToMove = cardsInStage[0];
+            break;
         }
     }
+
+    if (cardToMove) {
+        cardToMove.stage = targetStage;
+        renderOpportunityCards();
+        updateStageCounters();
+
+        // Highlight the moved card
+        setTimeout(() => {
+            const movedCard = document.querySelector(`[data-card-id="${cardToMove.id}"]`);
+            if (movedCard) {
+                movedCard.classList.add('highlight');
+                setTimeout(() => {
+                    movedCard.classList.remove('highlight');
+                }, 1000);
+            }
+        }, 100);
+    } else {
+        // If no cards in earlier stages, create a new one
+        addNewOpportunity();
+        setTimeout(() => {
+            const newCard = opportunityCards[window.opportunityCards.length - 1];
+            newCard.stage = targetStage;
+            renderOpportunityCards();
+            updateStageCounters();
+        }, 500);
+    }
 }
+
+// Delete specific opportunity card
+function deleteOpportunityCard(cardId) {
+    // Remove card from array
+    window.opportunityCards = window.window.opportunityCards.filter(card => card.id !== cardId);
+
+    // Re-render cards
+    renderOpportunityCards();
+    updateStageCounters();
+
+    // Play sound effect if available
+    if (typeof playSound === 'function') {
+        playSound('popSound');
+    }
+}
+
+// Clear All Opportunities
+function clearOpportunities() {
+    // Initialize opportunities if not already initialized
+    if (!window.opportunitiesInitialized) {
+        initializeOpportunities();
+        window.opportunitiesInitialized = true;
+    }
+
+    stopOpportunityAnimation();
+    window.window.opportunityCards = [];
+    renderOpportunityCards();
+    updateStageCounters();
+}
+
+// Quick Fill Pipeline
+function quickFillPipeline() {
+    console.log('quickFillPipeline called');
+    // Initialize opportunities if not already initialized
+    if (!window.opportunitiesInitialized) {
+        initializeOpportunities();
+        window.opportunitiesInitialized = true;
+    }
+
+    // Clear existing and add sample opportunities
+    window.opportunityCards = [
+        {
+            id: 1,
+            name: 'Sarah Johnson',
+            value: '5000.00',
+            source: 'Automate My Biz - AI Demo',
+            stage: 'demo-requested',
+            avatar: 'SJ'
+        },
+        {
+            id: 2,
+            name: 'Mike Chen',
+            value: '3500.00',
+            source: 'LinkedIn Outreach',
+            stage: 'demo-requested',
+            avatar: 'MC'
+        },
+        {
+            id: 3,
+            name: 'Emily Davis',
+            value: '7500.00',
+            source: 'Website Form',
+            stage: 'demo-scheduled',
+            avatar: 'ED'
+        },
+        {
+            id: 4,
+            name: 'James Wilson',
+            value: '12000.00',
+            source: 'Referral Program',
+            stage: 'demo-scheduled',
+            avatar: 'JW'
+        },
+        {
+            id: 5,
+            name: 'Lisa Martinez',
+            value: '4200.00',
+            source: 'Cold Email Campaign',
+            stage: 'demo-scheduled',
+            avatar: 'LM'
+        },
+        {
+            id: 6,
+            name: 'Robert Taylor',
+            value: '8800.00',
+            source: 'Facebook Ads',
+            stage: 'demo-no-show',
+            avatar: 'RT'
+        },
+        {
+            id: 7,
+            name: 'Anna Brown',
+            value: '6000.00',
+            source: 'Google Ads',
+            stage: 'demo-converted',
+            avatar: 'AB'
+        },
+        {
+            id: 8,
+            name: 'David Lee',
+            value: '15000.00',
+            source: 'Partner Referral',
+            stage: 'demo-converted',
+            avatar: 'DL'
+        },
+        {
+            id: 9,
+            name: 'Sophie Anderson',
+            value: '4500.00',
+            source: 'Trade Show',
+            stage: 'client-not-converted',
+            avatar: 'SA'
+        },
+        {
+            id: 10,
+            name: 'Chris Walker',
+            value: '9200.00',
+            source: 'Webinar Funnel',
+            stage: 'demo-converted',
+            avatar: 'CW'
+        }
+    ];
+
+    renderOpportunityCards();
+    updateStageCounters();
+}
+
+// Card Animation Variables
+let animatedMoveMode = false;
+let selectedCardForAnimation = null;
+let selectedCardElement = null;
+
+// Opportunity Animation Scenario System
+let opportunityScenario = [];
+let isRecordingMove = false;
+let isPlayingScenario = false;
+let currentScenarioStep = 0;
+
+// Start animated move mode
+function startAnimatedMove() {
+    const btn = document.getElementById('animatedMoveBtn');
+    const statusLabel = document.getElementById('animationStatusLabel');
+
+    if (animatedMoveMode) {
+        // Cancel mode
+        cancelAnimatedMove();
+        return;
+    }
+
+    // Enter card selection mode
+    animatedMoveMode = 'select-card';
+    btn.innerHTML = '<i class="fas fa-times"></i> Cancel';
+    btn.classList.add('active');
+    statusLabel.textContent = 'Step 1: Click on a card to select it';
+
+    // Add selection mode to all cards
+    document.querySelectorAll('.opportunity-card').forEach(card => {
+        card.classList.add('selectable-card');
+        card.addEventListener('click', handleCardSelection);
+    });
+}
+
+// Handle card selection
+function handleCardSelection(e) {
+    if (animatedMoveMode !== 'select-card') return;
+
+    e.stopPropagation();
+    e.preventDefault();
+
+    // Remove previous selection
+    document.querySelectorAll('.opportunity-card').forEach(card => {
+        card.classList.remove('selected-for-animation');
+    });
+
+    // Select this card
+    const card = e.currentTarget;
+    card.classList.add('selected-for-animation');
+    selectedCardElement = card;
+    selectedCardForAnimation = card.dataset.cardId;
+
+    // Update UI
+    const cardName = card.querySelector('.card-title').textContent;
+    document.getElementById('selectedCardName').textContent = cardName;
+    document.getElementById('selectedCardInfo').style.display = 'block';
+    document.getElementById('animationStatusLabel').textContent = 'Step 2: Click where you want to place the card';
+
+    // Switch to destination selection mode
+    animatedMoveMode = 'select-destination';
+
+    // Remove card click handlers and add destination handlers
+    document.querySelectorAll('.opportunity-card').forEach(card => {
+        card.classList.remove('selectable-card');
+        card.removeEventListener('click', handleCardSelection);
+    });
+
+    // Add destination indicators
+    addDestinationIndicators();
+}
+
+// Add visual destination indicators
+function addDestinationIndicators() {
+    const stages = document.querySelectorAll('.stage-cards');
+
+    stages.forEach(stage => {
+        // Add drop zone at the top of each stage
+        const topIndicator = createDropIndicator('top');
+        topIndicator.addEventListener('click', (e) => handleDestinationSelection(e, stage, 'top'));
+        stage.insertBefore(topIndicator, stage.firstChild);
+
+        // Add drop zones between cards
+        const cards = stage.querySelectorAll('.opportunity-card');
+        cards.forEach((card) => {
+            if (card !== selectedCardElement) {
+                const indicator = createDropIndicator('between');
+                indicator.addEventListener('click', (e) => handleDestinationSelection(e, stage, 'after', card));
+                card.parentNode.insertBefore(indicator, card.nextSibling);
+            }
+        });
+
+        // Make stage clickable for empty stages
+        if (cards.length === 0 || (cards.length === 1 && cards[0] === selectedCardElement)) {
+            stage.classList.add('drop-zone-active');
+            stage.addEventListener('click', handleEmptyStageClick);
+        }
+    });
+}
+
+// Create a drop indicator element
+function createDropIndicator(type) {
+    const indicator = document.createElement('div');
+    indicator.className = 'drop-indicator-interactive';
+    indicator.innerHTML = '<div class="drop-line"></div><div class="drop-text">Click to place here</div>';
+    return indicator;
+}
+
+// Handle destination selection
+function handleDestinationSelection(e, stage, position, afterCard) {
+    e.stopPropagation();
+    if (animatedMoveMode !== 'select-destination') return;
+
+    // Perform the animated move
+    performAnimatedMove(stage, position, afterCard);
+}
+
+// Handle clicking on empty stage
+function handleEmptyStageClick(e) {
+    if (e.target !== e.currentTarget) return;
+    handleDestinationSelection(e, e.currentTarget, 'top');
+}
+
+// Perform the animated move with kanban-style indicator
+function performAnimatedMove(targetStage, position, afterCard) {
+    if (!selectedCardElement) return;
+
+    const cardId = parseInt(selectedCardForAnimation);
+    const card = window.opportunityCards.find(c => c.id === cardId);
+    if (!card) return;
+
+    // First show the blue placement line
+    const placementLine = document.createElement('div');
+    placementLine.className = 'drop-placeholder';
+    placementLine.style.height = '3px';
+    placementLine.style.background = '#5643ce';
+    placementLine.style.margin = '4px 0';
+    placementLine.style.borderRadius = '2px';
+    placementLine.style.animation = 'pulse 1s infinite';
+
+    // Insert placeholder at destination
+    if (position === 'top') {
+        targetStage.insertBefore(placementLine, targetStage.firstChild);
+    } else if (position === 'after' && afterCard) {
+        afterCard.parentNode.insertBefore(placementLine, afterCard.nextSibling);
+    }
+
+    // Create clone for animation
+    const cardClone = selectedCardElement.cloneNode(true);
+    cardClone.style.position = 'fixed';
+    cardClone.style.zIndex = '1000';
+    cardClone.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+    cardClone.style.pointerEvents = 'none';
+    cardClone.classList.remove('selected-for-animation');
+
+    // Get positions
+    const startRect = selectedCardElement.getBoundingClientRect();
+    const destRect = placementLine.getBoundingClientRect();
+
+    // Set initial position
+    cardClone.style.left = startRect.left + 'px';
+    cardClone.style.top = startRect.top + 'px';
+    cardClone.style.width = startRect.width + 'px';
+    document.body.appendChild(cardClone);
+
+    // Hide original
+    selectedCardElement.style.opacity = '0';
+
+    // Animate to destination
+    setTimeout(() => {
+        cardClone.style.left = destRect.left + 'px';
+        cardClone.style.top = destRect.top + 'px';
+        cardClone.style.transform = 'scale(0.95)';
+    }, 50);
+
+    // After animation, update data
+    setTimeout(() => {
+        // Update card stage
+        const newStageId = targetStage.id.replace('-cards', '');
+        card.stage = newStageId;
+
+        // Remove placeholder
+        placementLine.remove();
+
+        // Re-render cards
+        renderOpportunityCards();
+        updateStageCounters();
+
+        // Clean up clone
+        cardClone.remove();
+
+        // Reset mode
+        cancelAnimatedMove();
+
+        // Play sound
+        if (typeof playSound === 'function') {
+            playSound('swooshSound');
+        }
+    }, 850);
+}
+
+// Cancel animated move mode  
+function cancelAnimatedMove() {
+    animatedMoveMode = false;
+    selectedCardForAnimation = null;
+    selectedCardElement = null;
+
+    // Clean up UI
+    const btn = document.getElementById('animatedMoveBtn');
+    if (btn) {
+        btn.innerHTML = '<i class="fas fa-hand-pointer"></i> Start Animated Move';
+        btn.classList.remove('active');
+    }
+    
+    const statusLabel = document.getElementById('animationStatusLabel');
+    if (statusLabel) {
+        statusLabel.textContent = 'Click button to start';
+    }
+    
+    const cardInfo = document.getElementById('selectedCardInfo');
+    if (cardInfo) {
+        cardInfo.style.display = 'none';
+    }
+
+    // Remove all classes and handlers
+    document.querySelectorAll('.opportunity-card').forEach(card => {
+        card.classList.remove('selectable-card', 'selected-for-animation');
+        card.removeEventListener('click', handleCardSelection);
+    });
+
+    // Remove indicators
+    document.querySelectorAll('.drop-indicator-interactive').forEach(ind => ind.remove());
+    document.querySelectorAll('.drop-zone-active').forEach(zone => {
+        zone.classList.remove('drop-zone-active');
+        zone.removeEventListener('click', handleEmptyStageClick);
+    });
+}
+
+// Record a move for scenario
+window.recordOpportunityMove = function() {
+    const btn = document.getElementById('recordMoveBtn');
+
+    if (isRecordingMove) {
+        // Cancel recording
+        cancelRecordingMove();
+        return;
+    }
+
+    // Start recording mode
+    isRecordingMove = true;
+    btn.innerHTML = '<i class="fas fa-times"></i> Cancel Recording';
+    btn.classList.add('active');
+
+    // Show instruction
+    alert('Step 1: Click on a card to select it\nStep 2: Click where you want to move it');
+
+    // Enable card selection
+    enableCardSelectionForRecording();
+};
+
+// Enable card selection for recording
+function enableCardSelectionForRecording() {
+    document.querySelectorAll('.opportunity-card').forEach(card => {
+        card.classList.add('recordable-card');
+        card.addEventListener('click', handleRecordCardSelection);
+    });
+}
+
+// Handle card selection during recording
+function handleRecordCardSelection(e) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (!isRecordingMove) return;
+
+    const card = e.currentTarget;
+    const cardId = card.dataset.cardId;
+    const cardTitle = card.querySelector('.card-title').textContent;
+
+    // Highlight selected card
+    document.querySelectorAll('.opportunity-card').forEach(c => {
+        c.classList.remove('recording-selected');
+    });
+    card.classList.add('recording-selected');
+
+    // Remove card selection handlers
+    document.querySelectorAll('.opportunity-card').forEach(c => {
+        c.classList.remove('recordable-card');
+        c.removeEventListener('click', handleRecordCardSelection);
+    });
+
+    // Now enable destination selection
+    enableDestinationSelectionForRecording(cardId, cardTitle);
+}
+
+// Enable destination selection for recording
+function enableDestinationSelectionForRecording(cardId, cardTitle) {
+    const stages = document.querySelectorAll('.stage-cards');
+
+    stages.forEach(stage => {
+        // Add visual indicators for drop zones
+        const cards = stage.querySelectorAll('.opportunity-card');
+
+        // Add top indicator
+        const topIndicator = document.createElement('div');
+        topIndicator.className = 'record-drop-indicator';
+        topIndicator.innerHTML = '<div class="drop-line"></div>';
+        topIndicator.dataset.position = 'top';
+        topIndicator.dataset.stage = stage.id.replace('-cards', '');
+        topIndicator.addEventListener('click', (e) => handleRecordDestination(e, cardId, cardTitle));
+        stage.insertBefore(topIndicator, stage.firstChild);
+
+        // Add indicators between cards
+        cards.forEach(card => {
+            if (card.dataset.cardId !== cardId) {
+                const indicator = document.createElement('div');
+                indicator.className = 'record-drop-indicator';
+                indicator.innerHTML = '<div class="drop-line"></div>';
+                indicator.dataset.position = 'after';
+                indicator.dataset.afterCardId = card.dataset.cardId;
+                indicator.dataset.stage = stage.id.replace('-cards', '');
+                indicator.addEventListener('click', (e) => handleRecordDestination(e, cardId, cardTitle));
+                card.parentNode.insertBefore(indicator, card.nextSibling);
+            }
+        });
+    });
+}
+
+// Handle destination selection during recording
+function handleRecordDestination(e, cardId, cardTitle) {
+    e.stopPropagation();
+
+    const stage = e.currentTarget.dataset.stage;
+    const position = e.currentTarget.dataset.position;
+    const afterCardId = e.currentTarget.dataset.afterCardId;
+
+    // Create scenario step
+    const step = {
+        cardId: cardId,
+        cardTitle: cardTitle,
+        fromStage: getCurrentStageForCard(cardId),
+        toStage: stage,
+        position: position,
+        afterCardId: afterCardId || null
+    };
+
+    // Add to scenario
+    opportunityScenario.push(step);
+
+    // Update UI
+    updateScenarioList();
+
+    // Clean up recording mode
+    cancelRecordingMove();
+
+    // Enable play button if we have steps
+    const playBtn = document.getElementById('playScenarioBtn');
+    if (playBtn && opportunityScenario.length > 0) {
+        playBtn.disabled = false;
+    }
+}
+
+// Get current stage for a card
+function getCurrentStageForCard(cardId) {
+    const card = document.querySelector('[data-card-id="' + cardId + '"]');
+    if (card) {
+        const stageCards = card.closest('.stage-cards');
+        if (stageCards) {
+            return stageCards.id.replace('-cards', '');
+        }
+    }
+    return null;
+}
+
+// Cancel recording mode
+function cancelRecordingMove() {
+    isRecordingMove = false;
+
+    // Reset button
+    const btn = document.getElementById('recordMoveBtn');
+    if (btn) {
+        btn.innerHTML = '<i class="fas fa-plus-circle"></i> Record Move';
+        btn.classList.remove('active');
+    }
+
+    // Clean up UI
+    document.querySelectorAll('.opportunity-card').forEach(card => {
+        card.classList.remove('recordable-card', 'recording-selected');
+        card.removeEventListener('click', handleRecordCardSelection);
+    });
+
+    document.querySelectorAll('.record-drop-indicator').forEach(indicator => {
+        indicator.remove();
+    });
+}
+
+// Update scenario list display
+function updateScenarioList() {
+    const listContainer = document.getElementById('opportunityScenarioList');
+    if (!listContainer) return;
+
+    if (opportunityScenario.length === 0) {
+        listContainer.innerHTML = '<div class="empty-scenario-message" style="text-align: center; color: #999; padding: 20px; font-size: 11px;">No moves recorded yet</div>';
+        return;
+    }
+
+    let html = '';
+    opportunityScenario.forEach((step, index) => {
+        const stageName = getStageName(step.toStage);
+        html += '<div class="scenario-step" style="padding: 8px; background: #f5f5f5; border-radius: 4px; margin-bottom: 6px; font-size: 11px;">';
+        html += '<div style="display: flex; justify-content: space-between; align-items: center;">';
+        html += '<span><strong>' + (index + 1) + '.</strong> Move "' + step.cardTitle + '" to ' + stageName + '</span>';
+        html += '<button onclick="removeScenarioStep(' + index + ')" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 12px;">';
+        html += '<i class="fas fa-times"></i></button></div></div>';
+    });
+    listContainer.innerHTML = html;
+}
+
+// Remove a scenario step
+window.removeScenarioStep = function(index) {
+    opportunityScenario.splice(index, 1);
+    updateScenarioList();
+
+    // Disable play button if no steps
+    const playBtn = document.getElementById('playScenarioBtn');
+    if (playBtn && opportunityScenario.length === 0) {
+        playBtn.disabled = true;
+    }
+};
+
+// Clear all scenario steps
+window.clearOpportunityScenario = function() {
+    opportunityScenario = [];
+    updateScenarioList();
+
+    const playBtn = document.getElementById('playScenarioBtn');
+    if (playBtn) {
+        playBtn.disabled = true;
+    }
+};
+
+// Play the scenario
+window.playOpportunityScenario = function() {
+    if (isPlayingScenario || opportunityScenario.length === 0) return;
+
+    isPlayingScenario = true;
+    currentScenarioStep = 0;
+
+    // Update UI
+    const playBtn = document.getElementById('playScenarioBtn');
+    const stopBtn = document.getElementById('stopScenarioBtn');
+    if (playBtn) playBtn.style.display = 'none';
+    if (stopBtn) stopBtn.style.display = 'block';
+
+    // Start playing steps
+    playNextScenarioStep();
+};
+
+// Play next step in scenario
+function playNextScenarioStep() {
+    if (!isPlayingScenario || currentScenarioStep >= opportunityScenario.length) {
+        // Finished playing
+        stopOpportunityScenario();
+        return;
+    }
+
+    const step = opportunityScenario[currentScenarioStep];
+    const speedSelect = document.getElementById('animationSpeed');
+    const speed = speedSelect ? speedSelect.value : 'normal';
+
+    // Get timing based on speed
+    let duration;
+    switch(speed) {
+        case 'slow': duration = 2000; break;
+        case 'fast': duration = 1000; break;
+        default: duration = 1500;
+    }
+
+    // Perform the animated move
+    performScenarioMove(step);
+
+    // Schedule next step
+    currentScenarioStep++;
+    setTimeout(() => {
+        playNextScenarioStep();
+    }, duration);
+}
+
+// Perform a scenario move
+function performScenarioMove(step) {
+    const card = document.querySelector('[data-card-id="' + step.cardId + '"]');
+    if (!card) return;
+
+    const targetStage = document.getElementById(step.toStage + '-cards');
+    if (!targetStage) return;
+
+    // Create blue indicator line first
+    const placementLine = document.createElement('div');
+    placementLine.className = 'drop-placeholder';
+    placementLine.style.cssText = 'height: 3px; background: #5643ce; margin: 4px 0; border-radius: 2px; animation: pulse 1s infinite;';
+
+    // Insert placeholder at destination
+    if (step.position === 'top') {
+        targetStage.insertBefore(placementLine, targetStage.firstChild);
+    } else if (step.position === 'after' && step.afterCardId) {
+        const afterCard = targetStage.querySelector('[data-card-id="' + step.afterCardId + '"]');
+        if (afterCard) {
+            afterCard.parentNode.insertBefore(placementLine, afterCard.nextSibling);
+        } else {
+            targetStage.appendChild(placementLine);
+        }
+    } else {
+        targetStage.appendChild(placementLine);
+    }
+
+    // Create clone for animation
+    const cardClone = card.cloneNode(true);
+    cardClone.style.position = 'fixed';
+    cardClone.style.zIndex = '1000';
+    cardClone.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+    cardClone.style.pointerEvents = 'none';
+
+    // Get positions
+    const startRect = card.getBoundingClientRect();
+    const destRect = placementLine.getBoundingClientRect();
+
+    // Set initial position
+    cardClone.style.left = startRect.left + 'px';
+    cardClone.style.top = startRect.top + 'px';
+    cardClone.style.width = startRect.width + 'px';
+    document.body.appendChild(cardClone);
+
+    // Hide original
+    card.style.opacity = '0';
+
+    // Animate to destination
+    setTimeout(() => {
+        cardClone.style.left = destRect.left + 'px';
+        cardClone.style.top = destRect.top + 'px';
+        cardClone.style.transform = 'scale(0.95)';
+    }, 50);
+
+    // After animation, update actual card position
+    setTimeout(() => {
+        // Get the card data
+        const cardData = window.opportunityCards.find(c => c.id == step.cardId);
+        if (!cardData) {
+            placementLine.remove();
+            cardClone.remove();
+            return;
+        }
+
+        // Update card data
+        cardData.stage = step.toStage;
+
+        // Remove the original card from DOM without animation
+        card.remove();
+
+        // Create a new card element for the destination
+        const newCard = createOpportunityCard(cardData);
+        newCard.style.opacity = '0';
+        newCard.style.transition = 'opacity 0.3s ease';
+
+        // Replace placeholder with actual card
+        placementLine.parentNode.insertBefore(newCard, placementLine);
+        placementLine.remove();
+        cardClone.remove();
+
+        // Fade in the new card
+        setTimeout(() => {
+            newCard.style.opacity = '1';
+        }, 50);
+
+        // Update array order to maintain correct position
+        const cardIndex = window.opportunityCards.indexOf(cardData);
+        window.opportunityCards.splice(cardIndex, 1);
+
+        if (step.position === 'top') {
+            // Insert at the beginning of cards for this stage
+            const firstCardInStage = window.opportunityCards.findIndex(c => c.stage === step.toStage);
+            if (firstCardInStage === -1) {
+                window.opportunityCards.push(cardData);
+            } else {
+                window.opportunityCards.splice(firstCardInStage, 0, cardData);
+            }
+        } else if (step.position === 'after' && step.afterCardId) {
+            // Find the card to insert after
+            const afterCardIndex = window.opportunityCards.findIndex(c => c.id == step.afterCardId);
+            if (afterCardIndex !== -1) {
+                window.opportunityCards.splice(afterCardIndex + 1, 0, cardData);
+            } else {
+                window.opportunityCards.push(cardData);
+            }
+        } else {
+            window.opportunityCards.push(cardData);
+        }
+
+        // Only update stage counters
+        if (window.updateStageCounters) {
+            window.updateStageCounters();
+        }
+
+        // Play sound
+        if (typeof playSound === 'function') {
+            playSound('swooshSound');
+        }
+    }, 850);
+}
+
+// Stop scenario playback
+window.stopOpportunityScenario = function() {
+    isPlayingScenario = false;
+    currentScenarioStep = 0;
+
+    // Update UI
+    const playBtn = document.getElementById('playScenarioBtn');
+    const stopBtn = document.getElementById('stopScenarioBtn');
+    if (playBtn) playBtn.style.display = 'block';
+    if (stopBtn) stopBtn.style.display = 'none';
+};
+
+// Helper function to get stage name
+function getStageName(stageId) {
+    const stageNames = {
+        'demo-requested': 'Demo Requested',
+        'demo-scheduled': 'Demo Scheduled',
+        'demo-no-show': 'Demo No-Show',
+        'demo-converted': 'Demo Converted',
+        'client-not-converted': 'Client Not-Converted'
+    };
+    return stageNames[stageId] || stageId;
+}
+// Move these functions outside DOMContentLoaded to make them globally available
+window.addContactOpportunity = function() {
+    console.log('addContactOpportunity called');
+    // Initialize opportunities if not already initialized
+    if (!window.opportunitiesInitialized) {
+        if (typeof initializeOpportunities === 'function') {
+            initializeOpportunities();
+        }
+        window.opportunitiesInitialized = true;
+    }
+
+    const nameInput = document.getElementById('contactName');
+    const valueInput = document.getElementById('opportunityValue');
+    const sourceInput = document.getElementById('opportunitySource');
+    const stageSelect = document.getElementById('targetStageSelect');
+
+    if (nameInput && nameInput.value) {
+        const name = nameInput.value;
+        const value = parseFloat(valueInput.value) || 0;
+        const source = sourceInput.value || 'Direct';
+        const stage = stageSelect.value || 'demo-requested';
+
+        // Generate initials from name
+        const nameParts = name.split(' ');
+        const initials = nameParts.length >= 2
+            ? nameParts[0][0].toUpperCase() + nameParts[1][0].toUpperCase()
+            : nameParts[0].substring(0, 2).toUpperCase();
+
+        const newCard = {
+            id: Date.now(),
+            name: name,
+            value: value.toFixed(2),
+            source: source,
+            stage: stage,
+            avatar: initials
+        };
+
+        if (!window.opportunityCards) {
+            window.window.window.opportunityCards = [];
+        }
+        window.window.opportunityCards.push(newCard);
+
+        console.log('Adding card:', newCard);
+
+        // Switch to opportunities screen
+        if (window.switchToScreen) {
+            window.switchToScreen('opportunities');
+        }
+
+        // Render cards
+        if (typeof renderOpportunityCards === 'function') {
+            renderOpportunityCards();
+        }
+        if (typeof updateStageCounters === 'function') {
+            updateStageCounters();
+        }
+
+        // Clear inputs
+        nameInput.value = '';
+        valueInput.value = '';
+        sourceInput.value = '';
+
+        // Play sound
+        if (typeof playSound === 'function') {
+            playSound('chachingSound');
+        }
+    } else {
+        alert('Please enter at least a contact name to add an opportunity.');
+    }
+};
+
+window.quickFillPipeline = function() {
+    console.log('quickFillPipeline called');
+    // Initialize opportunities if not already initialized
+    if (!window.opportunitiesInitialized) {
+        if (typeof initializeOpportunities === 'function') {
+            initializeOpportunities();
+        }
+        window.opportunitiesInitialized = true;
+    }
+
+    // Sample data
+    window.window.opportunityCards = [
+        {
+            id: 1,
+            name: 'Sarah Johnson',
+            value: '5000.00',
+            source: 'Automate My Biz - AI Demo',
+            stage: 'demo-requested',
+            avatar: 'SJ'
+        },
+        {
+            id: 2,
+            name: 'Mike Chen',
+            value: '3500.00',
+            source: 'LinkedIn Outreach',
+            stage: 'demo-requested',
+            avatar: 'MC'
+        },
+        {
+            id: 3,
+            name: 'Emily Davis',
+            value: '7500.00',
+            source: 'Website Form',
+            stage: 'demo-scheduled',
+            avatar: 'ED'
+        },
+        {
+            id: 4,
+            name: 'James Wilson',
+            value: '12000.00',
+            source: 'Referral Program',
+            stage: 'demo-scheduled',
+            avatar: 'JW'
+        },
+        {
+            id: 5,
+            name: 'Lisa Martinez',
+            value: '4200.00',
+            source: 'Cold Email Campaign',
+            stage: 'demo-scheduled',
+            avatar: 'LM'
+        },
+        {
+            id: 6,
+            name: 'Robert Taylor',
+            value: '8800.00',
+            source: 'Facebook Ads',
+            stage: 'demo-no-show',
+            avatar: 'RT'
+        },
+        {
+            id: 7,
+            name: 'Anna Brown',
+            value: '6000.00',
+            source: 'Google Ads',
+            stage: 'demo-converted',
+            avatar: 'AB'
+        },
+        {
+            id: 8,
+            name: 'David Lee',
+            value: '15000.00',
+            source: 'Partner Referral',
+            stage: 'demo-converted',
+            avatar: 'DL'
+        },
+        {
+            id: 9,
+            name: 'Sophie Anderson',
+            value: '4500.00',
+            source: 'Trade Show',
+            stage: 'client-not-converted',
+            avatar: 'SA'
+        },
+        {
+            id: 10,
+            name: 'Chris Walker',
+            value: '9200.00',
+            source: 'Webinar Funnel',
+            stage: 'demo-converted',
+            avatar: 'CW'
+        }
+    ];
+
+    // Switch to opportunities screen
+    if (window.switchToScreen) {
+        window.switchToScreen('opportunities');
+    }
+
+    // Render cards
+    if (window.renderOpportunityCards) {
+        window.renderOpportunityCards();
+    }
+    if (window.updateStageCounters) {
+        window.updateStageCounters();
+    }
+
+    // Play sound
+    if (typeof playSound === 'function') {
+        playSound('chachingSound');
+    }
+};
+
+window.clearOpportunities = function() {
+    console.log('clearOpportunities called');
+    // Initialize if not already done
+    if (!window.opportunitiesInitialized) {
+        if (typeof initializeOpportunities === 'function') {
+            initializeOpportunities();
+        }
+        window.opportunitiesInitialized = true;
+    }
+
+    window.window.window.opportunityCards = [];
+    
+    if (window.renderOpportunityCards) {
+        window.renderOpportunityCards();
+    }
+    if (window.updateStageCounters) {
+        window.updateStageCounters();
+    }
+};

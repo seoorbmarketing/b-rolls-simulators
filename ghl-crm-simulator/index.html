@@ -79,6 +79,10 @@
                     <i class="fas fa-comments"></i>
                     <span>Conversations</span>
                 </a>
+                <a href="#" class="nav-item" data-screen="opportunities">
+                    <i class="fas fa-trophy"></i>
+                    <span>Opportunities</span>
+                </a>
                 <a href="#" class="nav-item active" data-screen="calendar">
                     <i class="fas fa-calendar"></i>
                     <span>Calendars</span>
@@ -98,10 +102,6 @@
                 <a href="#" class="nav-item">
                     <i class="fas fa-bullseye"></i>
                     <span>Marketing</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fas fa-trophy"></i>
-                    <span>Opportunities</span>
                 </a>
                 <a href="#" class="nav-item">
                     <i class="fas fa-robot"></i>
@@ -873,6 +873,154 @@
                     <i class="fas fa-comment-dots"></i>
                 </div>
             </div>
+
+            <!-- Opportunities Screen -->
+            <div class="opportunities-content screen-content" id="opportunities-screen" style="display: none;">
+                <div class="opportunities-container">
+                    <!-- Top Bar with Tabs -->
+                    <div class="opportunities-header">
+                        <div class="opportunities-tabs">
+                            <button class="opp-tab active">Opportunities</button>
+                            <button class="opp-tab">Pipelines</button>
+                            <button class="opp-tab">Bulk Actions</button>
+                        </div>
+
+                        <!-- Pipeline Selector and Actions -->
+                        <div class="opportunities-actions">
+                            <div class="pipeline-selector">
+                                <select id="pipelineSelect">
+                                    <option>AI Demo Booking Pipeline</option>
+                                    <option>Sales Pipeline</option>
+                                    <option>Support Pipeline</option>
+                                </select>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+
+
+                            <div class="action-buttons">
+                                <button class="grid-view-btn" title="Grid View">
+                                    <i class="fas fa-th"></i>
+                                </button>
+                                <button class="list-view-btn" title="List View">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                                <button class="import-btn">
+                                    <i class="fas fa-download"></i>
+                                    Import
+                                </button>
+                                <button class="add-opportunity-btn">
+                                    <i class="fas fa-plus"></i>
+                                    Add opportunity
+                                </button>
+                                <button class="more-actions-btn">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filters Bar -->
+                    <div class="opportunities-filters">
+                        <button class="filter-toggle">
+                            <i class="fas fa-bars"></i>
+                            All
+                        </button>
+                        <button class="list-toggle">
+                            <i class="fas fa-list"></i>
+                            List
+                        </button>
+                        <button class="advanced-filters">
+                            <i class="fas fa-filter"></i>
+                            Advanced Filters
+                        </button>
+                        <button class="sort-btn">
+                            <i class="fas fa-sort"></i>
+                            Sort (1)
+                        </button>
+                        <div class="search-opportunities">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search Opportunities">
+                        </div>
+                        <button class="manage-fields-btn">
+                            <i class="fas fa-cog"></i>
+                            Manage Fields
+                        </button>
+                    </div>
+
+                    <!-- Pipeline Stages -->
+                    <div class="pipeline-stages">
+                        <!-- Demo Requested Stage -->
+                        <div class="stage-column" data-stage="demo-requested">
+                            <div class="stage-header">
+                                <h3>Demo Requested</h3>
+                                <div class="stage-info">
+                                    <span class="stage-count">0 Opportunities</span>
+                                    <span class="stage-value">$0.00</span>
+                                </div>
+                            </div>
+                            <div class="stage-cards" id="demo-requested-cards">
+                                <!-- Cards will be added here dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Demo Scheduled Stage -->
+                        <div class="stage-column" data-stage="demo-scheduled">
+                            <div class="stage-header">
+                                <h3>Demo Scheduled</h3>
+                                <div class="stage-info">
+                                    <span class="stage-count">0 Opportunities</span>
+                                    <span class="stage-value">$0.00</span>
+                                </div>
+                            </div>
+                            <div class="stage-cards" id="demo-scheduled-cards">
+                                <!-- Sample Cards -->
+                            </div>
+                        </div>
+
+                        <!-- Demo No-Show Stage -->
+                        <div class="stage-column" data-stage="demo-no-show">
+                            <div class="stage-header">
+                                <h3>Demo No-Show</h3>
+                                <div class="stage-info">
+                                    <span class="stage-count">0 Opportunities</span>
+                                    <span class="stage-value">$0.00</span>
+                                </div>
+                            </div>
+                            <div class="stage-cards" id="demo-no-show-cards">
+                                <!-- Cards will be added here dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Demo Converted Stage -->
+                        <div class="stage-column" data-stage="demo-converted">
+                            <div class="stage-header">
+                                <h3>Demo Converted</h3>
+                                <div class="stage-info">
+                                    <span class="stage-count">0 Opportunities</span>
+                                    <span class="stage-value">$0.00</span>
+                                </div>
+                            </div>
+                            <div class="stage-cards" id="demo-converted-cards">
+                                <!-- Cards will be added here dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Client Not-Converted Stage -->
+                        <div class="stage-column" data-stage="client-not-converted">
+                            <div class="stage-header">
+                                <h3>Client Not-Converted</h3>
+                                <div class="stage-info">
+                                    <span class="stage-count">0 Opportunities</span>
+                                    <span class="stage-value">$0.00</span>
+                                </div>
+                            </div>
+                            <div class="stage-cards" id="client-not-converted-cards">
+                                <!-- Cards will be added here dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- End opportunities-screen -->
         </div><!-- End main-content -->
     </div><!-- End main-wrapper -->
                     </div><!-- End crm-container -->
@@ -887,6 +1035,7 @@
                 <div class="screen-switcher">
                     <button class="screen-switch-btn active" data-panel="calendar">Calendar</button>
                     <button class="screen-switch-btn" data-panel="conversation">Conversation</button>
+                    <button class="screen-switch-btn" data-panel="opportunities">Opportunities</button>
                 </div>
             </div>
             
@@ -1201,6 +1350,126 @@
                         </button>
                     </div>
                 </div><!-- End conversation-controls -->
+
+                <!-- Opportunities Controls -->
+                <div class="control-panel-screen" id="opportunities-controls" style="display: none;">
+                    <!-- Pipeline Settings -->
+                    <div class="control-section">
+                        <h3>🎯 Pipeline Settings</h3>
+                        <div class="control-input-group">
+                            <label>Pipeline Name</label>
+                            <input type="text" class="control-input" id="pipelineNameControl" value="AI Demo Booking Pipeline" oninput="updatePipelineName()">
+                        </div>
+                    </div>
+
+                    <!-- Stage Names Configuration -->
+                    <div class="control-section">
+                        <h3>📊 Stage Names</h3>
+                        <div class="control-input-group">
+                            <label>Stage 1</label>
+                            <input type="text" class="control-input" id="stage1Name" value="Demo Requested" onchange="updateStageName(0, this.value)">
+                        </div>
+                        <div class="control-input-group">
+                            <label>Stage 2</label>
+                            <input type="text" class="control-input" id="stage2Name" value="Demo Scheduled" onchange="updateStageName(1, this.value)">
+                        </div>
+                        <div class="control-input-group">
+                            <label>Stage 3</label>
+                            <input type="text" class="control-input" id="stage3Name" value="Demo No-Show" onchange="updateStageName(2, this.value)">
+                        </div>
+                        <div class="control-input-group">
+                            <label>Stage 4</label>
+                            <input type="text" class="control-input" id="stage4Name" value="Demo Converted" onchange="updateStageName(3, this.value)">
+                        </div>
+                        <div class="control-input-group">
+                            <label>Stage 5</label>
+                            <input type="text" class="control-input" id="stage5Name" value="Client Not-Converted" onchange="updateStageName(4, this.value)">
+                        </div>
+                    </div>
+
+                    <!-- Add Contact Opportunity -->
+                    <div class="control-section">
+                        <h3>➕ Add Contact Opportunity</h3>
+                        <div class="control-input-group">
+                            <label>Contact Name</label>
+                            <input type="text" class="control-input" id="contactName" placeholder="e.g., Satya - AI Demo Scheduled">
+                        </div>
+                        <div class="control-input-group">
+                            <label>Opportunity Value</label>
+                            <input type="text" class="control-input" id="opportunityValue" placeholder="e.g., 297.00">
+                        </div>
+                        <div class="control-input-group">
+                            <label>Opportunity Source</label>
+                            <input type="text" class="control-input" id="opportunitySource" placeholder="e.g., Automate My Biz - AI...">
+                        </div>
+                        <div class="control-input-group">
+                            <label>Add to Stage</label>
+                            <select class="control-select" id="targetStageSelect">
+                                <option value="demo-requested">Stage 1</option>
+                                <option value="demo-scheduled">Stage 2</option>
+                                <option value="demo-no-show">Stage 3</option>
+                                <option value="demo-converted">Stage 4</option>
+                                <option value="client-not-converted">Stage 5</option>
+                            </select>
+                        </div>
+                        <button class="control-btn primary" onclick="addContactOpportunity()">
+                            <i class="fas fa-plus"></i> Add Contact
+                        </button>
+                    </div>
+
+                    <!-- Animation Scenario Builder -->
+                    <div class="control-section">
+                        <h3>🎬 Animation Scenario</h3>
+
+                        <!-- Scenario Steps List -->
+                        <div class="scenario-steps-list" id="opportunityScenarioList">
+                            <div class="empty-scenario-message" style="text-align: center; color: #999; padding: 20px; font-size: 11px;">
+                                No moves recorded yet
+                            </div>
+                        </div>
+
+                        <!-- Recording Controls -->
+                        <div class="scenario-recording-controls" style="margin-top: 10px;">
+                            <button class="control-btn" onclick="recordOpportunityMove()" id="recordMoveBtn">
+                                <i class="fas fa-plus-circle"></i> Record Move
+                            </button>
+                            <button class="control-btn" onclick="clearOpportunityScenario()">
+                                <i class="fas fa-trash"></i> Clear All
+                            </button>
+                        </div>
+
+                        <!-- Playback Controls -->
+                        <div class="scenario-playback-controls" style="margin-top: 10px;">
+                            <button class="control-btn primary" onclick="playOpportunityScenario()" id="playScenarioBtn" disabled>
+                                <i class="fas fa-play"></i> Play Animation
+                            </button>
+                            <button class="control-btn" onclick="stopOpportunityScenario()" id="stopScenarioBtn" style="display: none;">
+                                <i class="fas fa-stop"></i> Stop
+                            </button>
+                        </div>
+
+                        <!-- Speed Control -->
+                        <div class="control-input-group" style="margin-top: 10px;">
+                            <label>Animation Speed</label>
+                            <select class="control-select" id="animationSpeed">
+                                <option value="slow">Slow (2s per move)</option>
+                                <option value="normal" selected>Normal (1.5s per move)</option>
+                                <option value="fast">Fast (1s per move)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="control-section">
+                        <h3>⚡ Quick Actions</h3>
+                        <button class="control-btn" onclick="clearOpportunities()">
+                            <i class="fas fa-eraser"></i> Clear All
+                        </button>
+                        <button class="control-btn" onclick="quickFillPipeline()">
+                            <i class="fas fa-magic"></i> Fill Sample Data
+                        </button>
+                    </div>
+                </div><!-- End opportunities-controls -->
             </div>
         </div>
     </div><!-- End container -->
