@@ -11,6 +11,7 @@ function switchToScreen(screenName) {
     const rightPanel = document.querySelector(".right-panel");
     const navItems = document.querySelectorAll(".nav-item[data-screen]");
     const screenSwitchBtns = document.querySelectorAll(".screen-switch-btn");
+    const browserUrl = document.getElementById("browserUrl");
 
     // Hide all screens
     if (calendarScreen) calendarScreen.style.display = "none";
@@ -20,17 +21,26 @@ function switchToScreen(screenName) {
     // Update nav items
     navItems.forEach(nav => nav.classList.remove("active"));
 
-    // Switch to the requested screen
+    // Update control panel button states
+    screenSwitchBtns.forEach(btn => btn.classList.remove("active"));
+
+    // Switch to the requested screen and update URL
     if (screenName === "calendar") {
         if (calendarScreen) calendarScreen.style.display = "block";
         if (rightPanel) rightPanel.style.display = "block";
         const calendarNav = document.querySelector('.nav-item[data-screen="calendar"]');
         if (calendarNav) calendarNav.classList.add("active");
+        const calendarBtn = document.querySelector('.screen-switch-btn[data-panel="calendar"]');
+        if (calendarBtn) calendarBtn.classList.add("active");
+        if (browserUrl) browserUrl.textContent = "app.automatemybiz.pro/calendar";
     } else if (screenName === "conversations") {
         if (conversationsScreen) conversationsScreen.style.display = "block";
         if (rightPanel) rightPanel.style.display = "none";
         const conversationNav = document.querySelector('.nav-item[data-screen="conversations"]');
         if (conversationNav) conversationNav.classList.add("active");
+        const conversationBtn = document.querySelector('.screen-switch-btn[data-panel="conversation"]');
+        if (conversationBtn) conversationBtn.classList.add("active");
+        if (browserUrl) browserUrl.textContent = "app.automatemybiz.pro/conversations";
         // Initialize if needed
         if (!window.conversationsInitialized) {
             if (typeof initializeConversations === "function") {
@@ -43,6 +53,9 @@ function switchToScreen(screenName) {
         if (rightPanel) rightPanel.style.display = "none";
         const opportunitiesNav = document.querySelector('.nav-item[data-screen="opportunities"]');
         if (opportunitiesNav) opportunitiesNav.classList.add("active");
+        const opportunitiesBtn = document.querySelector('.screen-switch-btn[data-panel="opportunities"]');
+        if (opportunitiesBtn) opportunitiesBtn.classList.add("active");
+        if (browserUrl) browserUrl.textContent = "app.automatemybiz.pro/opportunities";
         // Initialize if needed
         if (!window.opportunitiesInitialized) {
             if (typeof initializeOpportunities === "function") {
@@ -94,73 +107,35 @@ document.addEventListener('DOMContentLoaded', function() {
     screenSwitchBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             const panel = this.getAttribute('data-panel');
-            
+
             // Update button states
             screenSwitchBtns.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
-            
-            // Switch control panels AND main screens
+
+            // Switch control panels
             if (panel === 'calendar') {
-                // Switch control panels
                 calendarControls.style.display = 'block';
                 conversationControls.style.display = 'none';
                 if (opportunitiesControls) opportunitiesControls.style.display = 'none';
 
-                // Switch main screens
-                calendarScreen.style.display = 'block';
-                conversationsScreen.style.display = 'none';
-                if (opportunitiesScreen) opportunitiesScreen.style.display = 'none';
-                if (rightPanel) rightPanel.style.display = 'block';
-                
-                // Update nav items
-                navItems.forEach(nav => nav.classList.remove('active'));
-                const calendarNav = document.querySelector('.nav-item[data-screen="calendar"]');
-                if (calendarNav) calendarNav.classList.add('active');
-                
+                // Use global switchToScreen function which handles URL update
+                switchToScreen('calendar');
+
             } else if (panel === 'conversation') {
-                // Switch control panels
                 calendarControls.style.display = 'none';
                 conversationControls.style.display = 'block';
                 if (opportunitiesControls) opportunitiesControls.style.display = 'none';
 
-                // Switch main screens
-                calendarScreen.style.display = 'none';
-                conversationsScreen.style.display = 'block';
-                if (opportunitiesScreen) opportunitiesScreen.style.display = 'none';
-                if (rightPanel) rightPanel.style.display = 'none';
+                // Use global switchToScreen function which handles URL update
+                switchToScreen('conversations');
 
-                // Update nav items
-                navItems.forEach(nav => nav.classList.remove('active'));
-                const conversationNav = document.querySelector('.nav-item[data-screen="conversations"]');
-                if (conversationNav) conversationNav.classList.add('active');
-
-                // Initialize conversations if needed
-                if (!window.conversationsInitialized) {
-                    initializeConversations();
-                    window.conversationsInitialized = true;
-                }
             } else if (panel === 'opportunities') {
-                // Switch control panels
                 calendarControls.style.display = 'none';
                 conversationControls.style.display = 'none';
                 if (opportunitiesControls) opportunitiesControls.style.display = 'block';
 
-                // Switch main screens
-                calendarScreen.style.display = 'none';
-                conversationsScreen.style.display = 'none';
-                if (opportunitiesScreen) opportunitiesScreen.style.display = 'block';
-                if (rightPanel) rightPanel.style.display = 'none';
-
-                // Update nav items
-                navItems.forEach(nav => nav.classList.remove('active'));
-                const opportunitiesNav = document.querySelector('.nav-item[data-screen="opportunities"]');
-                if (opportunitiesNav) opportunitiesNav.classList.add('active');
-
-                // Initialize opportunities if needed
-                if (!window.opportunitiesInitialized) {
-                    initializeOpportunities();
-                    window.opportunitiesInitialized = true;
-                }
+                // Use global switchToScreen function which handles URL update
+                switchToScreen('opportunities');
             }
         });
     });
