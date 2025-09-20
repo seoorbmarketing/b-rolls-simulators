@@ -3460,8 +3460,15 @@ function clearScenario() {
     renderScenarioList();
 }
 
+// Helper function to wait
+function wait(ms) {
+    return new Promise(resolve => {
+        scenarioTimeout = setTimeout(resolve, ms);
+    });
+}
+
 // Play Scenario
-function playScenario() {
+async function playScenario() {
     if (isScenarioPlaying) return;
 
     if (scenarioSteps.length === 0) {
@@ -3472,74 +3479,65 @@ function playScenario() {
     isScenarioPlaying = true;
     const speedSelect = document.getElementById('playbackSpeed');
     const speed = speedSelect ? speedSelect.value : 'medium';
-    const delays = {
-        slow: 2500,    // 2.5 seconds gap between steps
-        medium: 1500,   // 1.5 seconds gap between steps
-        fast: 1000      // 1 second gap between steps
-    };
 
-    let currentStep = 0;
+    // Speed multipliers (like Instagram simulator)
+    const speedMultiplier = {
+        slow: 2,      // 2x slower
+        medium: 1,    // Normal speed
+        fast: 0.7     // Slightly faster
+    }[speed];
 
-    function executeStep() {
-        if (!isScenarioPlaying || currentStep >= scenarioSteps.length) {
-            isScenarioPlaying = false;
-            return;
-        }
+    // Start with initial delay
+    await wait(500);
 
-        const step = scenarioSteps[currentStep];
-        currentStep++;
+    for (let i = 0; i < scenarioSteps.length; i++) {
+        if (!isScenarioPlaying) break;
+
+        const step = scenarioSteps[i];
 
         switch(step.type) {
             case 'incoming':
-                // Show typing indicator first for incoming messages
+                // Show typing indicator for incoming messages
                 showTypingIndicator();
-                const typingDuration = speed === 'slow' ? 1500 : speed === 'fast' ? 800 : 1000;
-                scenarioTimeout = setTimeout(() => {
-                    hideTypingIndicator();
-                    addMessage(step.content, 'incoming');
-                    // After message is added, wait then go to next step
-                    scenarioTimeout = setTimeout(() => {
-                        executeStep();
-                    }, delays[speed]);
-                }, typingDuration);
+                await wait(1500 * speedMultiplier); // Typing duration
+                hideTypingIndicator();
+                await wait(200); // Small pause after hiding typing
+                addMessage(step.content, 'incoming');
+                await wait(1000 * speedMultiplier); // Pause after message appears
                 break;
 
             case 'outgoing':
-                // Add outgoing message immediately
+                // Outgoing messages appear directly
                 addMessage(step.content, 'outgoing');
-                // Wait then go to next step
-                scenarioTimeout = setTimeout(() => {
-                    executeStep();
-                }, delays[speed]);
+                await wait(1000 * speedMultiplier); // Pause after sending
                 break;
 
             case 'typing':
                 // Just show typing indicator
                 showTypingIndicator();
-                const typingOnlyDuration = speed === 'slow' ? 2000 : speed === 'fast' ? 1000 : 1500;
-                scenarioTimeout = setTimeout(() => {
-                    hideTypingIndicator();
-                    executeStep();
-                }, typingOnlyDuration);
+                await wait(2000 * speedMultiplier);
+                hideTypingIndicator();
+                await wait(300);
                 break;
 
             case 'delay':
                 // Custom delay
                 const customDelay = parseInt(step.content) || 1000;
-                scenarioTimeout = setTimeout(() => {
-                    executeStep();
-                }, customDelay);
+                await wait(customDelay * speedMultiplier);
                 break;
+        }
 
-            default:
-                // Unknown type, continue to next
-                executeStep();
-                break;
+        // Additional pause between different message types for natural flow
+        if (i < scenarioSteps.length - 1) {
+            const nextStep = scenarioSteps[i + 1];
+            // Add extra pause when switching between incoming/outgoing
+            if (step.type !== nextStep.type && step.type !== 'delay' && nextStep.type !== 'delay') {
+                await wait(500 * speedMultiplier);
+            }
         }
     }
 
-    // Start with a small delay
-    scenarioTimeout = setTimeout(executeStep, 500);
+    isScenarioPlaying = false;
 }
 
 // Show typing indicator
