@@ -523,6 +523,7 @@ window.loadSavedScenarios = loadSavedScenarios;
 window.loadScenario = loadScenario;
 window.deleteScenario = deleteScenario;
 window.updateScenarioList = updateScenarioList;
+window.renderScenarioList = renderScenarioList;
 // window.removeScenarioStep = removeScenarioStep; // Will be defined later
 window.removeStep = removeStep;
 window.moveStep = moveStep;
@@ -3480,47 +3481,69 @@ function playScenario() {
     let currentStep = 0;
 
     function executeStep() {
-        if (currentStep >= scenarioSteps.length) {
+        if (!isScenarioPlaying || currentStep >= scenarioSteps.length) {
             isScenarioPlaying = false;
             return;
         }
 
         const step = scenarioSteps[currentStep];
-        currentStep++;
+        const delay = delays[speed];
 
-        if (step.type === 'delay') {
-            // Wait for specified delay
-            scenarioTimeout = setTimeout(() => {
-                executeStep();
-            }, parseInt(step.content) || 1000);
-        } else if (step.type === 'typing') {
-            // Show typing indicator
-            showTypingIndicator();
-            scenarioTimeout = setTimeout(() => {
-                hideTypingIndicator();
-                executeStep();
-            }, delays[speed]);
-        } else {
-            // Add message - map to correct types for message display
-            const messageType = step.type === 'incoming' ? 'incoming' : 'outgoing';
-
-            // Add a small initial delay for the first message, then add message
-            if (currentStep === 1) {
-                scenarioTimeout = setTimeout(() => {
-                    addMessage(step.content, messageType);
-                    scenarioTimeout = setTimeout(() => {
-                        executeStep();
-                    }, delays[speed]);
-                }, 300);
-            } else {
-                addMessage(step.content, messageType);
+        // Process the current step
+        switch(step.type) {
+            case 'delay':
+                // Custom delay
+                currentStep++;
                 scenarioTimeout = setTimeout(() => {
                     executeStep();
-                }, delays[speed]);
-            }
+                }, parseInt(step.content) || 1000);
+                break;
+
+            case 'typing':
+                // Show typing indicator
+                showTypingIndicator();
+                currentStep++;
+                scenarioTimeout = setTimeout(() => {
+                    hideTypingIndicator();
+                    executeStep();
+                }, delay);
+                break;
+
+            case 'incoming':
+            case 'outgoing':
+                // Add message with proper type
+                const messageType = step.type;
+
+                // For first message, add small initial delay
+                if (currentStep === 0) {
+                    scenarioTimeout = setTimeout(() => {
+                        addMessage(step.content, messageType);
+                        currentStep++;
+                        // Wait before next message
+                        scenarioTimeout = setTimeout(() => {
+                            executeStep();
+                        }, delay);
+                    }, 300);
+                } else {
+                    // Add message immediately for non-first messages
+                    addMessage(step.content, messageType);
+                    currentStep++;
+                    // Wait before processing next step
+                    scenarioTimeout = setTimeout(() => {
+                        executeStep();
+                    }, delay);
+                }
+                break;
+
+            default:
+                // Unknown type, skip
+                currentStep++;
+                executeStep();
+                break;
         }
     }
 
+    // Start the execution
     executeStep();
 }
 
@@ -3705,8 +3728,12 @@ function loadScenario(name) {
     // Load the scenario steps
     scenarioSteps = savedScenarios[name].steps;
 
-    // Update the scenario list display
-    updateScenarioList();
+    // Update the scenario list display - use renderScenarioList for conversation screen
+    if (typeof renderScenarioList === 'function') {
+        renderScenarioList();
+    } else if (typeof updateScenarioList === 'function') {
+        updateScenarioList();
+    }
 
     alert(`Loaded scenario: ${name}`);
 }
