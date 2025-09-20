@@ -2272,7 +2272,7 @@ function randomizeBookingData() {
     document.getElementById('animDescription').value = getRandomDescription();
     
     // Random team member
-    const teamMembers = ['', 'James Mitchell', 'Emma Thompson', 'Oliver Davies'];
+    const teamMembers = ['', 'James Mitchell', 'Emma Thompson', 'Oliver Davies', 'Sarah Johnson'];
     document.getElementById('animTeamMember').value = teamMembers[Math.floor(Math.random() * teamMembers.length)];
     
     // Random date (within next 7 days) and time combined
