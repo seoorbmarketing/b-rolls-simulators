@@ -124,6 +124,14 @@ function switchToScreen(screenName) {
     const opportunitiesControls = document.getElementById("opportunities-controls");
     const automationControls = document.getElementById("automation-controls");
 
+    console.log("Switching to screen:", screenName);
+    console.log("Control panels found:", {
+        calendar: !!calendarControls,
+        conversation: !!conversationControls,
+        opportunities: !!opportunitiesControls,
+        automation: !!automationControls
+    });
+
     // Hide all control panels first
     if (calendarControls) calendarControls.style.display = "none";
     if (conversationControls) conversationControls.style.display = "none";
@@ -132,12 +140,16 @@ function switchToScreen(screenName) {
 
     // Show the appropriate control panel
     if (screenName === "calendar" && calendarControls) {
+        console.log("Showing calendar controls");
         calendarControls.style.display = "block";
     } else if (screenName === "conversations" && conversationControls) {
+        console.log("Showing conversation controls");
         conversationControls.style.display = "block";
     } else if (screenName === "opportunities" && opportunitiesControls) {
+        console.log("Showing opportunities controls");
         opportunitiesControls.style.display = "block";
     } else if (screenName === "automation" && automationControls) {
+        console.log("Showing automation controls");
         automationControls.style.display = "block";
     }
 
