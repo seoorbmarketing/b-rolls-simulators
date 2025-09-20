@@ -299,8 +299,15 @@ function addWorkflowNode(nodeData) {
         workflowBuilder.appendChild(addBtn);
     }
 
-    // Animate in
+    // Animate in with sound
     setTimeout(() => {
+        // Play click sound when node appears
+        const clickSound = document.getElementById('clickSound');
+        if (clickSound) {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(e => console.log('Sound play failed:', e));
+        }
+
         nodeDiv.style.transition = 'opacity 0.3s';
         nodeDiv.style.opacity = '1';
         connectionLine.style.transition = 'opacity 0.3s';
@@ -332,6 +339,13 @@ function addEndNode() {
     workflowBuilder.appendChild(endNode);
 
     setTimeout(() => {
+        // Play click sound when END node appears
+        const clickSound = document.getElementById('clickSound');
+        if (clickSound) {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(e => console.log('Sound play failed:', e));
+        }
+
         connectionLine.style.transition = 'opacity 0.3s';
         connectionLine.style.opacity = '1';
         endNode.style.transition = 'opacity 0.3s';
