@@ -2311,7 +2311,7 @@ body {
 .message-group.outgoing .message-bubble {
     background: #5e72e4;
     color: #fff;
-    margin-right: 6px;
+    margin-right: 12px;
 }
 
 .message-group.incoming .message-bubble {
