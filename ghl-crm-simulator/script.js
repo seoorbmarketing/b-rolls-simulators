@@ -124,14 +124,6 @@ function switchToScreen(screenName) {
     const opportunitiesControls = document.getElementById("opportunities-controls");
     const automationControls = document.getElementById("automation-controls");
 
-    console.log("Switching to screen:", screenName);
-    console.log("Control panels found:", {
-        calendar: !!calendarControls,
-        conversation: !!conversationControls,
-        opportunities: !!opportunitiesControls,
-        automation: !!automationControls
-    });
-
     // Hide all control panels first
     if (calendarControls) calendarControls.style.display = "none";
     if (conversationControls) conversationControls.style.display = "none";
@@ -140,16 +132,12 @@ function switchToScreen(screenName) {
 
     // Show the appropriate control panel
     if (screenName === "calendar" && calendarControls) {
-        console.log("Showing calendar controls");
         calendarControls.style.display = "block";
     } else if (screenName === "conversations" && conversationControls) {
-        console.log("Showing conversation controls");
         conversationControls.style.display = "block";
     } else if (screenName === "opportunities" && opportunitiesControls) {
-        console.log("Showing opportunities controls");
         opportunitiesControls.style.display = "block";
     } else if (screenName === "automation" && automationControls) {
-        console.log("Showing automation controls");
         automationControls.style.display = "block";
     }
 
@@ -535,7 +523,9 @@ window.loadSavedScenarios = loadSavedScenarios;
 window.loadScenario = loadScenario;
 window.deleteScenario = deleteScenario;
 window.updateScenarioList = updateScenarioList;
-window.removeScenarioStep = removeScenarioStep;
+// window.removeScenarioStep = removeScenarioStep; // Will be defined later
+window.removeStep = removeStep;
+window.moveStep = moveStep;
 
 // Update trigger function
 window.updateTrigger = function() {
@@ -3667,6 +3657,12 @@ function loadScenario(name) {
     alert(`Loaded scenario: ${name}`);
 }
 
+// Remove a scenario step from conversation
+function removeScenarioStep(index) {
+    scenarioSteps.splice(index, 1);
+    updateScenarioList();
+}
+
 // Delete a Saved Scenario
 function deleteScenario(name) {
     if (!confirm(`Are you sure you want to delete the scenario "${name}"?`)) {
@@ -3679,6 +3675,7 @@ function deleteScenario(name) {
 
     loadSavedScenarios();
 }
+
 
 // Get Speed Multiplier
 function getSpeedMultiplier() {
@@ -3698,14 +3695,14 @@ function getSpeedMultiplier() {
 let opportunityAnimationInterval = null;
 // Make opportunityCards global
 if (!window.opportunityCards) {
-    window.window.window.opportunityCards = [];
+    window.opportunityCards = [];
 }
 let opportunityCards = window.opportunityCards;
 
 // Initialize Opportunities
 function initializeOpportunities() {
     // Start with empty pipeline
-    window.window.window.opportunityCards = [];
+    window.opportunityCards = [];
     opportunityCards = window.opportunityCards;
 
     renderOpportunityCards();
