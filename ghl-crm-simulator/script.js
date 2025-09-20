@@ -3481,56 +3481,63 @@ function playScenario() {
     let currentStep = 0;
 
     function executeStep() {
-        if (currentStep >= scenarioSteps.length) {
+        if (!isScenarioPlaying || currentStep >= scenarioSteps.length) {
             isScenarioPlaying = false;
             return;
         }
 
         const step = scenarioSteps[currentStep];
+        currentStep++;
 
         switch(step.type) {
             case 'incoming':
                 // Show typing indicator first for incoming messages
                 showTypingIndicator();
-                setTimeout(() => {
+                scenarioTimeout = setTimeout(() => {
                     hideTypingIndicator();
                     addMessage(step.content, 'incoming');
-                }, 1000); // Typing indicator duration
+                    // After message is added, wait then go to next step
+                    scenarioTimeout = setTimeout(() => {
+                        executeStep();
+                    }, delays[speed]);
+                }, 1200); // Typing duration
                 break;
 
             case 'outgoing':
+                // Add outgoing message immediately
                 addMessage(step.content, 'outgoing');
-                break;
-
-            case 'typing':
-                showTypingIndicator();
-                setTimeout(() => {
-                    hideTypingIndicator();
+                // Wait then go to next step
+                scenarioTimeout = setTimeout(() => {
+                    executeStep();
                 }, delays[speed]);
                 break;
 
+            case 'typing':
+                // Just show typing indicator
+                showTypingIndicator();
+                scenarioTimeout = setTimeout(() => {
+                    hideTypingIndicator();
+                    executeStep();
+                }, 1500);
+                break;
+
             case 'delay':
-                // Custom delay - move to next step after delay
+                // Custom delay
                 const customDelay = parseInt(step.content) || 1000;
-                setTimeout(() => {
-                    currentStep++;
+                scenarioTimeout = setTimeout(() => {
                     executeStep();
                 }, customDelay);
-                return; // Exit early to prevent double increment
-        }
+                break;
 
-        currentStep++;
-
-        // Schedule next step
-        if (currentStep < scenarioSteps.length) {
-            scenarioTimeout = setTimeout(executeStep, delays[speed]);
-        } else {
-            isScenarioPlaying = false;
+            default:
+                // Unknown type, continue to next
+                executeStep();
+                break;
         }
     }
 
     // Start with a small delay
-    setTimeout(executeStep, 500);
+    scenarioTimeout = setTimeout(executeStep, 500);
 }
 
 // Show typing indicator
