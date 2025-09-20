@@ -504,6 +504,14 @@ window.addNodeToScenario = addNodeToScenario;
 window.updateAutomationScenarioList = updateAutomationScenarioList;
 window.removeNodeFromScenario = removeNodeFromScenario;
 window.clearScenario = clearScenario;
+window.playScenario = playScenario;
+window.stopScenario = stopScenario;
+window.saveCustomScenario = saveCustomScenario;
+window.loadSavedScenarios = loadSavedScenarios;
+window.loadScenario = loadScenario;
+window.deleteScenario = deleteScenario;
+window.updateScenarioList = updateScenarioList;
+window.removeScenarioStep = removeScenarioStep;
 
 // Update trigger function
 window.updateTrigger = function() {
@@ -2628,6 +2636,9 @@ function initializeConversations() {
     setupConversationEventListeners();
     selectFirstConversation();
 
+    // Load saved scenarios for conversation screen
+    loadSavedScenarios();
+
     // Update the initial date/time display
     const timeSpan = document.querySelector('.last-message-time');
     if (timeSpan) {
@@ -3423,11 +3434,226 @@ function removeStep(index) {
 
 // Clear Scenario
 function clearScenario() {
-    if (isScenarioPlaying) {
+    if (isScenarioPlaying && typeof stopScenario === 'function') {
         stopScenario();
     }
     scenarioSteps = [];
     renderScenarioList();
+}
+
+// Play Scenario
+function playScenario() {
+    if (isScenarioPlaying || scenarioSteps.length === 0) {
+        if (scenarioSteps.length === 0) {
+            alert('No scenario steps to play! Add some steps first.');
+        }
+        return;
+    }
+
+    isScenarioPlaying = true;
+    const speedSelect = document.getElementById('playbackSpeed');
+    const speed = speedSelect ? speedSelect.value : 'medium';
+    const delays = {
+        slow: 2000,
+        medium: 1000,
+        fast: 500
+    };
+
+    let currentStep = 0;
+
+    function executeStep() {
+        if (currentStep >= scenarioSteps.length) {
+            isScenarioPlaying = false;
+            return;
+        }
+
+        const step = scenarioSteps[currentStep];
+
+        if (step.type === 'delay') {
+            scenarioTimeout = setTimeout(() => {
+                currentStep++;
+                executeStep();
+            }, parseInt(step.content) || 1000);
+        } else if (step.type === 'typing') {
+            showTypingIndicator();
+            scenarioTimeout = setTimeout(() => {
+                hideTypingIndicator();
+                currentStep++;
+                executeStep();
+            }, delays[speed]);
+        } else {
+            // Add message
+            const messageType = step.type === 'incoming' ? 'received' : 'sent';
+            addMessage(step.content, messageType);
+            currentStep++;
+            scenarioTimeout = setTimeout(executeStep, delays[speed]);
+        }
+    }
+
+    executeStep();
+}
+
+// Stop Scenario
+function stopScenario() {
+    isScenarioPlaying = false;
+    if (scenarioTimeout) {
+        clearTimeout(scenarioTimeout);
+        scenarioTimeout = null;
+    }
+    // Remove any lingering typing indicator when stopping
+    hideTypingIndicator();
+}
+
+// Add Message to Conversation
+function addMessage(text, type = 'outgoing') {
+    const messagesArea = document.querySelector('.messages-area');
+    if (!messagesArea) return;
+
+    // Clear "no messages" placeholder if it exists
+    if (messagesArea.innerHTML.includes('No messages yet') || messagesArea.innerHTML.includes('Start a conversation')) {
+        messagesArea.innerHTML = '';
+    }
+
+    // Create message object
+    const now = new Date();
+    const message = {
+        text: text,
+        type: type,
+        sender: type === 'outgoing' ? 'AI Assistant' : (currentConversation ? currentConversation.name : 'Contact'),
+        time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        date: now.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })
+    };
+
+    // Check if we need to add a date divider
+    const lastDateDivider = messagesArea.querySelector('.date-divider:last-of-type span');
+    if (!lastDateDivider || lastDateDivider.textContent !== message.date) {
+        const dateDivider = document.createElement('div');
+        dateDivider.className = 'date-divider';
+        dateDivider.innerHTML = `<span>${message.date}</span>`;
+        messagesArea.appendChild(dateDivider);
+    }
+
+    // Create and add message element
+    const messageGroup = createConversationMessageElement(message);
+    messagesArea.appendChild(messageGroup);
+
+    // Add to current conversation's messages if exists
+    if (currentConversation) {
+        currentConversation.messages.push(message);
+    }
+
+    // Scroll to bottom
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+
+    // Play message sound
+    playMessageSound();
+}
+
+// Save Custom Scenario
+function saveCustomScenario() {
+    const scenarioNameInput = document.getElementById('scenarioName');
+    if (!scenarioNameInput) {
+        console.error('Scenario name input not found');
+        return;
+    }
+
+    const name = scenarioNameInput.value.trim();
+
+    if (!name) {
+        alert('Please enter a scenario name');
+        return;
+    }
+
+    if (scenarioSteps.length === 0) {
+        alert('No steps to save! Add some steps first.');
+        return;
+    }
+
+    // Get existing scenarios from localStorage
+    const savedScenarios = JSON.parse(localStorage.getItem('ghlCrmSimulatorScenarios')) || {};
+
+    // Save the current scenario
+    savedScenarios[name] = {
+        name: name,
+        steps: scenarioSteps,
+        createdAt: new Date().toISOString()
+    };
+
+    // Save to localStorage
+    localStorage.setItem('ghlCrmSimulatorScenarios', JSON.stringify(savedScenarios));
+
+    // Clear the input
+    scenarioNameInput.value = '';
+
+    // Show success message
+    alert(`Scenario "${name}" saved successfully!`);
+
+    // Refresh the saved scenarios list
+    loadSavedScenarios();
+}
+
+// Load Saved Scenarios
+function loadSavedScenarios() {
+    const savedScenarios = JSON.parse(localStorage.getItem('ghlCrmSimulatorScenarios')) || {};
+    const savedScenariosList = document.getElementById('savedScenariosList');
+
+    if (!savedScenariosList) return;
+
+    // Clear existing list
+    savedScenariosList.innerHTML = '';
+
+    // Check if there are any saved scenarios
+    if (Object.keys(savedScenarios).length === 0) {
+        savedScenariosList.innerHTML = '<p style="color: #999; font-size: 12px;">No saved scenarios yet</p>';
+        return;
+    }
+
+    // Display each saved scenario
+    Object.keys(savedScenarios).forEach(key => {
+        const scenario = savedScenarios[key];
+        const scenarioDiv = document.createElement('div');
+        scenarioDiv.className = 'saved-scenario-item';
+        scenarioDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #f5f5f5; border-radius: 5px; margin-bottom: 5px;';
+
+        scenarioDiv.innerHTML = `
+            <span style="flex: 1; font-size: 14px;">${scenario.name}</span>
+            <button onclick="loadScenario('${key}')" style="padding: 4px 8px; font-size: 12px; margin-right: 5px;">Load</button>
+            <button onclick="deleteScenario('${key}')" style="padding: 4px 8px; font-size: 12px; background: #ff4444; color: white; border: none; border-radius: 3px;">Delete</button>
+        `;
+
+        savedScenariosList.appendChild(scenarioDiv);
+    });
+}
+
+// Load a Saved Scenario
+function loadScenario(name) {
+    const savedScenarios = JSON.parse(localStorage.getItem('ghlCrmSimulatorScenarios')) || {};
+
+    if (!savedScenarios[name]) {
+        alert('Scenario not found!');
+        return;
+    }
+
+    // Load the scenario steps
+    scenarioSteps = savedScenarios[name].steps;
+
+    // Update the scenario list display
+    updateScenarioList();
+
+    alert(`Loaded scenario: ${name}`);
+}
+
+// Delete a Saved Scenario
+function deleteScenario(name) {
+    if (!confirm(`Are you sure you want to delete the scenario "${name}"?`)) {
+        return;
+    }
+
+    const savedScenarios = JSON.parse(localStorage.getItem('ghlCrmSimulatorScenarios')) || {};
+    delete savedScenarios[name];
+    localStorage.setItem('ghlCrmSimulatorScenarios', JSON.stringify(savedScenarios));
+
+    loadSavedScenarios();
 }
 
 // Get Speed Multiplier
