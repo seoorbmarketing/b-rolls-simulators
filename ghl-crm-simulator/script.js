@@ -3468,7 +3468,7 @@ function wait(ms) {
 }
 
 // Play Scenario
-async function playScenario() {
+function playScenario() {
     if (isScenarioPlaying) return;
 
     if (scenarioSteps.length === 0) {
@@ -3480,64 +3480,82 @@ async function playScenario() {
     const speedSelect = document.getElementById('playbackSpeed');
     const speed = speedSelect ? speedSelect.value : 'medium';
 
-    // Speed multipliers (like Instagram simulator)
-    const speedMultiplier = {
-        slow: 2,      // 2x slower
-        medium: 1,    // Normal speed
-        fast: 0.7     // Slightly faster
-    }[speed];
+    // Base delays for each speed
+    const baseDelay = {
+        slow: 2500,
+        medium: 1500,
+        fast: 1000
+    }[speed] || 1500;
 
-    // Start with initial delay
-    await wait(500);
+    let currentIndex = 0;
 
-    for (let i = 0; i < scenarioSteps.length; i++) {
-        if (!isScenarioPlaying) break;
+    function processNextStep() {
+        if (!isScenarioPlaying || currentIndex >= scenarioSteps.length) {
+            isScenarioPlaying = false;
+            return;
+        }
 
-        const step = scenarioSteps[i];
+        const step = scenarioSteps[currentIndex];
+        currentIndex++;
 
         switch(step.type) {
             case 'incoming':
-                // Show typing indicator for incoming messages
+                // Show typing first
                 showTypingIndicator();
-                await wait(1500 * speedMultiplier); // Typing duration
-                hideTypingIndicator();
-                await wait(200); // Small pause after hiding typing
-                addMessage(step.content, 'incoming');
-                await wait(1000 * speedMultiplier); // Pause after message appears
+
+                // After typing duration, show message
+                scenarioTimeout = setTimeout(() => {
+                    hideTypingIndicator();
+                    addMessage(step.content, 'incoming');
+
+                    // Wait before next step
+                    scenarioTimeout = setTimeout(() => {
+                        processNextStep();
+                    }, baseDelay);
+                }, 1500); // Typing duration
                 break;
 
             case 'outgoing':
-                // Outgoing messages appear directly
+                // Show message immediately
                 addMessage(step.content, 'outgoing');
-                await wait(1000 * speedMultiplier); // Pause after sending
+
+                // Wait before next step
+                scenarioTimeout = setTimeout(() => {
+                    processNextStep();
+                }, baseDelay);
                 break;
 
             case 'typing':
-                // Just show typing indicator
                 showTypingIndicator();
-                await wait(2000 * speedMultiplier);
-                hideTypingIndicator();
-                await wait(300);
+
+                scenarioTimeout = setTimeout(() => {
+                    hideTypingIndicator();
+                    // Small pause after hiding typing
+                    scenarioTimeout = setTimeout(() => {
+                        processNextStep();
+                    }, 300);
+                }, 2000); // Show typing for 2 seconds
                 break;
 
             case 'delay':
-                // Custom delay
-                const customDelay = parseInt(step.content) || 1000;
-                await wait(customDelay * speedMultiplier);
-                break;
-        }
+                const delayTime = parseInt(step.content) || 1000;
 
-        // Additional pause between different message types for natural flow
-        if (i < scenarioSteps.length - 1) {
-            const nextStep = scenarioSteps[i + 1];
-            // Add extra pause when switching between incoming/outgoing
-            if (step.type !== nextStep.type && step.type !== 'delay' && nextStep.type !== 'delay') {
-                await wait(500 * speedMultiplier);
-            }
+                scenarioTimeout = setTimeout(() => {
+                    processNextStep();
+                }, delayTime);
+                break;
+
+            default:
+                // Unknown type, continue
+                processNextStep();
+                break;
         }
     }
 
-    isScenarioPlaying = false;
+    // Start with a small initial delay
+    scenarioTimeout = setTimeout(() => {
+        processNextStep();
+    }, 500);
 }
 
 // Show typing indicator
