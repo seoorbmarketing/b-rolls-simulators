@@ -3487,6 +3487,20 @@ function playScenario() {
         fast: 1000
     }[speed] || 1500;
 
+    // Clear "No messages yet" placeholder right at the start
+    const messagesArea = document.querySelector('.messages-area');
+    if (messagesArea) {
+        if (messagesArea.innerHTML.includes('No messages yet') || messagesArea.innerHTML.includes('Start a conversation') || messagesArea.innerHTML.includes('Select a conversation')) {
+            messagesArea.innerHTML = '';
+            // Add date divider since we're starting fresh
+            const now = new Date();
+            const dateDivider = document.createElement('div');
+            dateDivider.className = 'date-divider';
+            dateDivider.innerHTML = `<span>${now.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}</span>`;
+            messagesArea.appendChild(dateDivider);
+        }
+    }
+
     let currentIndex = 0;
 
     function processNextStep() {
