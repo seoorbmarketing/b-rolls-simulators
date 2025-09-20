@@ -526,6 +526,7 @@ window.updateScenarioList = updateScenarioList;
 // window.removeScenarioStep = removeScenarioStep; // Will be defined later
 window.removeStep = removeStep;
 window.moveStep = moveStep;
+window.clearConversations = clearConversations;
 
 // Update trigger function
 window.updateTrigger = function() {
@@ -3655,6 +3656,50 @@ function loadScenario(name) {
     updateScenarioList();
 
     alert(`Loaded scenario: ${name}`);
+}
+
+// Clear all conversations/contacts
+function clearConversations() {
+    // Clear the conversations list HTML
+    const conversationsList = document.querySelector('.conversations-list');
+    if (conversationsList) {
+        conversationsList.innerHTML = `
+            <div class="conversations-header">
+                <h2>Messages</h2>
+                <button class="new-message-btn">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search">
+            </div>
+            <div style="text-align: center; color: #999; padding: 50px; font-size: 14px;">
+                No conversations yet
+            </div>
+        `;
+    }
+
+    // Clear the chat area
+    const messagesArea = document.querySelector('.messages-area');
+    if (messagesArea) {
+        messagesArea.innerHTML = '<div style="text-align: center; color: #999; padding: 50px;">Select a conversation to start messaging</div>';
+    }
+
+    // Clear the conversations object
+    conversations = {};
+    currentConversation = null;
+
+    // Clear the contact details panel
+    const contactAvatar = document.querySelector('.contact-avatar');
+    const contactNameH3 = document.querySelector('.contact-details-panel h3');
+    if (contactAvatar) {
+        contactAvatar.textContent = '';
+        contactAvatar.style.background = '#e0e0e0';
+    }
+    if (contactNameH3) contactNameH3.textContent = 'Select a contact';
+
+    console.log('All conversations cleared');
 }
 
 // Remove a scenario step from conversation
