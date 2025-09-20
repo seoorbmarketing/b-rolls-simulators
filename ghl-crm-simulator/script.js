@@ -3596,7 +3596,8 @@ function addMessage(text, type = 'outgoing') {
     if (!messagesArea) return;
 
     // Clear "no messages" placeholder if it exists
-    if (messagesArea.innerHTML.includes('No messages yet') || messagesArea.innerHTML.includes('Start a conversation')) {
+    const isFirstMessage = messagesArea.innerHTML.includes('No messages yet') || messagesArea.innerHTML.includes('Start a conversation');
+    if (isFirstMessage) {
         messagesArea.innerHTML = '';
     }
 
@@ -3610,9 +3611,9 @@ function addMessage(text, type = 'outgoing') {
         date: now.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })
     };
 
-    // Check if we need to add a date divider
-    const lastDateDivider = messagesArea.querySelector('.date-divider:last-of-type span');
-    if (!lastDateDivider || lastDateDivider.textContent !== message.date) {
+    // Only add date divider if this is the first message or if there are no date dividers yet
+    const existingDateDivider = messagesArea.querySelector('.date-divider');
+    if (!existingDateDivider) {
         const dateDivider = document.createElement('div');
         dateDivider.className = 'date-divider';
         dateDivider.innerHTML = `<span>${message.date}</span>`;
