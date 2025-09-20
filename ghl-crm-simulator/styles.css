@@ -2315,7 +2315,7 @@ body {
 }
 
 .message-group.incoming .message-bubble {
-    margin-left: 6px;
+    margin-left: 12px;
 }
 
 .message-header .label {

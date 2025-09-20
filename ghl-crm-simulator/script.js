@@ -2961,8 +2961,11 @@ function createConversationMessageElement(message) {
             <div class="avatar-small">AI</div>
         `;
     } else {
+        // For incoming messages, use initials if available, otherwise use first 2 letters of sender name
+        const initials = currentConversation && currentConversation.initials ? currentConversation.initials :
+                        (message.sender ? message.sender.substring(0, 2).toUpperCase() : 'CT');
         messageGroup.innerHTML = `
-            <div class="avatar-small">${currentConversation.initials}</div>
+            <div class="avatar-small">${initials}</div>
             <div class="message-bubble">
                 <div class="message-header">
                     <span class="message-text">${message.text}</span>
@@ -3497,8 +3500,8 @@ function playScenario() {
                 executeStep();
             }, delays[speed]);
         } else {
-            // Add message
-            const messageType = step.type === 'incoming' ? 'received' : 'sent';
+            // Add message - map to correct types for message display
+            const messageType = step.type === 'incoming' ? 'incoming' : 'outgoing';
             addMessage(step.content, messageType);
             currentStep++;
             scenarioTimeout = setTimeout(executeStep, delays[speed]);
