@@ -3663,24 +3663,20 @@ function loadScenario(name) {
 
 // Clear all conversations/contacts
 function clearConversations() {
-    // Clear the conversations list HTML
-    const conversationsList = document.querySelector('.conversations-list');
-    if (conversationsList) {
-        conversationsList.innerHTML = `
-            <div class="conversations-header">
-                <h2>Messages</h2>
-                <button class="new-message-btn">
-                    <i class="fas fa-edit"></i>
-                </button>
-            </div>
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search">
-            </div>
+    // Only clear the conversation items, not the entire structure
+    const conversationItems = document.querySelector('.conversation-items');
+    if (conversationItems) {
+        conversationItems.innerHTML = `
             <div style="text-align: center; color: #999; padding: 50px; font-size: 14px;">
                 No conversations yet
             </div>
         `;
+    }
+
+    // Update results count
+    const resultsCount = document.querySelector('.results-count');
+    if (resultsCount) {
+        resultsCount.textContent = '0 RESULTS';
     }
 
     // Clear the chat area
@@ -3688,6 +3684,10 @@ function clearConversations() {
     if (messagesArea) {
         messagesArea.innerHTML = '<div style="text-align: center; color: #999; padding: 50px;">Select a conversation to start messaging</div>';
     }
+
+    // Clear the chat header
+    const chatHeader = document.querySelector('.chat-contact-info h2');
+    if (chatHeader) chatHeader.textContent = 'Select a conversation';
 
     // Clear the conversations object
     conversations = {};
