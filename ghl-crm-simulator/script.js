@@ -3473,9 +3473,9 @@ function playScenario() {
     const speedSelect = document.getElementById('playbackSpeed');
     const speed = speedSelect ? speedSelect.value : 'medium';
     const delays = {
-        slow: 3000,
-        medium: 1500,
-        fast: 800
+        slow: 2500,    // 2.5 seconds gap between steps
+        medium: 1500,   // 1.5 seconds gap between steps
+        fast: 1000      // 1 second gap between steps
     };
 
     let currentStep = 0;
@@ -3493,6 +3493,7 @@ function playScenario() {
             case 'incoming':
                 // Show typing indicator first for incoming messages
                 showTypingIndicator();
+                const typingDuration = speed === 'slow' ? 1500 : speed === 'fast' ? 800 : 1000;
                 scenarioTimeout = setTimeout(() => {
                     hideTypingIndicator();
                     addMessage(step.content, 'incoming');
@@ -3500,7 +3501,7 @@ function playScenario() {
                     scenarioTimeout = setTimeout(() => {
                         executeStep();
                     }, delays[speed]);
-                }, 1200); // Typing duration
+                }, typingDuration);
                 break;
 
             case 'outgoing':
@@ -3515,10 +3516,11 @@ function playScenario() {
             case 'typing':
                 // Just show typing indicator
                 showTypingIndicator();
+                const typingOnlyDuration = speed === 'slow' ? 2000 : speed === 'fast' ? 1000 : 1500;
                 scenarioTimeout = setTimeout(() => {
                     hideTypingIndicator();
                     executeStep();
-                }, 1500);
+                }, typingOnlyDuration);
                 break;
 
             case 'delay':
