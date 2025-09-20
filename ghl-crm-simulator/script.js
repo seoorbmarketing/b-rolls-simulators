@@ -118,16 +118,28 @@ function switchToScreen(screenName) {
         }, 100);
     }
 
-    // Update control panels
+    // Update control panels - hide all first, then show the active one
     const calendarControls = document.getElementById("calendar-controls");
     const conversationControls = document.getElementById("conversation-controls");
     const opportunitiesControls = document.getElementById("opportunities-controls");
     const automationControls = document.getElementById("automation-controls");
 
-    if (calendarControls) calendarControls.style.display = screenName === "calendar" ? "block" : "none";
-    if (conversationControls) conversationControls.style.display = screenName === "conversations" ? "block" : "none";
-    if (opportunitiesControls) opportunitiesControls.style.display = screenName === "opportunities" ? "block" : "none";
-    if (automationControls) automationControls.style.display = screenName === "automation" ? "block" : "none";
+    // Hide all control panels first
+    if (calendarControls) calendarControls.style.display = "none";
+    if (conversationControls) conversationControls.style.display = "none";
+    if (opportunitiesControls) opportunitiesControls.style.display = "none";
+    if (automationControls) automationControls.style.display = "none";
+
+    // Show the appropriate control panel
+    if (screenName === "calendar" && calendarControls) {
+        calendarControls.style.display = "block";
+    } else if (screenName === "conversations" && conversationControls) {
+        conversationControls.style.display = "block";
+    } else if (screenName === "opportunities" && opportunitiesControls) {
+        opportunitiesControls.style.display = "block";
+    } else if (screenName === "automation" && automationControls) {
+        automationControls.style.display = "block";
+    }
 
     // Update control panel buttons
     screenSwitchBtns.forEach((btn, index) => {
