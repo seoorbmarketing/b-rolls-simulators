@@ -3486,29 +3486,79 @@ function playScenario() {
         }
 
         const step = scenarioSteps[currentStep];
+        currentStep++;
 
         if (step.type === 'delay') {
+            // Wait for specified delay
             scenarioTimeout = setTimeout(() => {
-                currentStep++;
                 executeStep();
             }, parseInt(step.content) || 1000);
         } else if (step.type === 'typing') {
+            // Show typing indicator
             showTypingIndicator();
             scenarioTimeout = setTimeout(() => {
                 hideTypingIndicator();
-                currentStep++;
                 executeStep();
             }, delays[speed]);
         } else {
             // Add message - map to correct types for message display
             const messageType = step.type === 'incoming' ? 'incoming' : 'outgoing';
-            addMessage(step.content, messageType);
-            currentStep++;
-            scenarioTimeout = setTimeout(executeStep, delays[speed]);
+
+            // Add a small initial delay for the first message, then add message
+            if (currentStep === 1) {
+                scenarioTimeout = setTimeout(() => {
+                    addMessage(step.content, messageType);
+                    scenarioTimeout = setTimeout(() => {
+                        executeStep();
+                    }, delays[speed]);
+                }, 300);
+            } else {
+                addMessage(step.content, messageType);
+                scenarioTimeout = setTimeout(() => {
+                    executeStep();
+                }, delays[speed]);
+            }
         }
     }
 
     executeStep();
+}
+
+// Show typing indicator
+function showTypingIndicator() {
+    const messagesArea = document.querySelector('.messages-area');
+    if (!messagesArea) return;
+
+    // Remove any existing typing indicator
+    hideTypingIndicator();
+
+    // Create typing indicator element
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'typing-indicator';
+    typingDiv.id = 'typingIndicator';
+    typingDiv.innerHTML = `
+        <div class="message-group incoming">
+            <div class="avatar-small">${currentConversation && currentConversation.initials ? currentConversation.initials : 'CT'}</div>
+            <div class="message-bubble">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    messagesArea.appendChild(typingDiv);
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+}
+
+// Hide typing indicator
+function hideTypingIndicator() {
+    const typingIndicator = document.getElementById('typingIndicator');
+    if (typingIndicator) {
+        typingIndicator.remove();
+    }
 }
 
 // Stop Scenario
