@@ -268,6 +268,25 @@ body {
     color: #e5e5e7;
 }
 
+/* Message Links */
+.message-link {
+    color: #007aff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.message.sent .message-link {
+    color: #a5d8ff;
+}
+
+.message.received .message-link {
+    color: #007aff;
+}
+
+.message-link:hover {
+    opacity: 0.8;
+}
+
 /* Message Status */
 .message-status {
     font-size: 11px;

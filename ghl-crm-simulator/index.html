@@ -103,7 +103,7 @@
                     <i class="fas fa-bullseye"></i>
                     <span>Marketing</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" data-screen="automation">
                     <i class="fas fa-robot"></i>
                     <span>Automation</span>
                 </a>
@@ -1018,6 +1018,99 @@
                     </div>
                 </div>
             </div><!-- End opportunities-screen -->
+
+            <!-- Automation Screen -->
+            <div class="automation-content screen-content" id="automation-screen" style="display: none;">
+                <div class="automation-container">
+                    <!-- Top Bar -->
+                    <div class="automation-header">
+                        <div class="automation-title">
+                            <h2>Follow Up Sequence</h2>
+                            <button class="edit-name-btn">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                        </div>
+                        <div class="automation-actions">
+                            <button class="action-btn test-workflow">
+                                <i class="fas fa-play-circle"></i>
+                                Test Workflow
+                            </button>
+                            <button class="action-btn save-btn primary">
+                                <i class="fas fa-save"></i>
+                                Save
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sub Navigation -->
+                    <div class="automation-subnav">
+                        <div class="subnav-tabs">
+                            <button class="subnav-tab active">Builder</button>
+                            <button class="subnav-tab">Settings</button>
+                            <button class="subnav-tab">Enrollment History</button>
+                            <button class="subnav-tab">Execution Logs</button>
+                        </div>
+                        <div class="publish-toggle-container">
+                            <span class="toggle-label">Draft</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="publishToggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Publish</span>
+                        </div>
+                    </div>
+
+                    <!-- Workflow Canvas -->
+                    <div class="workflow-canvas">
+                        <!-- Canvas Tools -->
+                        <div class="canvas-tools">
+                            <div class="zoom-controls">
+                                <button class="zoom-btn" id="zoomOut" onclick="zoomOut()">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <span class="zoom-level">100%</span>
+                                <button class="zoom-btn" id="zoomIn" onclick="zoomIn()">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="canvas-actions">
+                                <button class="canvas-btn" onclick="resetZoom()" title="Reset Zoom to 100%">
+                                    <i class="fas fa-expand-arrows-alt"></i>
+                                </button>
+                                <button class="canvas-btn">
+                                    <i class="fas fa-robot"></i>
+                                    Workflow AI
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Workflow Builder Area -->
+                        <div class="workflow-builder">
+                            <!-- Trigger Node -->
+                            <div class="workflow-node trigger-node" id="triggerNode">
+                                <div class="node-header">
+                                    <i class="fas fa-bolt"></i>
+                                    <span>Trigger</span>
+                                    <button class="node-menu">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
+                                <div class="node-content">
+                                    <p class="node-title">Contact Created</p>
+                                </div>
+                            </div>
+
+                            <!-- Connection Line -->
+                            <div class="connection-line vertical"></div>
+
+                            <!-- Add Node Button -->
+                            <div class="add-node-btn" id="addNode1">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- End automation-screen -->
         </div><!-- End main-content -->
     </div><!-- End main-wrapper -->
                     </div><!-- End crm-container -->
@@ -1033,6 +1126,7 @@
                     <button class="screen-switch-btn active" data-panel="calendar">Calendar</button>
                     <button class="screen-switch-btn" data-panel="conversation">Conversation</button>
                     <button class="screen-switch-btn" data-panel="opportunities">Opportunities</button>
+                    <button class="screen-switch-btn" data-panel="automation">Automation</button>
                 </div>
             </div>
             
@@ -1467,6 +1561,84 @@
                         </button>
                     </div>
                 </div><!-- End opportunities-controls -->
+
+                <!-- Automation Controls -->
+                <div class="control-panel-screen" id="automation-controls" style="display: none;">
+                    <!-- Trigger Section -->
+                    <div class="control-section">
+                        <h3>🎯 Trigger Setup</h3>
+                        <div class="control-input-group">
+                            <label>Trigger Name</label>
+                            <input type="text" class="control-input" id="triggerName" placeholder="e.g., Contact Created" value="Contact Created">
+                        </div>
+                        <button class="control-btn" onclick="updateTrigger()">
+                            <i class="fas fa-sync-alt"></i>
+                            Update Trigger
+                        </button>
+                    </div>
+
+                    <!-- Actions Section -->
+                    <div class="control-section">
+                        <h3>📋 Scenario Builder</h3>
+
+                        <div class="control-input-group">
+                            <label>Add Action</label>
+                            <select class="control-select" id="nodeTypeSelect">
+                                <option value="wait">⏰ Wait</option>
+                                <option value="call">📞 Call</option>
+                                <option value="sms">💬 SMS</option>
+                                <option value="email">✉️ Email</option>
+                                <option value="user">👤 Assign User</option>
+                                <option value="webhook">🔗 Webhook</option>
+                                <option value="condition">🌿 If/Else</option>
+                                <option value="tag">🏷️ Add Tag</option>
+                            </select>
+                        </div>
+
+                        <div class="control-input-group">
+                            <label>Action Label</label>
+                            <input type="text" class="control-input" id="nodeLabel" placeholder="e.g., Wait 2 Days">
+                        </div>
+
+                        <button class="control-btn" onclick="if(typeof addNodeToScenario === 'function') { addNodeToScenario(); } else { console.error('addNodeToScenario function not found'); alert('Error: Function not loaded. Please refresh the page.'); }">
+                            <i class="fas fa-plus"></i>
+                            Add to Scenario
+                        </button>
+
+                        <div class="scenario-list" id="scenarioList" style="margin-top: 15px; max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 4px; background: #f9fafb;">
+                            <div style="text-align: center; color: #999; padding: 10px; font-size: 11px;">No actions added yet</div>
+                        </div>
+
+                        <div class="control-input-group" style="margin-top: 15px;">
+                            <label>Animation Speed</label>
+                            <select class="control-select" id="animationSpeed">
+                                <option value="fast">Fast</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="slow">Slow</option>
+                            </select>
+                        </div>
+
+                        <button class="control-btn primary" onclick="startWorkflowAnimation()" id="startAnimationBtn">
+                            <i class="fas fa-play"></i>
+                            Start Animation
+                        </button>
+
+                        <button class="control-btn" onclick="stopWorkflowAnimation()" id="stopAnimationBtn" style="display: none;">
+                            <i class="fas fa-stop"></i>
+                            Stop Animation
+                        </button>
+
+                        <button class="control-btn" onclick="clearScenario()">
+                            <i class="fas fa-trash"></i>
+                            Clear Scenario
+                        </button>
+
+                        <button class="control-btn" onclick="resetWorkflow()">
+                            <i class="fas fa-undo"></i>
+                            Reset Canvas
+                        </button>
+                    </div>
+                </div><!-- End automation-controls -->
             </div>
         </div>
     </div><!-- End container -->

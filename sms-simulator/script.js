@@ -100,6 +100,21 @@ function handleSendClick() {
     }
 }
 
+// Process message text for link formatting
+function processMessageText(text) {
+    // Escape HTML first
+    let processedText = text.replace(/&/g, '&amp;')
+                           .replace(/</g, '&lt;')
+                           .replace(/>/g, '&gt;')
+                           .replace(/"/g, '&quot;')
+                           .replace(/'/g, '&#39;');
+
+    // Then process <link> tags
+    processedText = processedText.replace(/&lt;link&gt;(.*?)&lt;\/link&gt;/g, '<a href="#" class="message-link">$1</a>');
+
+    return processedText;
+}
+
 // Add a message to the chat
 function addMessage(text, type = 'sent', showStatus = true, addTimestamp = true) {
     // Add timestamp before message if it's been a while or first message
@@ -123,7 +138,10 @@ function addMessage(text, type = 'sent', showStatus = true, addTimestamp = true)
     
     const bubbleDiv = document.createElement('div');
     bubbleDiv.className = 'message-bubble';
-    bubbleDiv.textContent = text;
+
+    // Process text for link formatting
+    const processedText = processMessageText(text);
+    bubbleDiv.innerHTML = processedText;
     
     messageDiv.appendChild(bubbleDiv);
     

@@ -8,6 +8,7 @@ function switchToScreen(screenName) {
     const calendarScreen = document.getElementById("calendar-screen");
     const conversationsScreen = document.getElementById("conversations-screen");
     const opportunitiesScreen = document.getElementById("opportunities-screen");
+    const automationScreen = document.getElementById("automation-screen");
     const rightPanel = document.querySelector(".right-panel");
     const navItems = document.querySelectorAll(".nav-item[data-screen]");
     const screenSwitchBtns = document.querySelectorAll(".screen-switch-btn");
@@ -17,6 +18,7 @@ function switchToScreen(screenName) {
     if (calendarScreen) calendarScreen.style.display = "none";
     if (conversationsScreen) conversationsScreen.style.display = "none";
     if (opportunitiesScreen) opportunitiesScreen.style.display = "none";
+    if (automationScreen) automationScreen.style.display = "none";
 
     // Update nav items
     navItems.forEach(nav => nav.classList.remove("active"));
@@ -24,8 +26,22 @@ function switchToScreen(screenName) {
     // Update control panel button states
     screenSwitchBtns.forEach(btn => btn.classList.remove("active"));
 
+    // Get navigation elements
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const mainWrapper = document.querySelector('.main-wrapper');
+    const topNav = document.querySelector('.top-nav');
+
     // Switch to the requested screen and update URL
     if (screenName === "calendar") {
+        // Show sidebar and top nav for calendar
+        if (sidebar) sidebar.style.display = "block";
+        if (sidebarToggle) sidebarToggle.style.display = "block";
+        if (topNav) topNav.style.display = "flex";
+        if (mainWrapper && !sidebar.classList.contains('collapsed')) {
+            mainWrapper.style.marginLeft = "180px";
+        }
+
         if (calendarScreen) calendarScreen.style.display = "block";
         if (rightPanel) rightPanel.style.display = "block";
         const calendarNav = document.querySelector('.nav-item[data-screen="calendar"]');
@@ -34,6 +50,14 @@ function switchToScreen(screenName) {
         if (calendarBtn) calendarBtn.classList.add("active");
         if (browserUrl) browserUrl.textContent = "app.automatemybiz.pro/calendar";
     } else if (screenName === "conversations") {
+        // Show sidebar and top nav for conversations
+        if (sidebar) sidebar.style.display = "block";
+        if (sidebarToggle) sidebarToggle.style.display = "block";
+        if (topNav) topNav.style.display = "flex";
+        if (mainWrapper && !sidebar.classList.contains('collapsed')) {
+            mainWrapper.style.marginLeft = "180px";
+        }
+
         if (conversationsScreen) conversationsScreen.style.display = "block";
         if (rightPanel) rightPanel.style.display = "none";
         const conversationNav = document.querySelector('.nav-item[data-screen="conversations"]');
@@ -49,6 +73,14 @@ function switchToScreen(screenName) {
             }
         }
     } else if (screenName === "opportunities") {
+        // Show sidebar and top nav for opportunities
+        if (sidebar) sidebar.style.display = "block";
+        if (sidebarToggle) sidebarToggle.style.display = "block";
+        if (topNav) topNav.style.display = "flex";
+        if (mainWrapper && !sidebar.classList.contains('collapsed')) {
+            mainWrapper.style.marginLeft = "180px";
+        }
+
         if (opportunitiesScreen) opportunitiesScreen.style.display = "block";
         if (rightPanel) rightPanel.style.display = "none";
         const opportunitiesNav = document.querySelector('.nav-item[data-screen="opportunities"]');
@@ -63,24 +95,387 @@ function switchToScreen(screenName) {
                 window.opportunitiesInitialized = true;
             }
         }
+    } else if (screenName === "automation") {
+        // Hide sidebar and top nav for automation screen
+        if (sidebar) sidebar.style.display = "none";
+        if (sidebarToggle) sidebarToggle.style.display = "none";
+        if (topNav) topNav.style.display = "none";
+        if (mainWrapper) mainWrapper.style.marginLeft = "0";
+
+        if (automationScreen) automationScreen.style.display = "block";
+        if (rightPanel) rightPanel.style.display = "none";
+        const automationNav = document.querySelector('.nav-item[data-screen="automation"]');
+        if (automationNav) automationNav.classList.add("active");
+        const automationBtn = document.querySelector('.screen-switch-btn[data-panel="automation"]');
+        if (automationBtn) automationBtn.classList.add("active");
+        if (browserUrl) browserUrl.textContent = "app.automatemybiz.pro/automation";
+
+        // Initialize scenario list when switching to automation
+        setTimeout(() => {
+            updateAutomationScenarioList();
+            // Reset zoom when switching to automation
+            resetZoom();
+        }, 100);
     }
 
     // Update control panels
     const calendarControls = document.getElementById("calendar-controls");
     const conversationControls = document.getElementById("conversation-controls");
     const opportunitiesControls = document.getElementById("opportunities-controls");
+    const automationControls = document.getElementById("automation-controls");
 
     if (calendarControls) calendarControls.style.display = screenName === "calendar" ? "block" : "none";
     if (conversationControls) conversationControls.style.display = screenName === "conversations" ? "block" : "none";
     if (opportunitiesControls) opportunitiesControls.style.display = screenName === "opportunities" ? "block" : "none";
+    if (automationControls) automationControls.style.display = screenName === "automation" ? "block" : "none";
 
     // Update control panel buttons
     screenSwitchBtns.forEach((btn, index) => {
         if (screenName === "calendar" && index === 0) btn.classList.add("active");
         else if (screenName === "conversations" && index === 1) btn.classList.add("active");
         else if (screenName === "opportunities" && index === 2) btn.classList.add("active");
+        else if (screenName === "automation" && index === 3) btn.classList.add("active");
         else btn.classList.remove("active");
     });
+}
+
+// Workflow Animation Functions
+window.workflowNodes = [];
+let currentNodeIndex = 0;
+let animationSpeed = 'normal';
+
+const nodeTypes = {
+    wait: { icon: 'fas fa-clock', color: 'purple', label: 'Wait' },
+    call: { icon: 'fas fa-phone', color: 'green', label: 'Call' },
+    sms: { icon: 'fas fa-comment-dots', color: 'blue', label: 'SMS' },
+    email: { icon: 'fas fa-envelope', color: 'orange', label: 'Email' },
+    user: { icon: 'fas fa-user-check', color: 'teal', label: 'Assign User' },
+    webhook: { icon: 'fas fa-link', color: 'indigo', label: 'Webhook' },
+    condition: { icon: 'fas fa-code-branch', color: 'yellow', label: 'If/Else' },
+    tag: { icon: 'fas fa-tag', color: 'pink', label: 'Add Tag' }
+};
+
+function startWorkflowAnimation() {
+    const speedSelect = document.getElementById('animationSpeed');
+    animationSpeed = speedSelect ? speedSelect.value : 'normal';
+
+    // Toggle button visibility
+    const startBtn = document.getElementById('startAnimationBtn');
+    const stopBtn = document.getElementById('stopAnimationBtn');
+    if (startBtn) startBtn.style.display = 'none';
+    if (stopBtn) stopBtn.style.display = 'block';
+
+    // Reset workflow
+    resetWorkflow();
+
+    // Start animation sequence
+    animateNextNode();
+}
+
+function resetWorkflow() {
+    console.log('Resetting workflow canvas, keeping scenario nodes:', window.workflowNodes);
+
+    // Remove all nodes except trigger
+    const workflowBuilder = document.querySelector('.workflow-builder');
+    if (!workflowBuilder) return;
+
+    // Remove all dynamically added nodes
+    const dynamicNodes = workflowBuilder.querySelectorAll('.dynamic-node');
+    dynamicNodes.forEach(node => {
+        if (node && node.parentNode) {
+            node.parentNode.removeChild(node);
+        }
+    });
+
+    // Keep original structure intact
+    const firstAddBtn = document.getElementById('addNode1');
+    if (firstAddBtn) {
+        firstAddBtn.style.display = 'flex';
+        // Remove any nodes after the first add button
+        let nextSibling = firstAddBtn.nextSibling;
+        while (nextSibling) {
+            let toRemove = nextSibling;
+            nextSibling = nextSibling.nextSibling;
+            if (toRemove.nodeType === 1) { // Element node
+                toRemove.parentNode.removeChild(toRemove);
+            }
+        }
+    }
+
+    // Reset the animation index to start from the beginning
+    currentNodeIndex = 0;
+
+    console.log('Canvas reset complete. Ready to animate', window.workflowNodes.length, 'nodes');
+}
+
+function animateNextNode() {
+    console.log(`Animating node ${currentNodeIndex} of ${window.workflowNodes.length}`);
+
+    if (currentNodeIndex >= window.workflowNodes.length) {
+        console.log('All nodes animated, adding END node');
+        // Add end node
+        window.animationTimeout = setTimeout(() => {
+            addEndNode();
+            // Reset buttons when animation completes
+            const startBtn = document.getElementById('startAnimationBtn');
+            const stopBtn = document.getElementById('stopAnimationBtn');
+            if (startBtn) startBtn.style.display = 'block';
+            if (stopBtn) stopBtn.style.display = 'none';
+        }, getAnimationDelay());
+        return;
+    }
+
+    const node = window.workflowNodes[currentNodeIndex];
+    console.log(`Animating node:`, node);
+
+    window.animationTimeout = setTimeout(() => {
+        addWorkflowNode(node);
+        currentNodeIndex++;
+        animateNextNode();
+    }, getAnimationDelay());
+}
+
+function getAnimationDelay() {
+    const delays = {
+        fast: 500,
+        normal: 1000,
+        slow: 1500
+    };
+    return delays[animationSpeed] || 1000;
+}
+
+function addWorkflowNode(nodeData) {
+    const workflowBuilder = document.querySelector('.workflow-builder');
+    if (!workflowBuilder) return;
+
+    const nodeType = nodeTypes[nodeData.type] || nodeTypes.user;
+
+    // Create node element
+    const nodeDiv = document.createElement('div');
+    nodeDiv.className = 'workflow-node action-node dynamic-node';
+    nodeDiv.style.opacity = '0';
+    nodeDiv.innerHTML = `
+        <div class="node-header ${nodeData.type}">
+            <i class="${nodeType.icon}"></i>
+            <span>${nodeData.label || nodeType.label}</span>
+            <button class="node-menu">
+                <i class="fas fa-ellipsis-h"></i>
+            </button>
+        </div>
+    `;
+
+    // Add connection line
+    const connectionLine = document.createElement('div');
+    connectionLine.className = 'connection-line vertical dynamic-node';
+    connectionLine.style.opacity = '0';
+
+    // Add next add button
+    const addBtn = document.createElement('div');
+    addBtn.className = 'add-node-btn dynamic-node';
+    addBtn.innerHTML = '<i class="fas fa-plus"></i>';
+    addBtn.style.opacity = '0';
+
+    // Find where to insert - after the last visible add button or at the end
+    const allAddBtns = workflowBuilder.querySelectorAll('.add-node-btn');
+    let insertPoint = null;
+
+    // Find the last visible add button
+    for (let i = allAddBtns.length - 1; i >= 0; i--) {
+        if (allAddBtns[i].style.display !== 'none') {
+            insertPoint = allAddBtns[i];
+            break;
+        }
+    }
+
+    if (insertPoint) {
+        insertPoint.style.display = 'none';
+        insertPoint.parentNode.insertBefore(nodeDiv, insertPoint.nextSibling);
+        nodeDiv.parentNode.insertBefore(connectionLine, nodeDiv.nextSibling);
+        connectionLine.parentNode.insertBefore(addBtn, connectionLine.nextSibling);
+    } else {
+        // Fallback: append to workflow builder
+        workflowBuilder.appendChild(nodeDiv);
+        workflowBuilder.appendChild(connectionLine);
+        workflowBuilder.appendChild(addBtn);
+    }
+
+    // Animate in
+    setTimeout(() => {
+        nodeDiv.style.transition = 'opacity 0.3s';
+        nodeDiv.style.opacity = '1';
+        connectionLine.style.transition = 'opacity 0.3s';
+        connectionLine.style.opacity = '1';
+        addBtn.style.transition = 'opacity 0.3s';
+        addBtn.style.opacity = '1';
+    }, 100);
+}
+
+function addEndNode() {
+    const workflowBuilder = document.querySelector('.workflow-builder');
+    if (!workflowBuilder) return;
+
+    // Hide all add buttons
+    const allAddBtns = workflowBuilder.querySelectorAll('.add-node-btn');
+    allAddBtns.forEach(btn => btn.style.display = 'none');
+
+    // Add final connection and end node
+    const connectionLine = document.createElement('div');
+    connectionLine.className = 'connection-line vertical dynamic-node';
+    connectionLine.style.opacity = '0';
+
+    const endNode = document.createElement('div');
+    endNode.className = 'workflow-node end-node dynamic-node';
+    endNode.style.opacity = '0';
+    endNode.innerHTML = '<div class="node-content"><span>END</span></div>';
+
+    workflowBuilder.appendChild(connectionLine);
+    workflowBuilder.appendChild(endNode);
+
+    setTimeout(() => {
+        connectionLine.style.transition = 'opacity 0.3s';
+        connectionLine.style.opacity = '1';
+        endNode.style.transition = 'opacity 0.3s';
+        endNode.style.opacity = '1';
+    }, 100);
+}
+
+// Removed template loading function
+
+function addNodeToScenario() {
+    console.log('=== addNodeToScenario called ===');
+
+    try {
+        // Debug: Check if we're on the right screen
+        const automationControls = document.getElementById('automation-controls');
+        console.log('Automation controls visible:', automationControls && automationControls.style.display !== 'none');
+
+        const typeSelect = document.getElementById('nodeTypeSelect');
+        const labelInput = document.getElementById('nodeLabel');
+
+        console.log('Type select found:', !!typeSelect);
+        console.log('Label input found:', !!labelInput);
+
+        if (!typeSelect || !labelInput) {
+            console.error('ERROR: Required elements not found!');
+            console.log('typeSelect:', typeSelect);
+            console.log('labelInput:', labelInput);
+            alert('Error: Cannot find required form elements. Please refresh the page.');
+            return;
+        }
+
+        const type = typeSelect.value;
+        const label = labelInput.value.trim() || nodeTypes[type].label;
+
+        console.log('Node type:', type);
+        console.log('Node label:', label);
+        console.log('Current workflow nodes before adding:', JSON.stringify(window.workflowNodes));
+        console.log('Array length before push:', window.workflowNodes.length);
+
+        // Create the new node
+        const newNode = { type, label };
+        console.log('Creating new node:', JSON.stringify(newNode));
+
+        // Add the node to the array
+        const newLength = window.workflowNodes.push(newNode);
+        console.log('Push returned new length:', newLength);
+
+        console.log('Array length after push:', window.workflowNodes.length);
+        console.log('Current workflow nodes after adding:', JSON.stringify(window.workflowNodes));
+
+        // Clear the input field
+        labelInput.value = '';
+
+        console.log('About to call updateScenarioList...');
+        console.log('typeof updateScenarioList:', typeof updateScenarioList);
+        console.log('typeof window.updateScenarioList:', typeof window.updateScenarioList);
+
+        // Call the automation-specific update function
+        console.log('Calling updateAutomationScenarioList()...');
+        updateAutomationScenarioList();
+        console.log('updateScenarioList call completed');
+    } catch (error) {
+        console.error('ERROR in addNodeToScenario:', error);
+        alert('Error adding node: ' + error.message);
+    }
+}
+
+function updateAutomationScenarioList() {
+    console.log('=== updateAutomationScenarioList called ===');
+    console.log('Nodes to display:', window.workflowNodes);
+
+    const scenarioList = document.getElementById('scenarioList');
+    console.log('Scenario list element found:', !!scenarioList);
+
+    if (!scenarioList) {
+        console.error('ERROR: scenarioList element not found!');
+        // Try to find it with a different method
+        const allScenarioLists = document.querySelectorAll('#scenarioList');
+        console.log('Found scenario lists with querySelectorAll:', allScenarioLists.length);
+        return;
+    }
+
+    console.log('Clearing scenario list...');
+    scenarioList.innerHTML = '';
+
+    if (window.workflowNodes.length === 0) {
+        scenarioList.innerHTML = '<div style="text-align: center; color: #999; padding: 10px; font-size: 11px;">No actions added yet</div>';
+        return;
+    }
+
+    window.workflowNodes.forEach((node, index) => {
+        console.log(`Adding node ${index}:`, node);
+        const nodeType = nodeTypes[node.type] || nodeTypes.user;
+        const item = document.createElement('div');
+        item.style.cssText = 'padding: 5px; margin: 2px 0; background: #f3f4f6; border-radius: 4px; font-size: 11px; display: flex; align-items: center; gap: 5px;';
+        item.innerHTML = `
+            <i class="${nodeType.icon}" style="color: ${getNodeColor(node.type)}; font-size: 10px;"></i>
+            <span style="flex: 1;">${node.label}</span>
+            <button onclick="removeNodeFromScenario(${index})" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 2px;">
+                <i class="fas fa-times" style="font-size: 10px;"></i>
+            </button>
+        `;
+        scenarioList.appendChild(item);
+    });
+    console.log(`Scenario list updated successfully with ${window.workflowNodes.length} items`);
+}
+
+function removeNodeFromScenario(index) {
+    window.workflowNodes.splice(index, 1);
+    updateAutomationScenarioList();
+}
+
+function clearScenario() {
+    window.workflowNodes = [];
+    updateAutomationScenarioList();
+}
+
+function stopWorkflowAnimation() {
+    if (window.animationTimeout) {
+        clearTimeout(window.animationTimeout);
+        window.animationTimeout = null;
+    }
+
+    // Toggle button visibility
+    const startBtn = document.getElementById('startAnimationBtn');
+    const stopBtn = document.getElementById('stopAnimationBtn');
+    if (startBtn) startBtn.style.display = 'block';
+    if (stopBtn) stopBtn.style.display = 'none';
+}
+
+// Removed second template loading function
+
+function getNodeColor(type) {
+    const colors = {
+        wait: '#6d28d9',
+        call: '#059669',
+        sms: '#1e40af',
+        email: '#c2410c',
+        user: '#0f766e',
+        webhook: '#4338ca',
+        condition: '#a16207',
+        tag: '#be185d'
+    };
+    return colors[type] || '#374151';
 }
 
 // Make functions globally available
@@ -89,6 +484,83 @@ window.renderOpportunityCards = renderOpportunityCards;
 window.updateStageCounters = updateStageCounters;
 window.initializeOpportunities = initializeOpportunities;
 window.startAnimatedMove = startAnimatedMove;
+window.startWorkflowAnimation = startWorkflowAnimation;
+window.resetWorkflow = resetWorkflow;
+window.addNodeToScenario = addNodeToScenario;
+window.updateAutomationScenarioList = updateAutomationScenarioList;
+window.removeNodeFromScenario = removeNodeFromScenario;
+window.clearScenario = clearScenario;
+
+// Update trigger function
+window.updateTrigger = function() {
+    const triggerName = document.getElementById('triggerName');
+
+    if (!triggerName) return;
+
+    // Find the trigger node
+    const triggerNode = document.querySelector('.trigger-node');
+    if (triggerNode) {
+        const titleElement = triggerNode.querySelector('.node-title');
+
+        if (titleElement) {
+            titleElement.textContent = triggerName.value || 'Contact Created';
+        }
+    }
+
+    console.log('Trigger updated:', triggerName.value);
+};
+
+// Test function to verify scenario builder is working
+window.testScenarioBuilder = function() {
+    console.log('=== Testing Scenario Builder ===');
+
+    // Add a test node
+    window.workflowNodes.push({ type: 'email', label: 'Test Email Action' });
+
+    // Update the list
+    updateAutomationScenarioList();
+
+    console.log('Test complete. Check if "Test Email Action" appears in the scenario list.');
+};
+
+// Zoom functionality for workflow canvas
+let currentZoom = 100;
+const ZOOM_STEP = 10;
+const MIN_ZOOM = 50;
+const MAX_ZOOM = 150;
+
+function updateZoomLevel(newZoom) {
+    // Clamp zoom level between min and max
+    currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
+
+    // Update zoom level display
+    const zoomLevelElement = document.querySelector('.zoom-level');
+    if (zoomLevelElement) {
+        zoomLevelElement.textContent = currentZoom + '%';
+    }
+
+    // Apply zoom to workflow builder
+    const workflowBuilder = document.querySelector('.workflow-builder');
+    if (workflowBuilder) {
+        const scale = currentZoom / 100;
+        workflowBuilder.style.transform = `scale(${scale})`;
+        workflowBuilder.style.transformOrigin = 'top center';
+    }
+
+    console.log('Zoom updated to:', currentZoom + '%');
+}
+
+window.zoomIn = function() {
+    updateZoomLevel(currentZoom + ZOOM_STEP);
+};
+
+window.zoomOut = function() {
+    updateZoomLevel(currentZoom - ZOOM_STEP);
+};
+
+window.resetZoom = function() {
+    updateZoomLevel(100);
+};
 
 document.addEventListener('DOMContentLoaded', function() {
     // Get common elements
@@ -136,9 +608,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Use global switchToScreen function which handles URL update
                 switchToScreen('opportunities');
+            } else if (panel === 'automation') {
+                calendarControls.style.display = 'none';
+                conversationControls.style.display = 'none';
+                if (opportunitiesControls) opportunitiesControls.style.display = 'none';
+                const automationControls = document.getElementById('automation-controls');
+                if (automationControls) automationControls.style.display = 'block';
+
+                // Use global switchToScreen function which handles URL update
+                switchToScreen('automation');
             }
         });
     });
+
+    // Initialize automation screen if we're on it
+    if (document.getElementById('automation-screen') && document.getElementById('automation-screen').style.display !== 'none') {
+        console.log('Automation screen is visible, functions ready');
+    }
     
     // Screen switching functionality
     navItems.forEach(item => {
@@ -158,6 +644,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (calendarScreen) calendarScreen.style.display = 'none';
                 if (conversationsScreen) conversationsScreen.style.display = 'none';
                 if (opportunitiesScreen) opportunitiesScreen.style.display = 'none';
+                const automationScreen = document.getElementById('automation-screen');
+                if (automationScreen) automationScreen.style.display = 'none';
 
                 // Switch screens
                 if (screen === 'calendar') {
@@ -200,6 +688,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Switch control panel too
                     if (screenSwitchBtns && screenSwitchBtns[2]) {
                         screenSwitchBtns[2].click();
+                    }
+                } else if (screen === 'automation') {
+                    console.log('Showing automation screen');
+                    const automationScreen = document.getElementById('automation-screen');
+                    if (automationScreen) automationScreen.style.display = 'block';
+                    if (rightPanel) rightPanel.style.display = 'none';
+
+                    // Switch control panel too
+                    if (screenSwitchBtns && screenSwitchBtns[3]) {
+                        screenSwitchBtns[3].click();
                     }
                 }
             } catch (error) {
@@ -389,8 +887,41 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Initialize card animation controls for opportunities
-    initializeCardAnimationControls();
+    // Initialize card animation controls for opportunities if function exists
+    if (typeof initializeCardAnimationControls === 'function') {
+        initializeCardAnimationControls();
+    }
+
+    // Add Enter key listener for automation node label input
+    const nodeLabelInput = document.getElementById('nodeLabel');
+    if (nodeLabelInput) {
+        nodeLabelInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addNodeToScenario();
+            }
+        });
+    }
+
+    // Add keyboard shortcuts for zoom (Ctrl/Cmd + Plus/Minus)
+    document.addEventListener('keydown', function(e) {
+        // Only work when automation screen is active
+        const automationScreen = document.getElementById('automation-screen');
+        if (!automationScreen || automationScreen.style.display === 'none') return;
+
+        if ((e.ctrlKey || e.metaKey)) {
+            if (e.key === '=' || e.key === '+') {
+                e.preventDefault();
+                zoomIn();
+            } else if (e.key === '-' || e.key === '_') {
+                e.preventDefault();
+                zoomOut();
+            } else if (e.key === '0') {
+                e.preventDefault();
+                resetZoom();
+            }
+        }
+    });
 });
 
 // Search functionality
