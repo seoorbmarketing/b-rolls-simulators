@@ -3462,10 +3462,10 @@ function clearScenario() {
 
 // Play Scenario
 function playScenario() {
-    if (isScenarioPlaying || scenarioSteps.length === 0) {
-        if (scenarioSteps.length === 0) {
-            alert('No scenario steps to play! Add some steps first.');
-        }
+    if (isScenarioPlaying) return;
+
+    if (scenarioSteps.length === 0) {
+        alert('No scenario steps to play! Add some steps first.');
         return;
     }
 
@@ -3473,78 +3473,64 @@ function playScenario() {
     const speedSelect = document.getElementById('playbackSpeed');
     const speed = speedSelect ? speedSelect.value : 'medium';
     const delays = {
-        slow: 2000,
-        medium: 1000,
-        fast: 500
+        slow: 3000,
+        medium: 1500,
+        fast: 800
     };
 
     let currentStep = 0;
 
     function executeStep() {
-        if (!isScenarioPlaying || currentStep >= scenarioSteps.length) {
+        if (currentStep >= scenarioSteps.length) {
             isScenarioPlaying = false;
             return;
         }
 
         const step = scenarioSteps[currentStep];
-        const delay = delays[speed];
 
-        // Process the current step
         switch(step.type) {
-            case 'delay':
-                // Custom delay
-                currentStep++;
-                scenarioTimeout = setTimeout(() => {
-                    executeStep();
-                }, parseInt(step.content) || 1000);
+            case 'incoming':
+                // Show typing indicator first for incoming messages
+                showTypingIndicator();
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    addMessage(step.content, 'incoming');
+                }, 1000); // Typing indicator duration
+                break;
+
+            case 'outgoing':
+                addMessage(step.content, 'outgoing');
                 break;
 
             case 'typing':
-                // Show typing indicator
                 showTypingIndicator();
-                currentStep++;
-                scenarioTimeout = setTimeout(() => {
+                setTimeout(() => {
                     hideTypingIndicator();
-                    executeStep();
-                }, delay);
+                }, delays[speed]);
                 break;
 
-            case 'incoming':
-            case 'outgoing':
-                // Add message with proper type
-                const messageType = step.type;
-
-                // For first message, add small initial delay
-                if (currentStep === 0) {
-                    scenarioTimeout = setTimeout(() => {
-                        addMessage(step.content, messageType);
-                        currentStep++;
-                        // Wait before next message
-                        scenarioTimeout = setTimeout(() => {
-                            executeStep();
-                        }, delay);
-                    }, 300);
-                } else {
-                    // Add message immediately for non-first messages
-                    addMessage(step.content, messageType);
+            case 'delay':
+                // Custom delay - move to next step after delay
+                const customDelay = parseInt(step.content) || 1000;
+                setTimeout(() => {
                     currentStep++;
-                    // Wait before processing next step
-                    scenarioTimeout = setTimeout(() => {
-                        executeStep();
-                    }, delay);
-                }
-                break;
+                    executeStep();
+                }, customDelay);
+                return; // Exit early to prevent double increment
+        }
 
-            default:
-                // Unknown type, skip
-                currentStep++;
-                executeStep();
-                break;
+        currentStep++;
+
+        // Schedule next step
+        if (currentStep < scenarioSteps.length) {
+            scenarioTimeout = setTimeout(executeStep, delays[speed]);
+        } else {
+            isScenarioPlaying = false;
         }
     }
 
-    // Start the execution
-    executeStep();
+    // Start with a small delay
+    setTimeout(executeStep, 500);
 }
 
 // Show typing indicator
