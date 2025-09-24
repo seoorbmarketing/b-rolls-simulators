@@ -9,6 +9,7 @@ function switchToScreen(screenName) {
     const conversationsScreen = document.getElementById("conversations-screen");
     const opportunitiesScreen = document.getElementById("opportunities-screen");
     const automationScreen = document.getElementById("automation-screen");
+    const formsScreen = document.getElementById("forms-screen");
     const rightPanel = document.querySelector(".right-panel");
     const navItems = document.querySelectorAll(".nav-item[data-screen]");
     const screenSwitchBtns = document.querySelectorAll(".screen-switch-btn");
@@ -19,6 +20,7 @@ function switchToScreen(screenName) {
     if (conversationsScreen) conversationsScreen.style.display = "none";
     if (opportunitiesScreen) opportunitiesScreen.style.display = "none";
     if (automationScreen) automationScreen.style.display = "none";
+    if (formsScreen) formsScreen.style.display = "none";
 
     // Update nav items
     navItems.forEach(nav => nav.classList.remove("active"));
@@ -116,6 +118,22 @@ function switchToScreen(screenName) {
             // Reset zoom when switching to automation
             resetZoom();
         }, 100);
+    } else if (screenName === "forms") {
+        // Show sidebar and top nav for forms
+        if (sidebar) sidebar.style.display = "block";
+        if (sidebarToggle) sidebarToggle.style.display = "block";
+        if (topNav) topNav.style.display = "flex";
+        if (mainWrapper && !sidebar.classList.contains('collapsed')) {
+            mainWrapper.style.marginLeft = "180px";
+        }
+
+        if (formsScreen) formsScreen.style.display = "block";
+        if (rightPanel) rightPanel.style.display = "none";
+        const formsNav = document.querySelector('.nav-item[data-screen="forms"]');
+        if (formsNav) formsNav.classList.add("active");
+        const formsBtn = document.querySelector('.screen-switch-btn[data-panel="forms"]');
+        if (formsBtn) formsBtn.classList.add("active");
+        if (browserUrl) browserUrl.textContent = "app.automatemybiz.pro/forms";
     }
 
     // Update control panels - hide all first, then show the active one
@@ -123,12 +141,14 @@ function switchToScreen(screenName) {
     const conversationControls = document.getElementById("conversation-controls");
     const opportunitiesControls = document.getElementById("opportunities-controls");
     const automationControls = document.getElementById("automation-controls");
+    const formsControls = document.getElementById("forms-controls");
 
     // Hide all control panels first
     if (calendarControls) calendarControls.style.display = "none";
     if (conversationControls) conversationControls.style.display = "none";
     if (opportunitiesControls) opportunitiesControls.style.display = "none";
     if (automationControls) automationControls.style.display = "none";
+    if (formsControls) formsControls.style.display = "none";
 
     // Show the appropriate control panel
     if (screenName === "calendar" && calendarControls) {
@@ -139,6 +159,8 @@ function switchToScreen(screenName) {
         opportunitiesControls.style.display = "block";
     } else if (screenName === "automation" && automationControls) {
         automationControls.style.display = "block";
+    } else if (screenName === "forms" && formsControls) {
+        formsControls.style.display = "block";
     }
 
     // Update control panel buttons
@@ -147,6 +169,7 @@ function switchToScreen(screenName) {
         else if (screenName === "conversations" && index === 1) btn.classList.add("active");
         else if (screenName === "opportunities" && index === 2) btn.classList.add("active");
         else if (screenName === "automation" && index === 3) btn.classList.add("active");
+        else if (screenName === "forms" && index === 4) btn.classList.add("active");
         else btn.classList.remove("active");
     });
 }
@@ -601,6 +624,11 @@ window.resetZoom = function() {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Load saved stage names on page load
+    loadSavedStageNames();
+    // Load saved pipeline name on page load
+    loadSavedPipelineName();
+
     // Get common elements
     const calendarScreen = document.getElementById('calendar-screen');
     const conversationsScreen = document.getElementById('conversations-screen');
@@ -650,11 +678,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 calendarControls.style.display = 'none';
                 conversationControls.style.display = 'none';
                 if (opportunitiesControls) opportunitiesControls.style.display = 'none';
+                const formsControls = document.getElementById('forms-controls');
+                if (formsControls) formsControls.style.display = 'none';
                 const automationControls = document.getElementById('automation-controls');
                 if (automationControls) automationControls.style.display = 'block';
 
                 // Use global switchToScreen function which handles URL update
                 switchToScreen('automation');
+            } else if (panel === 'forms') {
+                calendarControls.style.display = 'none';
+                conversationControls.style.display = 'none';
+                if (opportunitiesControls) opportunitiesControls.style.display = 'none';
+                const automationControls = document.getElementById('automation-controls');
+                if (automationControls) automationControls.style.display = 'none';
+                const formsControls = document.getElementById('forms-controls');
+                if (formsControls) formsControls.style.display = 'block';
+
+                // Use global switchToScreen function which handles URL update
+                switchToScreen('forms');
             }
         });
     });
@@ -684,6 +725,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (opportunitiesScreen) opportunitiesScreen.style.display = 'none';
                 const automationScreen = document.getElementById('automation-screen');
                 if (automationScreen) automationScreen.style.display = 'none';
+                const formsScreen = document.getElementById('forms-screen');
+                if (formsScreen) formsScreen.style.display = 'none';
 
                 // Switch screens
                 if (screen === 'calendar') {
@@ -736,6 +779,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Switch control panel too
                     if (screenSwitchBtns && screenSwitchBtns[3]) {
                         screenSwitchBtns[3].click();
+                    }
+                } else if (screen === 'forms') {
+                    console.log('Showing forms screen');
+                    const formsScreen = document.getElementById('forms-screen');
+                    if (formsScreen) formsScreen.style.display = 'block';
+                    if (rightPanel) rightPanel.style.display = 'none';
+
+                    // Switch control panel if button exists
+                    if (screenSwitchBtns && screenSwitchBtns[4]) {
+                        screenSwitchBtns[4].click();
                     }
                 }
             } catch (error) {
@@ -1714,7 +1767,7 @@ function confirmQuickAppointment() {
         
         // Create appointment element
         const appointment = document.createElement('div');
-        appointment.className = 'appointment';
+        appointment.className = 'appointment-card';
         appointment.style.cssText = `
             position: absolute;
             top: 0;
@@ -3852,6 +3905,11 @@ let opportunityCards = window.opportunityCards;
 
 // Initialize Opportunities
 function initializeOpportunities() {
+    // Load saved stage names when initializing opportunities
+    loadSavedStageNames();
+    // Load saved pipeline name when initializing opportunities
+    loadSavedPipelineName();
+
     // Start with empty pipeline
     window.opportunityCards = [];
     opportunityCards = window.opportunityCards;
@@ -5127,17 +5185,157 @@ window.stopOpportunityScenario = function() {
     if (stopBtn) stopBtn.style.display = 'none';
 };
 
+// Store custom stage names
+let customStageNames = {
+    'demo-requested': 'Demo Requested',
+    'demo-scheduled': 'Demo Scheduled',
+    'demo-no-show': 'Demo No-Show',
+    'demo-converted': 'Demo Converted',
+    'client-not-converted': 'Client Not-Converted'
+};
+
+// Store custom pipeline name
+let customPipelineName = 'AI Demo Booking Pipeline';
+
+// Load saved stage names from localStorage
+function loadSavedStageNames() {
+    const saved = localStorage.getItem('ghlStageNames');
+    if (saved) {
+        customStageNames = JSON.parse(saved);
+        // Update the input fields
+        const stages = ['demo-requested', 'demo-scheduled', 'demo-no-show', 'demo-converted', 'client-not-converted'];
+        stages.forEach((stage, index) => {
+            const input = document.getElementById(`stage${index + 1}Name`);
+            if (input) {
+                input.value = customStageNames[stage];
+            }
+        });
+        // Update the actual stage headers
+        updateAllStageHeaders();
+    }
+}
+
 // Helper function to get stage name
 function getStageName(stageId) {
-    const stageNames = {
-        'demo-requested': 'Demo Requested',
-        'demo-scheduled': 'Demo Scheduled',
-        'demo-no-show': 'Demo No-Show',
-        'demo-converted': 'Demo Converted',
-        'client-not-converted': 'Client Not-Converted'
-    };
-    return stageNames[stageId] || stageId;
+    return customStageNames[stageId] || stageId;
 }
+
+// Update stage name function
+function updateStageName(index, newName) {
+    const stages = ['demo-requested', 'demo-scheduled', 'demo-no-show', 'demo-converted', 'client-not-converted'];
+    const stageId = stages[index];
+
+    if (stageId && newName) {
+        customStageNames[stageId] = newName;
+
+        // Update the stage header in the UI
+        const stageColumn = document.querySelector(`[data-stage="${stageId}"]`);
+        if (stageColumn) {
+            const header = stageColumn.querySelector('.stage-header h3');
+            if (header) {
+                header.textContent = newName;
+            }
+        }
+    }
+}
+
+// Save stage names to localStorage
+function saveStageNames() {
+    localStorage.setItem('ghlStageNames', JSON.stringify(customStageNames));
+    updateAllStageHeaders();
+
+    // Show success feedback
+    const saveBtn = document.querySelector('#opportunities-controls .save-stages-btn');
+    if (saveBtn) {
+        const originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+        saveBtn.style.background = '#22c55e';
+        setTimeout(() => {
+            saveBtn.innerHTML = originalText;
+            saveBtn.style.background = '';
+        }, 2000);
+    }
+}
+
+// Update all stage headers with custom names
+function updateAllStageHeaders() {
+    const stages = ['demo-requested', 'demo-scheduled', 'demo-no-show', 'demo-converted', 'client-not-converted'];
+
+    stages.forEach(stageId => {
+        const stageColumn = document.querySelector(`[data-stage="${stageId}"]`);
+        if (stageColumn) {
+            const header = stageColumn.querySelector('.stage-header h3');
+            if (header) {
+                header.textContent = customStageNames[stageId];
+            }
+        }
+    });
+}
+
+// Pipeline Name Functions
+function loadSavedPipelineName() {
+    const saved = localStorage.getItem('ghlPipelineName');
+    if (saved) {
+        customPipelineName = saved;
+        // Update the input field
+        const input = document.getElementById('pipelineNameControl');
+        if (input) {
+            input.value = customPipelineName;
+        }
+        // Update the pipeline selector
+        updatePipelineSelector();
+    }
+}
+
+function updatePipelineName() {
+    const input = document.getElementById('pipelineNameControl');
+    if (input && input.value) {
+        customPipelineName = input.value;
+        // Update the pipeline selector immediately
+        updatePipelineSelector();
+    }
+}
+
+function savePipelineName() {
+    localStorage.setItem('ghlPipelineName', customPipelineName);
+    updatePipelineSelector();
+
+    // Show success feedback
+    const saveBtn = document.querySelector('#opportunities-controls .save-pipeline-btn');
+    if (saveBtn) {
+        const originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+        saveBtn.style.background = '#22c55e';
+        setTimeout(() => {
+            saveBtn.innerHTML = originalText;
+            saveBtn.style.background = '';
+        }, 2000);
+    }
+}
+
+function updatePipelineSelector() {
+    // Update the pipeline selector dropdown
+    const pipelineSelector = document.querySelector('.pipeline-selector');
+    if (pipelineSelector) {
+        // Update the first option which is our main pipeline
+        const firstOption = pipelineSelector.querySelector('option:first-child');
+        if (firstOption) {
+            firstOption.textContent = customPipelineName;
+        }
+        // If the first option is selected, update the displayed value
+        if (pipelineSelector.selectedIndex === 0) {
+            pipelineSelector.value = customPipelineName;
+        }
+    }
+}
+
+// Make functions globally available
+window.updateStageName = updateStageName;
+window.saveStageNames = saveStageNames;
+window.loadSavedStageNames = loadSavedStageNames;
+window.updatePipelineName = updatePipelineName;
+window.savePipelineName = savePipelineName;
+window.loadSavedPipelineName = loadSavedPipelineName;
 // Move these functions outside DOMContentLoaded to make them globally available
 window.addContactOpportunity = function() {
     console.log('addContactOpportunity called');
@@ -5341,3 +5539,4 @@ window.clearOpportunities = function() {
         window.updateStageCounters();
     }
 };
+

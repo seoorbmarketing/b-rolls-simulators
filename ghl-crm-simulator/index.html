@@ -6,6 +6,7 @@
     <title>Go High Level CRM - Calendar</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="forms-complete.css">
 </head>
 <body>
     <div class="container">
@@ -90,6 +91,10 @@
                 <a href="#" class="nav-item">
                     <i class="fas fa-users"></i>
                     <span>Contacts</span>
+                </a>
+                <a href="#" class="nav-item" data-screen="forms">
+                    <i class="fas fa-wpforms"></i>
+                    <span>Forms</span>
                 </a>
                 <a href="#" class="nav-item">
                     <i class="fas fa-credit-card"></i>
@@ -1019,6 +1024,184 @@
                 </div>
             </div><!-- End opportunities-screen -->
 
+            <!-- Forms Screen -->
+            <div class="forms-content screen-content" id="forms-screen" style="display: none;">
+                <div class="forms-container">
+                    <!-- Top Navigation Bar -->
+                    <div class="forms-header">
+                        <div class="forms-nav">
+                            <a href="#" class="forms-nav-item">Sites</a>
+                            <a href="#" class="forms-nav-item">Funnels</a>
+                            <a href="#" class="forms-nav-item">Analytics</a>
+                            <a href="#" class="forms-nav-item">Blogs</a>
+                            <a href="#" class="forms-nav-item">Client Portal</a>
+                            <a href="#" class="forms-nav-item active">Forms</a>
+                            <a href="#" class="forms-nav-item">Surveys</a>
+                            <a href="#" class="forms-nav-item">Quizzes</a>
+                            <a href="#" class="forms-nav-item">Chat Widget</a>
+                            <a href="#" class="forms-nav-item">QR Codes</a>
+                        </div>
+                        <button class="settings-btn">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+
+                    <!-- Submissions Section -->
+                    <div class="submissions-container">
+                        <div class="submissions-header">
+                            <div class="submissions-title">
+                                <h1>Submissions</h1>
+                                <p>Effortlessly Review, Manage, and Export Form Submissions</p>
+                            </div>
+                            <button class="export-btn">
+                                <i class="fas fa-download"></i>
+                                Export
+                            </button>
+                        </div>
+
+                        <!-- Form Selector and Info -->
+                        <div class="form-selector-bar">
+                            <div class="form-info">
+                                <span class="form-name">Lead Magnet Form</span>
+                                <span class="submission-count">34 Submissions</span>
+                            </div>
+                            <div class="date-filter">
+                                <input type="date" class="date-input" value="2025-08-23">
+                                <span class="date-arrow">→</span>
+                                <input type="date" class="date-input" value="2025-09-23">
+                                <button class="search-btn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                <button class="refresh-btn">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Submissions Table -->
+                        <div class="submissions-table-container">
+                            <table class="submissions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Submitted At</th>
+                                        <th>Contact</th>
+                                        <th>Full Name</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Timezone</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="submissionsTableBody">
+                                    <!-- Sample US-based submissions -->
+                                    <tr>
+                                        <td><span class="submission-date">Sep 22, 2025 06:36 PM</span></td>
+                                        <td><div class="contact-avatar" style="background: #34c759;">JD</div></td>
+                                        <td>John Davidson</td>
+                                        <td>John Davidson</td>
+                                        <td><a href="mailto:john.davidson@gmail.com">john.davidson@gmail.com</a></td>
+                                        <td>New York (GMT-05:00)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="submission-date">Sep 22, 2025 05:01 PM</span></td>
+                                        <td><div class="contact-avatar" style="background: #af52de;">SW</div></td>
+                                        <td>Sarah Williams</td>
+                                        <td>Sarah Williams</td>
+                                        <td><a href="mailto:sarah.williams@outlook.com">sarah.williams@outlook.com</a></td>
+                                        <td>New York (GMT-05:00)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="submission-date">Sep 22, 2025 04:12 PM</span></td>
+                                        <td><div class="contact-avatar" style="background: #34c759;">MJ</div></td>
+                                        <td>Michael Johnson</td>
+                                        <td>Michael Johnson</td>
+                                        <td><a href="mailto:mjohnson@gmail.com">mjohnson@gmail.com</a></td>
+                                        <td>New York (GMT-05:00)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="submission-date">Sep 22, 2025 04:06 PM</span></td>
+                                        <td><div class="contact-avatar" style="background: #34c759;">RB</div></td>
+                                        <td>Robert Brown</td>
+                                        <td>Robert Brown</td>
+                                        <td><a href="mailto:robert.brown@yahoo.com">robert.brown@yahoo.com</a></td>
+                                        <td>New York (GMT-05:00)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="submission-date">Sep 22, 2025 04:03 PM</span></td>
+                                        <td><div class="contact-avatar" style="background: #5856d6;">EM</div></td>
+                                        <td>Emily Martinez</td>
+                                        <td>Emily Martinez</td>
+                                        <td><a href="mailto:emily.martinez@gmail.com">emily.martinez@gmail.com</a></td>
+                                        <td>New York (GMT-05:00)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="submission-date">Sep 22, 2025 03:37 PM</span></td>
+                                        <td><div class="contact-avatar" style="background: #ffd60a;">DW</div></td>
+                                        <td>David Wilson</td>
+                                        <td>David Wilson</td>
+                                        <td><a href="mailto:david.wilson@gmail.com">david.wilson@gmail.com</a></td>
+                                        <td>New York (GMT-05:00)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="submission-date">Sep 22, 2025 03:20 PM</span></td>
+                                        <td><div class="contact-avatar" style="background: #ffd60a;">JT</div></td>
+                                        <td>Jennifer Thompson</td>
+                                        <td>Jennifer Thompson</td>
+                                        <td><a href="mailto:jthompson@hotmail.com">jthompson@hotmail.com</a></td>
+                                        <td>New York (GMT-05:00)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="submission-date">Sep 22, 2025 02:59 PM</span></td>
+                                        <td><div class="contact-avatar" style="background: #af52de;">CA</div></td>
+                                        <td>Christopher Anderson</td>
+                                        <td>Christopher Anderson</td>
+                                        <td><a href="mailto:c.anderson@gmail.com">c.anderson@gmail.com</a></td>
+                                        <td>New York (GMT-05:00)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="submission-date">Sep 22, 2025 01:41 PM</span></td>
+                                        <td><div class="contact-avatar" style="background: #af52de;">AG</div></td>
+                                        <td>Amanda Garcia</td>
+                                        <td>Amanda Garcia</td>
+                                        <td><a href="mailto:amanda.g@yahoo.com">amanda.g@yahoo.com</a></td>
+                                        <td>New York (GMT-05:00)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="submission-date">Sep 22, 2025 12:44 PM</span></td>
+                                        <td><div class="contact-avatar" style="background: #007aff;">WM</div></td>
+                                        <td>William Miller</td>
+                                        <td>William Miller</td>
+                                        <td><a href="mailto:w.miller@outlook.com">w.miller@outlook.com</a></td>
+                                        <td>New York (GMT-05:00)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="pagination-container">
+                            <div class="pagination-info">
+                                Page 1 of 2
+                            </div>
+                            <div class="pagination-controls">
+                                <select class="per-page-select">
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                                <button class="page-btn">First</button>
+                                <button class="page-btn">← Prev</button>
+                                <span class="page-numbers">
+                                    <button class="page-number active">1</button>
+                                    <button class="page-number">2</button>
+                                </span>
+                                <button class="page-btn">Next →</button>
+                                <button class="page-btn">Last</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- End forms-screen -->
+
             <!-- Automation Screen -->
             <div class="automation-content screen-content" id="automation-screen" style="display: none;">
                 <div class="automation-container">
@@ -1127,6 +1310,7 @@
                     <button class="screen-switch-btn" data-panel="conversation" onclick="switchToScreen('conversations')">Conversation</button>
                     <button class="screen-switch-btn" data-panel="opportunities" onclick="switchToScreen('opportunities')">Opportunities</button>
                     <button class="screen-switch-btn" data-panel="automation" onclick="switchToScreen('automation')">Automation</button>
+                    <button class="screen-switch-btn" data-panel="forms" onclick="switchToScreen('forms')">Forms</button>
                 </div>
             </div>
             
@@ -1430,6 +1614,11 @@
                             <label>Pipeline Name</label>
                             <input type="text" class="control-input" id="pipelineNameControl" value="AI Demo Booking Pipeline" oninput="updatePipelineName()">
                         </div>
+
+                        <button class="control-btn primary save-pipeline-btn" onclick="savePipelineName()">
+                            <i class="fas fa-save"></i>
+                            Save Pipeline Name
+                        </button>
                     </div>
 
                     <!-- Stage Names Configuration -->
@@ -1455,6 +1644,11 @@
                             <label>Stage 5</label>
                             <input type="text" class="control-input" id="stage5Name" value="Client Not-Converted" onchange="updateStageName(4, this.value)">
                         </div>
+
+                        <button class="control-btn primary save-stages-btn" onclick="saveStageNames()">
+                            <i class="fas fa-save"></i>
+                            Save Stage Names
+                        </button>
                     </div>
 
                     <!-- Add Contact Opportunity -->
@@ -1618,6 +1812,89 @@
                         </button>
                     </div>
                 </div><!-- End automation-controls -->
+
+                <!-- Forms Controls -->
+                <div class="control-panel-screen" id="forms-controls" style="display: none;">
+                    <!-- Animation Simulator Section -->
+                    <div class="control-section">
+                        <h3>🎬 Animation Simulator</h3>
+                        <p style="font-size: 12px; color: #666; margin: 8px 0;">Simulate new form submission notifications</p>
+
+                        <!-- Submission Type Toggle -->
+                        <div class="control-radio-group">
+                            <label class="control-radio">
+                                <input type="radio" name="submissionType" value="random" checked onchange="toggleSubmissionType('random')">
+                                <span>Random Data</span>
+                            </label>
+                            <label class="control-radio">
+                                <input type="radio" name="submissionType" value="manual" onchange="toggleSubmissionType('manual')">
+                                <span>Manual Fields</span>
+                            </label>
+                        </div>
+
+                        <!-- Random Data Options -->
+                        <div id="randomDataOptions" class="submission-options">
+                            <div class="control-input-group">
+                                <label>Animation Speed</label>
+                                <select class="control-select" id="formsAnimationSpeed">
+                                    <option value="slow">Slow</option>
+                                    <option value="normal" selected>Normal</option>
+                                    <option value="fast">Fast</option>
+                                </select>
+                            </div>
+                            <button class="control-btn" onclick="animateRandomSubmission()">
+                                <i class="fas fa-magic"></i>
+                                Generate Random Submission
+                            </button>
+                        </div>
+
+                        <!-- Manual Fields Options -->
+                        <div id="manualFieldsOptions" class="submission-options" style="display: none;">
+                            <div class="control-input-group">
+                                <label>Full Name</label>
+                                <input type="text" class="control-input" id="manualName" placeholder="e.g., John Smith">
+                            </div>
+                            <div class="control-input-group">
+                                <label>Email</label>
+                                <input type="email" class="control-input" id="manualEmail" placeholder="john@example.com">
+                            </div>
+                            <button class="control-btn" onclick="animateManualSubmission()">
+                                <i class="fas fa-plus-circle"></i>
+                                Add Manual Submission
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Animation Settings -->
+                    <div class="control-section">
+                        <h3>⚙️ Animation Settings</h3>
+                        <label class="control-checkbox">
+                            <input type="checkbox" id="playSound" checked>
+                            <span>Play notification sound</span>
+                        </label>
+                        <label class="control-checkbox">
+                            <input type="checkbox" id="autoScroll" checked>
+                            <span>Auto-scroll to new entry</span>
+                        </label>
+                    </div>
+
+                    <!-- Bulk Actions -->
+                    <div class="control-section">
+                        <h3>🚀 Quick Actions</h3>
+                        <button class="control-btn" onclick="simulateBulkSubmissions()">
+                            <i class="fas fa-rocket"></i>
+                            Simulate 5 Submissions
+                        </button>
+                        <button class="control-btn" onclick="clearAllSubmissions()">
+                            <i class="fas fa-trash-alt"></i>
+                            Clear All Submissions
+                        </button>
+                        <button class="control-btn" onclick="resetToDefault()">
+                            <i class="fas fa-undo"></i>
+                            Reset to Default
+                        </button>
+                    </div>
+                </div><!-- End forms-controls -->
             </div>
         </div>
     </div><!-- End container -->
@@ -1806,5 +2083,7 @@
     </audio>
 
     <script src="script.js"></script>
+    <script src="forms-animation.js"></script>
+    <script src="navigation-fix.js"></script>
 </body>
 </html>

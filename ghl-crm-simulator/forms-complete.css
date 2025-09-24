@@ -1,0 +1,619 @@
+/* ============================================
+   FORMS SCREEN COMPLETE STYLES
+   All styles are scoped to #forms-screen only
+   Matches actual HTML structure
+   ============================================ */
+
+/* Base Forms Screen Container */
+#forms-screen {
+    display: none;
+    width: 100%;
+    height: 100%;
+    background: white;
+}
+
+/* When Forms screen is active */
+#forms-screen[style*="display: block"] {
+    display: flex !important;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Forms Container - full height */
+#forms-screen .forms-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    overflow: hidden;
+}
+
+/* Top Navigation Bar */
+#forms-screen .forms-header {
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+#forms-screen .forms-nav {
+    display: flex;
+    gap: 20px;
+    padding: 12px 20px;
+    align-items: center;
+    flex: 1;
+}
+
+#forms-screen .forms-nav-item {
+    color: #6b7280;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 0;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+}
+
+#forms-screen .forms-nav-item.active {
+    color: #3b82f6;
+    border-bottom-color: #3b82f6;
+}
+
+/* Settings Button */
+#forms-screen .settings-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: white;
+    color: #6b7280;
+    font-size: 14px;
+    margin-right: 20px;
+}
+
+/* Submissions Container - Scrollable */
+#forms-screen .submissions-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #f9fafb;
+}
+
+/* Submissions Header */
+#forms-screen .submissions-header {
+    padding: 20px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+#forms-screen .submissions-title {
+    flex: 1;
+}
+
+#forms-screen .submissions-title h1 {
+    font-size: 24px;
+    margin: 0;
+    color: #111827;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+#forms-screen .submissions-title p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 4px 0 0 0;
+}
+
+/* Export Button */
+#forms-screen .export-btn {
+    background: white;
+    border: 1px solid #d1d5db;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #374151;
+    font-weight: 500;
+}
+
+#forms-screen .export-btn i {
+    font-size: 12px;
+}
+
+/* Form Selector Bar */
+#forms-screen .form-selector-bar {
+    padding: 16px 20px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+#forms-screen .form-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#forms-screen .form-name {
+    font-size: 14px;
+    color: #111827;
+    font-weight: 600;
+}
+
+#forms-screen .submission-count {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* Date Filter */
+#forms-screen .date-filter {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+#forms-screen .date-input {
+    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #374151;
+    background: white;
+}
+
+#forms-screen .date-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+#forms-screen .date-arrow {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+#forms-screen .search-btn,
+#forms-screen .refresh-btn {
+    background: white;
+    border: 1px solid #d1d5db;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #6b7280;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Submissions Toolbar - REMOVED (merged into form-selector-bar) */
+/* Search and manage columns functionality moved to form-selector-bar */
+
+/* Table Container - Scrollable Area */
+#forms-screen .submissions-table-container {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: auto;
+    padding: 20px;
+    background: #f9fafb;
+    min-height: 0;
+}
+
+/* Table Wrapper for Shadow */
+#forms-screen .submissions-table {
+    width: 100%;
+    min-width: 800px;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Table Header */
+#forms-screen .submissions-table thead {
+    background: #f9fafb;
+}
+
+#forms-screen .submissions-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+    white-space: nowrap;
+}
+
+#forms-screen .submissions-table th:first-child {
+    padding-left: 20px;
+}
+
+#forms-screen .submissions-table th:last-child {
+    padding-right: 20px;
+}
+
+/* Table Body */
+#forms-screen .submissions-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 13px;
+    color: #374151;
+    vertical-align: middle;
+    background: white;
+}
+
+#forms-screen .submissions-table td:first-child {
+    padding-left: 20px;
+}
+
+#forms-screen .submissions-table td:last-child {
+    padding-right: 20px;
+}
+
+#forms-screen .submissions-table tbody tr {
+    cursor: pointer;
+}
+
+#forms-screen .submissions-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Contact Avatar */
+#forms-screen .contact-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    flex-shrink: 0;
+    text-transform: uppercase;
+}
+
+/* Links in Table */
+#forms-screen .submissions-table a {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+/* Submission Date */
+#forms-screen .submission-date {
+    font-size: 13px;
+    color: #374151;
+    white-space: nowrap;
+}
+
+/* Ensure proper scrolling */
+#forms-screen {
+    position: relative;
+}
+
+#forms-screen .forms-container {
+    position: relative;
+    height: 100%;
+}
+
+/* Force table display */
+#forms-screen .submissions-table,
+#forms-screen .submissions-table thead,
+#forms-screen .submissions-table tbody,
+#forms-screen .submissions-table tr,
+#forms-screen .submissions-table th,
+#forms-screen .submissions-table td {
+    display: revert;
+}
+
+/* Ensure visibility */
+#forms-screen .forms-header,
+#forms-screen .submissions-header,
+#forms-screen .form-selector-bar {
+    display: flex;
+}
+
+#forms-screen .submissions-table-container {
+    display: block;
+}
+
+/* Custom scrollbar for table container */
+#forms-screen .submissions-table-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#forms-screen .submissions-table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#forms-screen .submissions-table-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1400px) {
+    #forms-screen .forms-nav {
+        gap: 15px;
+    }
+
+    #forms-screen .forms-nav-item {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 1200px) {
+    #forms-screen .submissions-table th,
+    #forms-screen .submissions-table td {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+}
+
+/* ============================================
+   FORMS CONTROL PANEL STYLES
+   ============================================ */
+
+#forms-controls {
+    padding: 15px;
+}
+
+#forms-controls .control-section {
+    margin-bottom: 20px;
+}
+
+#forms-controls .control-section h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+    color: #374151;
+    font-weight: 600;
+}
+
+#forms-controls .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+#forms-controls .stat-item {
+    background: #f9fafb;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+#forms-controls .stat-label {
+    display: block;
+    font-size: 10px;
+    color: #6b7280;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+#forms-controls .stat-value {
+    display: block;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+}
+/* ============================================
+   PAGINATION CONTAINER STYLES
+   ============================================ */
+
+/* Pagination Container */
+#forms-screen .pagination-container {
+    padding: 16px 20px;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+/* Pagination Info */
+#forms-screen .pagination-info {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* Pagination Controls */
+#forms-screen .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Per Page Select */
+#forms-screen .per-page-select {
+    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #374151;
+    background: white;
+    cursor: pointer;
+    margin-right: 8px;
+}
+
+#forms-screen .per-page-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+
+/* Page Buttons */
+#forms-screen .page-btn {
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    background: white;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #374151;
+    cursor: pointer;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+#forms-screen .page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: #9ca3af;
+}
+
+/* Page Numbers Container */
+#forms-screen .page-numbers {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Page Number Buttons */
+#forms-screen .page-number {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    border: 1px solid #d1d5db;
+    background: white;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #374151;
+    cursor: pointer;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#forms-screen .page-number.active {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+
+/* Ensure submissions container doesn't overflow */
+#forms-screen .submissions-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Adjust table container to account for pagination */
+#forms-screen .submissions-table-container {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+/* Mobile responsiveness for pagination */
+@media (max-width: 768px) {
+    #forms-screen .pagination-container {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    #forms-screen .pagination-controls {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    #forms-screen .pagination-info {
+        text-align: center;
+    }
+}
+
+/* ============================================
+   FORMS CONTROL PANEL RADIO & CHECKBOX STYLES
+   ============================================ */
+
+/* Radio Group */
+#forms-controls .control-radio-group {
+    display: flex;
+    gap: 15px;
+    margin: 12px 0;
+}
+
+#forms-controls .control-radio {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 13px;
+    color: #374151;
+}
+
+#forms-controls .control-radio input[type="radio"] {
+    margin-right: 6px;
+    cursor: pointer;
+}
+
+#forms-controls .control-radio span {
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Checkbox Styles */
+#forms-controls .control-checkbox {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    cursor: pointer;
+    font-size: 13px;
+    color: #374151;
+}
+
+#forms-controls .control-checkbox input[type="checkbox"] {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+#forms-controls .control-checkbox span {
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Submission Options Container */
+#forms-controls .submission-options {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Control Section Paragraph */
+#forms-controls .control-section p {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 8px 0;
+    line-height: 1.4;
+}
