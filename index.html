@@ -30,7 +30,6 @@
         .dashboard-header {
             text-align: center;
             margin-bottom: 30px;
-            animation: fadeInDown 0.8s ease;
         }
 
         .dashboard-title {
@@ -51,7 +50,6 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
-            animation: fadeInUp 0.8s ease;
         }
 
         .simulator-card {
@@ -166,42 +164,10 @@
             color: #6C63FF;
         }
 
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .audio-gradient {
+            color: #667eea;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(0.8);
-                opacity: 0.5;
-            }
-            50% {
-                transform: scale(1.2);
-                opacity: 0.3;
-            }
-            100% {
-                transform: scale(0.8);
-                opacity: 0.5;
-            }
-        }
 
 
         @media (max-width: 1200px) {
@@ -366,24 +332,20 @@
                     <button class="launch-btn" onclick="event.stopPropagation(); window.location.href='contact-details-simulator/index.html'">Launch</button>
                 </div>
             </div>
+
+            <!-- Audio Player Simulator -->
+            <div class="simulator-card" onclick="window.location.href='audio-player-simulator/index.html'">
+                <div class="simulator-preview">
+                    <i class="fas fa-headphones simulator-icon audio-gradient"></i>
+                </div>
+                <div class="simulator-info">
+                    <h3 class="simulator-name">Audio Player</h3>
+                    <button class="launch-btn" onclick="event.stopPropagation(); window.location.href='audio-player-simulator/index.html'">Launch</button>
+                </div>
+            </div>
         </div>
 
     </div>
 
-    <script>
-        // Add entrance animations to cards
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.simulator-card');
-            cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(30px)';
-                setTimeout(() => {
-                    card.style.transition = 'all 0.5s ease';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 100);
-            });
-        });
-    </script>
 </body>
 </html>

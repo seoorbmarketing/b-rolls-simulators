@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Player Simulator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Browser Frame Container -->
+        <div class="browser-container">
+            <div class="browser-frame">
+                <!-- Browser Header -->
+                <div class="browser-header">
+                    <div class="browser-controls">
+                        <div class="browser-button close"></div>
+                        <div class="browser-button minimize"></div>
+                        <div class="browser-button maximize"></div>
+                    </div>
+                    <div class="browser-url-bar">
+                        <i class="fas fa-lock"></i>
+                        <span>workforce.automatemybiz.pro</span>
+                    </div>
+                    <div class="browser-actions">
+                        <i class="fas fa-redo"></i>
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                </div>
+
+                <!-- Browser Content -->
+                <div class="browser-content">
+                    <!-- Header Section -->
+                    <div class="content-header">
+                        <h1>Explore Voice Library</h1>
+                        <p>Find high quality voices from the community. Perfect for any occasion.</p>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Search voices...">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+
+                    <!-- Filter Dropdown -->
+                    <div class="filter-container">
+                        <div class="filter-dropdown">
+                            <span class="filter-badge">V3</span>
+                            <span class="filter-text">Best voices for v3</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+
+                    <!-- Audio Cards Container -->
+                    <div class="audio-cards-container">
+                        <!-- T-800 -->
+                        <div class="audio-card" data-audio="terminator">
+                            <div class="card-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="card-info">
+                                <div class="card-header">
+                                    <h3 class="card-title">T-800</h3>
+                                    <span class="verified-badge">
+                                        <i class="fas fa-check-circle"></i>
+                                    </span>
+                                </div>
+                                <p class="card-description">I'll be back... A menacing robotic voice with metallic undertones</p>
+                            </div>
+                            <div class="card-actions">
+                                <button class="play-btn" onclick="togglePlay('terminator')">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="more-btn">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Taxi Driver -->
+                        <div class="audio-card" data-audio="taxi">
+                            <div class="card-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                <i class="fas fa-taxi"></i>
+                            </div>
+                            <div class="card-info">
+                                <div class="card-header">
+                                    <h3 class="card-title">Taxi Driver</h3>
+                                    <span class="verified-badge">
+                                        <i class="fas fa-check-circle"></i>
+                                    </span>
+                                </div>
+                                <p class="card-description">You talkin' to me? Gritty New York accent with edge</p>
+                            </div>
+                            <div class="card-actions">
+                                <button class="play-btn" onclick="togglePlay('taxi')">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="more-btn">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Casablanca -->
+                        <div class="audio-card" data-audio="casablanca">
+                            <div class="card-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                <i class="fas fa-film"></i>
+                            </div>
+                            <div class="card-info">
+                                <div class="card-header">
+                                    <h3 class="card-title">Casablanca</h3>
+                                    <span class="verified-badge">
+                                        <i class="fas fa-check-circle"></i>
+                                    </span>
+                                </div>
+                                <p class="card-description">Here's looking at you, kid. Classic 1940s smooth narrator</p>
+                            </div>
+                            <div class="card-actions">
+                                <button class="play-btn" onclick="togglePlay('casablanca')">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="more-btn">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Yoda -->
+                        <div class="audio-card" data-audio="starwars">
+                            <div class="card-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                                <i class="fas fa-jedi"></i>
+                            </div>
+                            <div class="card-info">
+                                <div class="card-header">
+                                    <h3 class="card-title">Yoda</h3>
+                                    <span class="verified-badge">
+                                        <i class="fas fa-check-circle"></i>
+                                    </span>
+                                </div>
+                                <p class="card-description">May the Force be with you. Epic space opera narration</p>
+                            </div>
+                            <div class="card-actions">
+                                <button class="play-btn" onclick="togglePlay('starwars')">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="more-btn">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Al Pacino -->
+                        <div class="audio-card" data-audio="scarface">
+                            <div class="card-avatar" style="background: linear-gradient(135deg, #f77062 0%, #fe5196 100%);">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <div class="card-info">
+                                <div class="card-header">
+                                    <h3 class="card-title">Al Pacino</h3>
+                                    <span class="verified-badge">
+                                        <i class="fas fa-check-circle"></i>
+                                    </span>
+                                </div>
+                                <p class="card-description">Say hello to my little friend! Cuban-American accent with intensity</p>
+                            </div>
+                            <div class="card-actions">
+                                <button class="play-btn" onclick="togglePlay('scarface')">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="more-btn">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Godfather Style (DEMO) -->
+                        <div class="audio-card demo-track" data-audio="godfather">
+                            <div class="card-avatar" style="background: linear-gradient(135deg, #89216b 0%, #da4453 100%);">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div class="card-info">
+                                <div class="card-header">
+                                    <h3 class="card-title">Godfather style</h3>
+                                    <span class="verified-badge">
+                                        <i class="fas fa-check-circle"></i>
+                                    </span>
+                                </div>
+                                <p class="card-description">I'm gonna make him an offer he can't refuse. Italian-American authority</p>
+                            </div>
+                            <div class="card-actions">
+                                <button class="play-btn" onclick="togglePlay('godfather')">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="more-btn">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- James Bond Style (DEMO) -->
+                        <div class="audio-card demo-track" data-audio="bond">
+                            <div class="card-avatar" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+                                <i class="fas fa-user-secret"></i>
+                            </div>
+                            <div class="card-info">
+                                <div class="card-header">
+                                    <h3 class="card-title">James Bond style</h3>
+                                    <span class="verified-badge">
+                                        <i class="fas fa-check-circle"></i>
+                                    </span>
+                                </div>
+                                <p class="card-description">The name's Bond. James Bond. Sophisticated British spy charm</p>
+                            </div>
+                            <div class="card-actions">
+                                <button class="play-btn" onclick="togglePlay('bond')">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="more-btn">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-header">
+                <h2>Audio Controls</h2>
+            </div>
+
+            <div class="control-content">
+                <!-- Audio Player Controls -->
+                <div class="control-section">
+                    <h3>Now Playing</h3>
+                    <div class="now-playing">
+                        <div id="currentTrack">No track selected</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="time-display">
+                            <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Playback Controls -->
+                <div class="control-section">
+                    <h3>Playback Controls</h3>
+                    <div class="playback-controls">
+                        <button onclick="previousTrack()" class="control-btn">
+                            <i class="fas fa-backward"></i>
+                        </button>
+                        <button onclick="playPause()" class="control-btn play-pause">
+                            <i class="fas fa-play" id="playPauseIcon"></i>
+                        </button>
+                        <button onclick="nextTrack()" class="control-btn">
+                            <i class="fas fa-forward"></i>
+                        </button>
+                    </div>
+                    <div class="volume-control">
+                        <i class="fas fa-volume-up"></i>
+                        <input type="range" id="volumeSlider" min="0" max="100" value="50">
+                        <span id="volumeValue">50%</span>
+                    </div>
+                </div>
+
+                <!-- Quick Play Options -->
+                <div class="control-section">
+                    <h3>Quick Play</h3>
+                    <button onclick="playSpecific('terminator')" class="quick-play-btn">
+                        <i class="fas fa-robot"></i> T-800
+                    </button>
+                    <button onclick="playSpecific('taxi')" class="quick-play-btn">
+                        <i class="fas fa-taxi"></i> Taxi Driver
+                    </button>
+                    <button onclick="playSpecific('casablanca')" class="quick-play-btn">
+                        <i class="fas fa-film"></i> Casablanca
+                    </button>
+                    <button onclick="playSpecific('starwars')" class="quick-play-btn">
+                        <i class="fas fa-jedi"></i> Yoda
+                    </button>
+                    <button onclick="playSpecific('scarface')" class="quick-play-btn">
+                        <i class="fas fa-crown"></i> Al Pacino
+                    </button>
+                    <button onclick="playSpecific('godfather')" class="quick-play-btn" style="opacity: 0.7; cursor: not-allowed;" title="Demo track - not playable">
+                        <i class="fas fa-user-tie"></i> Godfather
+                    </button>
+                    <button onclick="playSpecific('bond')" class="quick-play-btn" style="opacity: 0.7; cursor: not-allowed;" title="Demo track - not playable">
+                        <i class="fas fa-user-secret"></i> Bond
+                    </button>
+                </div>
+
+                <!-- Settings -->
+                <div class="control-section">
+                    <h3>Settings</h3>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="autoplay" checked>
+                        <span>Autoplay next</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="loop">
+                        <span>Loop current</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="shuffle">
+                        <span>Shuffle playlist</span>
+                    </label>
+                </div>
+
+                <!-- Audio Upload Section -->
+                <div class="control-section">
+                    <h3>Upload Custom Audio</h3>
+                    <div class="audio-uploads">
+                        <div class="upload-item">
+                            <div class="upload-label">
+                                <i class="fas fa-robot"></i>
+                                <span>T-800</span>
+                            </div>
+                            <label for="upload-terminator" class="upload-btn">Upload</label>
+                            <input type="file" id="upload-terminator" accept="audio/*" onchange="uploadAudio('terminator', this)" hidden>
+                            <span class="upload-status" id="status-terminator"></span>
+                        </div>
+                        <div class="upload-item">
+                            <div class="upload-label">
+                                <i class="fas fa-taxi"></i>
+                                <span>Taxi Driver</span>
+                            </div>
+                            <label for="upload-taxi" class="upload-btn">Upload</label>
+                            <input type="file" id="upload-taxi" accept="audio/*" onchange="uploadAudio('taxi', this)" hidden>
+                            <span class="upload-status" id="status-taxi"></span>
+                        </div>
+                        <div class="upload-item">
+                            <div class="upload-label">
+                                <i class="fas fa-film"></i>
+                                <span>Casablanca</span>
+                            </div>
+                            <label for="upload-casablanca" class="upload-btn">Upload</label>
+                            <input type="file" id="upload-casablanca" accept="audio/*" onchange="uploadAudio('casablanca', this)" hidden>
+                            <span class="upload-status" id="status-casablanca"></span>
+                        </div>
+                        <div class="upload-item">
+                            <div class="upload-label">
+                                <i class="fas fa-jedi"></i>
+                                <span>Yoda</span>
+                            </div>
+                            <label for="upload-starwars" class="upload-btn">Upload</label>
+                            <input type="file" id="upload-starwars" accept="audio/*" onchange="uploadAudio('starwars', this)" hidden>
+                            <span class="upload-status" id="status-starwars"></span>
+                        </div>
+                        <div class="upload-item">
+                            <div class="upload-label">
+                                <i class="fas fa-crown"></i>
+                                <span>Al Pacino</span>
+                            </div>
+                            <label for="upload-scarface" class="upload-btn">Upload</label>
+                            <input type="file" id="upload-scarface" accept="audio/*" onchange="uploadAudio('scarface', this)" hidden>
+                            <span class="upload-status" id="status-scarface"></span>
+                        </div>
+                    </div>
+                    <button onclick="clearAllAudio()" class="action-btn" style="margin-top: 10px;">
+                        <i class="fas fa-trash"></i> Clear All Audio
+                    </button>
+                </div>
+
+                <!-- Custom Names Section -->
+                <div class="control-section">
+                    <h3>Customize Names</h3>
+                    <div class="name-inputs">
+                        <div class="name-input-item">
+                            <i class="fas fa-robot"></i>
+                            <input type="text" id="name-terminator" placeholder="T-800" onchange="updateCardName('terminator', this.value)">
+                        </div>
+                        <div class="name-input-item">
+                            <i class="fas fa-taxi"></i>
+                            <input type="text" id="name-taxi" placeholder="Taxi Driver" onchange="updateCardName('taxi', this.value)">
+                        </div>
+                        <div class="name-input-item">
+                            <i class="fas fa-film"></i>
+                            <input type="text" id="name-casablanca" placeholder="Casablanca" onchange="updateCardName('casablanca', this.value)">
+                        </div>
+                        <div class="name-input-item">
+                            <i class="fas fa-jedi"></i>
+                            <input type="text" id="name-starwars" placeholder="Yoda" onchange="updateCardName('starwars', this.value)">
+                        </div>
+                        <div class="name-input-item">
+                            <i class="fas fa-crown"></i>
+                            <input type="text" id="name-scarface" placeholder="Al Pacino" onchange="updateCardName('scarface', this.value)">
+                        </div>
+                        <div class="name-input-item">
+                            <i class="fas fa-user-tie"></i>
+                            <input type="text" id="name-godfather" placeholder="Godfather style" onchange="updateCardName('godfather', this.value)">
+                        </div>
+                        <div class="name-input-item">
+                            <i class="fas fa-user-secret"></i>
+                            <input type="text" id="name-bond" placeholder="James Bond style" onchange="updateCardName('bond', this.value)">
+                        </div>
+                    </div>
+                    <button onclick="resetAllNames()" class="action-btn" style="margin-top: 10px;">
+                        <i class="fas fa-undo"></i> Reset Names
+                    </button>
+                </div>
+
+                <!-- Actions -->
+                <div class="control-section">
+                    <h3>Actions</h3>
+                    <button onclick="playAll()" class="action-btn">
+                        <i class="fas fa-play-circle"></i> Play All
+                    </button>
+                    <button onclick="stopAll()" class="action-btn">
+                        <i class="fas fa-stop-circle"></i> Stop All
+                    </button>
+                    <button onclick="resetPlayer()" class="action-btn">
+                        <i class="fas fa-redo"></i> Reset Player
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Audio Elements -->
+    <audio id="audioPlayer" preload="auto" controls style="display: none;"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
