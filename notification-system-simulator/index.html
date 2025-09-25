@@ -277,8 +277,45 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- iOS Lockscreen -->
+                    <div class="lockscreen" id="lockscreen" style="display: none;">
+                        <!-- Lockscreen Wallpaper -->
+                        <div class="lockscreen-wallpaper">
+                            <div class="gradient-bg"></div>
+                        </div>
+
+                        <!-- Lockscreen Content -->
+                        <div class="lockscreen-content">
+                            <!-- Date and Time -->
+                            <div class="lockscreen-datetime">
+                                <div class="lockscreen-date" id="lockscreenDate">Tuesday, January 9</div>
+                                <div class="lockscreen-time" id="lockscreenTime">09:41</div>
+                            </div>
+
+                            <!-- Notification Area (for lockscreen notifications) -->
+                            <div class="lockscreen-notifications" id="lockscreenNotifications">
+                                <!-- Notifications will appear here -->
+                            </div>
+
+                            <!-- Bottom Shortcuts -->
+                            <div class="lockscreen-shortcuts">
+                                <div class="shortcut-button flashlight">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div class="shortcut-button camera">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Bar -->
+                            <div class="lockscreen-bottom-bar">
+                                <div class="bottom-bar-line"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
+
                 <!-- Home Indicator -->
                 <div class="home-indicator"></div>
             </div>
@@ -302,6 +339,10 @@
                         <label class="radio-label">
                             <input type="radio" name="uiStyle" value="real" onchange="toggleUIStyle('real')">
                             <span>Real iOS UI</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="uiStyle" value="lockscreen" onchange="toggleUIStyle('lockscreen')">
+                            <span>iOS Lockscreen</span>
                         </label>
                     </div>
                 </div>
@@ -381,6 +422,9 @@
                     </button>
                     <button onclick="sendClientMessages()" class="scenario-btn">
                         <i class="fas fa-users"></i> Client Messages
+                    </button>
+                    <button onclick="sendMissedCallsVoicemail()" class="scenario-btn">
+                        <i class="fas fa-phone-slash"></i> Missed Calls & Voicemail
                     </button>
                     <button onclick="clearAllNotifications()" class="scenario-btn clear">
                         <i class="fas fa-trash"></i> Clear All

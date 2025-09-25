@@ -803,3 +803,257 @@ textarea {
 .radio-label input[type="radio"] {
     cursor: pointer;
 }
+
+/* ======================== */
+/* iOS Lockscreen Styles */
+/* ======================== */
+
+.lockscreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Lockscreen Wallpaper with Gradient */
+.lockscreen-wallpaper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.gradient-bg {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        180deg,
+        #d83c60 0%,
+        #e85d4a 15%,
+        #f39438 30%,
+        #ff9f40 40%,
+        #e863b6 55%,
+        #b565d8 65%,
+        #7c8ff0 75%,
+        #61b3f0 85%,
+        #4fc3f0 100%
+    );
+    position: relative;
+}
+
+/* Add flowing wave shapes */
+.gradient-bg::before {
+    content: '';
+    position: absolute;
+    width: 150%;
+    height: 60%;
+    background: radial-gradient(ellipse at center,
+        rgba(255, 165, 100, 0.3) 0%,
+        transparent 70%);
+    top: 10%;
+    left: -25%;
+    border-radius: 50%;
+    filter: blur(40px);
+}
+
+.gradient-bg::after {
+    content: '';
+    position: absolute;
+    width: 120%;
+    height: 50%;
+    background: radial-gradient(ellipse at center,
+        rgba(255, 120, 200, 0.3) 0%,
+        transparent 70%);
+    bottom: 20%;
+    right: -20%;
+    border-radius: 50%;
+    filter: blur(30px);
+}
+
+/* Lockscreen Content */
+.lockscreen-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 60px 20px 40px;
+}
+
+/* Date and Time */
+.lockscreen-datetime {
+    text-align: center;
+    color: white;
+    margin-top: 40px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.lockscreen-date {
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+}
+
+.lockscreen-time {
+    font-size: 80px;
+    font-weight: 200;
+    line-height: 1;
+    letter-spacing: -2px;
+}
+
+.lockscreen-time::after {
+    content: '';
+    display: block;
+    height: 20px;
+}
+
+/* Lockscreen Notifications Area */
+.lockscreen-notifications {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 30px;
+    padding: 0 5px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Lockscreen notification style */
+.lockscreen-notifications .notification {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 12px;
+    margin-bottom: 8px;
+}
+
+.lockscreen-notifications .notification .notification-header {
+    color: #000;
+}
+
+.lockscreen-notifications .notification .notification-title {
+    color: #000;
+}
+
+.lockscreen-notifications .notification .notification-message {
+    color: #333;
+}
+
+.lockscreen-notifications .notification .notification-time {
+    color: #666;
+}
+
+/* Bottom Shortcuts */
+.lockscreen-shortcuts {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 50px;
+    margin-bottom: 30px;
+}
+
+.shortcut-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(240, 240, 240, 0.3);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.shortcut-button:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(1.1);
+}
+
+.shortcut-button:active {
+    transform: scale(0.95);
+}
+
+.shortcut-button i {
+    color: white;
+    font-size: 22px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.shortcut-button svg {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* Custom Torch Icon */
+.torch-icon {
+    position: relative;
+    width: 20px;
+    height: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.torch-body {
+    width: 12px;
+    height: 18px;
+    background: white;
+    border-radius: 2px 2px 4px 4px;
+    position: relative;
+}
+
+.torch-head {
+    width: 16px;
+    height: 6px;
+    background: white;
+    border-radius: 2px 2px 0 0;
+    position: absolute;
+    top: -6px;
+}
+
+.torch-light {
+    width: 8px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    position: absolute;
+    top: -4px;
+    box-shadow: 0 -2px 8px 2px rgba(255, 255, 255, 0.4);
+}
+
+/* Lockscreen Bottom Bar */
+.lockscreen-bottom-bar {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0 20px;
+}
+
+.bottom-bar-line {
+    width: 134px;
+    height: 5px;
+    background: white;
+    border-radius: 100px;
+    opacity: 0.9;
+}
+
+/* Hide home indicator on lockscreen */
+.lockscreen ~ .home-indicator {
+    display: none;
+}

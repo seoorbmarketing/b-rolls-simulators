@@ -61,15 +61,15 @@ function createNotification(app, title, message, icon, color = '#007AFF', action
     const notification = document.createElement('div');
     notification.className = 'notification';
     notification.id = `notification-${notificationCounter++}`;
-    
+
     // Get current time
     const now = new Date();
-    const time = now.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
+    const time = now.toLocaleTimeString('en-US', {
+        hour: 'numeric',
         minute: '2-digit',
-        hour12: true 
+        hour12: true
     }).toLowerCase();
-    
+
     let notificationHTML = `
         <div class="notification-header">
             <div class="notification-icon" style="background: ${color}">
@@ -81,7 +81,7 @@ function createNotification(app, title, message, icon, color = '#007AFF', action
         <div class="notification-title">${title}</div>
         <div class="notification-message">${message}</div>
     `;
-    
+
     // Add actions if provided
     if (actions) {
         notificationHTML += '<div class="notification-actions">';
@@ -96,20 +96,31 @@ function createNotification(app, title, message, icon, color = '#007AFF', action
     }
     
     notification.innerHTML = notificationHTML;
-    
+
     // Add click to dismiss
     notification.addEventListener('click', function(e) {
         if (!e.target.classList.contains('notification-action')) {
             dismissNotification(this.id);
         }
     });
-    
-    // Add to container
-    if (document.getElementById('stackNotifications').checked) {
-        container.appendChild(notification);
+
+    // Check if lockscreen is active
+    const lockscreenUI = document.getElementById('lockscreen');
+    const isLockscreenActive = lockscreenUI && lockscreenUI.style.display === 'flex';
+
+    if (isLockscreenActive) {
+        // Add ONLY to lockscreen when it's active
+        const lockscreenContainer = document.getElementById('lockscreenNotifications');
+        notification.id = `lockscreen-${notificationCounter - 1}`;
+        lockscreenContainer.insertBefore(notification, lockscreenContainer.firstChild);
     } else {
-        container.innerHTML = '';
-        container.appendChild(notification);
+        // Add to regular notification container when lockscreen is not active
+        if (document.getElementById('stackNotifications').checked) {
+            container.appendChild(notification);
+        } else {
+            container.innerHTML = '';
+            container.appendChild(notification);
+        }
     }
     
     // Play sound if enabled
@@ -314,16 +325,92 @@ function sendClientMessages() {
     });
 }
 
-// Toggle between skeleton and real iOS UI
+// Send missed calls and voicemail scenario
+function sendMissedCallsVoicemail() {
+    // Clear existing notifications first
+    clearAllNotifications();
+
+    // Wait a moment then send missed calls notification
+    setTimeout(() => {
+        // Single notification for 3 missed calls
+        createNotification(
+            'Phone',
+            '3 Missed Calls',
+            'James Smith',
+            'fas fa-phone',
+            '#FF3B30'
+        );
+    }, 500);
+
+    setTimeout(() => {
+        // Voicemail notification
+        createNotification(
+            'Phone',
+            'Voicemail',
+            'James Smith',
+            'fas fa-voicemail',
+            '#007AFF'
+        );
+    }, 1200);
+}
+
+// Toggle between skeleton, real iOS UI, and lockscreen
 function toggleUIStyle(style) {
     const skeletonUI = document.getElementById('homescreenSkeleton');
     const realUI = document.getElementById('homescreenReal');
-    
+    const lockscreenUI = document.getElementById('lockscreen');
+    const notificationContainer = document.getElementById('notificationContainer');
+
+    // Hide all UIs first
+    skeletonUI.style.display = 'none';
+    realUI.style.display = 'none';
+    lockscreenUI.style.display = 'none';
+
+    // Show selected UI
     if (style === 'skeleton') {
         skeletonUI.style.display = 'block';
-        realUI.style.display = 'none';
+        notificationContainer.style.display = 'block';
     } else if (style === 'real') {
-        skeletonUI.style.display = 'none';
         realUI.style.display = 'flex';
+        notificationContainer.style.display = 'block';
+    } else if (style === 'lockscreen') {
+        lockscreenUI.style.display = 'flex';
+        notificationContainer.style.display = 'none'; // Hide regular notifications on lockscreen
+        updateLockscreenTime();
+        updateLockscreenDate();
     }
 }
+
+// Update lockscreen time
+function updateLockscreenTime() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const timeString = `${hours}:${minutes}`;
+    const lockscreenTime = document.getElementById('lockscreenTime');
+    if (lockscreenTime) {
+        lockscreenTime.textContent = timeString;
+    }
+}
+
+// Update lockscreen date
+function updateLockscreenDate() {
+    const now = new Date();
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+
+    const dayName = days[now.getDay()];
+    const monthName = months[now.getMonth()];
+    const date = now.getDate();
+
+    const dateString = `${dayName}, ${monthName} ${date}`;
+    const lockscreenDate = document.getElementById('lockscreenDate');
+    if (lockscreenDate) {
+        lockscreenDate.textContent = dateString;
+    }
+}
+
+// Update lockscreen time every minute
+setInterval(updateLockscreenTime, 60000);
+updateLockscreenTime();
