@@ -21,6 +21,8 @@ function switchToScreen(screenName) {
     if (opportunitiesScreen) opportunitiesScreen.style.display = "none";
     if (automationScreen) automationScreen.style.display = "none";
     if (formsScreen) formsScreen.style.display = "none";
+    const paymentsScreen = document.getElementById("payments-screen");
+    if (paymentsScreen) paymentsScreen.style.display = "none";
 
     // Update nav items
     navItems.forEach(nav => nav.classList.remove("active"));
@@ -46,6 +48,19 @@ function switchToScreen(screenName) {
 
         if (calendarScreen) calendarScreen.style.display = "block";
         if (rightPanel) rightPanel.style.display = "block";
+
+        // Show calendar panel content
+        const calendarPanelContent = document.getElementById('calendar-panel-content');
+        if (calendarPanelContent) calendarPanelContent.style.display = 'block';
+
+        // Hide all control panels first
+        document.querySelectorAll('.control-panel-screen').forEach(panel => {
+            panel.style.display = 'none';
+        });
+        // Show calendar controls
+        const calendarControls = document.getElementById('calendar-controls');
+        if (calendarControls) calendarControls.style.display = 'block';
+
         const calendarNav = document.querySelector('.nav-item[data-screen="calendar"]');
         if (calendarNav) calendarNav.classList.add("active");
         const calendarBtn = document.querySelector('.screen-switch-btn[data-panel="calendar"]');
@@ -62,6 +77,10 @@ function switchToScreen(screenName) {
 
         if (conversationsScreen) conversationsScreen.style.display = "block";
         if (rightPanel) rightPanel.style.display = "none";
+
+        // Hide calendar panel content
+        const calendarPanelContent = document.getElementById('calendar-panel-content');
+        if (calendarPanelContent) calendarPanelContent.style.display = 'none';
         const conversationNav = document.querySelector('.nav-item[data-screen="conversations"]');
         if (conversationNav) conversationNav.classList.add("active");
         const conversationBtn = document.querySelector('.screen-switch-btn[data-panel="conversation"]');
@@ -85,6 +104,10 @@ function switchToScreen(screenName) {
 
         if (opportunitiesScreen) opportunitiesScreen.style.display = "block";
         if (rightPanel) rightPanel.style.display = "none";
+
+        // Hide calendar panel content
+        const calendarPanelContent = document.getElementById('calendar-panel-content');
+        if (calendarPanelContent) calendarPanelContent.style.display = 'none';
         const opportunitiesNav = document.querySelector('.nav-item[data-screen="opportunities"]');
         if (opportunitiesNav) opportunitiesNav.classList.add("active");
         const opportunitiesBtn = document.querySelector('.screen-switch-btn[data-panel="opportunities"]');
@@ -129,8 +152,9 @@ function switchToScreen(screenName) {
 
         // Show payments screen
         const paymentsScreen = document.getElementById("payments-screen");
-        if (paymentsScreen) paymentsScreen.style.display = "block";
-        if (rightPanel) rightPanel.style.display = "flex";
+        if (paymentsScreen) paymentsScreen.style.display = "flex";
+        // Don't show the right panel for payments
+        if (rightPanel) rightPanel.style.display = "none";
 
         // Show payments controls
         document.querySelectorAll('.control-panel-screen').forEach(panel => {
@@ -156,6 +180,10 @@ function switchToScreen(screenName) {
 
         if (formsScreen) formsScreen.style.display = "block";
         if (rightPanel) rightPanel.style.display = "none";
+
+        // Hide calendar panel content
+        const calendarPanelContent = document.getElementById('calendar-panel-content');
+        if (calendarPanelContent) calendarPanelContent.style.display = 'none';
         const formsNav = document.querySelector('.nav-item[data-screen="forms"]');
         if (formsNav) formsNav.classList.add("active");
         const formsBtn = document.querySelector('.screen-switch-btn[data-panel="forms"]');
@@ -754,6 +782,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (automationScreen) automationScreen.style.display = 'none';
                 const formsScreen = document.getElementById('forms-screen');
                 if (formsScreen) formsScreen.style.display = 'none';
+                const paymentsScreen = document.getElementById('payments-screen');
+                if (paymentsScreen) paymentsScreen.style.display = 'none';
 
                 // Switch screens
                 if (screen === 'calendar') {
@@ -816,6 +846,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Switch control panel if button exists
                     if (screenSwitchBtns && screenSwitchBtns[4]) {
                         screenSwitchBtns[4].click();
+                    }
+                } else if (screen === 'payments') {
+                    console.log('Showing payments screen');
+                    if (window.switchToScreen) {
+                        window.switchToScreen('payments');
                     }
                 }
             } catch (error) {
@@ -5606,7 +5641,7 @@ function renderInvoiceTable() {
                 <span class="issue-date">${invoice.date}</span>
             </td>
             <td>
-                <span class="amount">₹${invoice.amount.toLocaleString()}</span>
+                <span class="amount">$${invoice.amount.toLocaleString()}</span>
             </td>
             <td>
                 <span class="status-badge status-${invoice.status}">${invoice.status}</span>
@@ -5641,16 +5676,16 @@ function updateInvoiceStats() {
     const statCards = document.querySelectorAll('.stat-card');
     if (statCards.length >= 4) {
         statCards[0].querySelector('.stat-label').textContent = `${stats.draft.count} Invoice(s) in Draft`;
-        statCards[0].querySelector('.stat-value').textContent = `₹${(stats.draft.amount / 1000).toFixed(1)}k`;
+        statCards[0].querySelector('.stat-value').textContent = `$${(stats.draft.amount / 1000).toFixed(1)}k`;
 
         statCards[1].querySelector('.stat-label').textContent = `${stats.overdue.count} Overdue`;
-        statCards[1].querySelector('.stat-value').textContent = `₹${(stats.overdue.amount / 1000).toFixed(1)}k`;
+        statCards[1].querySelector('.stat-value').textContent = `$${(stats.overdue.amount / 1000).toFixed(1)}k`;
 
         statCards[2].querySelector('.stat-label').textContent = `${stats.pending.count} Awaiting Payment`;
-        statCards[2].querySelector('.stat-value').textContent = `₹${(stats.pending.amount / 1000).toFixed(1)}k`;
+        statCards[2].querySelector('.stat-value').textContent = `$${(stats.pending.amount / 1000).toFixed(1)}k`;
 
         statCards[3].querySelector('.stat-label').textContent = `${stats.paid.count} Paid`;
-        statCards[3].querySelector('.stat-value').textContent = `₹${(stats.paid.amount / 1000).toFixed(1)}k`;
+        statCards[3].querySelector('.stat-value').textContent = `$${(stats.paid.amount / 1000).toFixed(1)}k`;
     }
 }
 
@@ -5682,9 +5717,10 @@ function deleteInvoice(invoiceId) {
 }
 
 function markRandomAsPaid() {
-    const unpaidInvoices = invoices.filter(inv => inv.status !== 'paid');
-    if (unpaidInvoices.length > 0) {
-        const randomInvoice = unpaidInvoices[Math.floor(Math.random() * unpaidInvoices.length)];
+    // Only select from pending or overdue invoices (not draft or already paid)
+    const eligibleInvoices = invoices.filter(inv => inv.status === 'pending' || inv.status === 'overdue');
+    if (eligibleInvoices.length > 0) {
+        const randomInvoice = eligibleInvoices[Math.floor(Math.random() * eligibleInvoices.length)];
         const index = invoices.findIndex(inv => inv.id === randomInvoice.id);
         if (index !== -1) {
             invoices[index].status = 'paid';
@@ -5694,7 +5730,8 @@ function markRandomAsPaid() {
 }
 
 function markRandomAsOverdue() {
-    const eligibleInvoices = invoices.filter(inv => inv.status === 'pending' || inv.status === 'draft');
+    // Only select from pending invoices to mark as overdue (not draft or paid)
+    const eligibleInvoices = invoices.filter(inv => inv.status === 'pending');
     if (eligibleInvoices.length > 0) {
         const randomInvoice = eligibleInvoices[Math.floor(Math.random() * eligibleInvoices.length)];
         const index = invoices.findIndex(inv => inv.id === randomInvoice.id);
