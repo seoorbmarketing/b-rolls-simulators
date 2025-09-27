@@ -118,6 +118,33 @@ function switchToScreen(screenName) {
             // Reset zoom when switching to automation
             resetZoom();
         }, 100);
+    } else if (screenName === "payments") {
+        // Show sidebar and top nav for payments
+        if (sidebar) sidebar.style.display = "block";
+        if (sidebarToggle) sidebarToggle.style.display = "block";
+        if (topNav) topNav.style.display = "none"; // Hide top nav for payments
+        if (mainWrapper && !sidebar.classList.contains('collapsed')) {
+            mainWrapper.style.marginLeft = "180px";
+        }
+
+        // Show payments screen
+        const paymentsScreen = document.getElementById("payments-screen");
+        if (paymentsScreen) paymentsScreen.style.display = "block";
+        if (rightPanel) rightPanel.style.display = "flex";
+
+        // Show payments controls
+        document.querySelectorAll('.control-panel-screen').forEach(panel => {
+            panel.style.display = 'none';
+        });
+        const paymentsControls = document.getElementById('payments-controls');
+        if (paymentsControls) paymentsControls.style.display = 'block';
+
+        // Update active state
+        const paymentsNav = document.querySelector('.nav-item[data-screen="payments"]');
+        if (paymentsNav) paymentsNav.classList.add("active");
+        const paymentsBtn = document.querySelector('.screen-switch-btn[data-panel="payments"]');
+        if (paymentsBtn) paymentsBtn.classList.add("active");
+        if (browserUrl) browserUrl.textContent = "app.automatemybiz.pro/payments/invoices";
     } else if (screenName === "forms") {
         // Show sidebar and top nav for forms
         if (sidebar) sidebar.style.display = "block";
@@ -5531,7 +5558,7 @@ window.clearOpportunities = function() {
     }
 
     window.window.window.opportunityCards = [];
-    
+
     if (window.renderOpportunityCards) {
         window.renderOpportunityCards();
     }
@@ -5539,4 +5566,175 @@ window.clearOpportunities = function() {
         window.updateStageCounters();
     }
 };
+
+// Payment/Invoices Screen Functions
+let invoices = [
+    { id: 'INV-001', customer: 'Alfredo Marco', avatar: 'AM', avatarColor: '#10b981', date: 'Nov 5, 2024', amount: 4500, status: 'overdue' },
+    { id: 'INV-002', customer: 'Sarah Johnson', avatar: 'SJ', avatarColor: '#f59e0b', date: 'Nov 8, 2024', amount: 3200, status: 'paid' },
+    { id: 'INV-003', customer: 'Michael Chen', avatar: 'MC', avatarColor: '#8b5cf6', date: 'Nov 10, 2024', amount: 7800, status: 'draft' },
+    { id: 'INV-004', customer: 'Emily Davis', avatar: 'ED', avatarColor: '#ef4444', date: 'Nov 12, 2024', amount: 2100, status: 'pending' },
+    { id: 'INV-005', customer: 'Robert Wilson', avatar: 'RW', avatarColor: '#3b82f6', date: 'Nov 14, 2024', amount: 5600, status: 'paid' },
+    { id: 'INV-006', customer: 'Lisa Anderson', avatar: 'LA', avatarColor: '#ec4899', date: 'Nov 15, 2024', amount: 4200, status: 'overdue' },
+    { id: 'INV-007', customer: 'James Taylor', avatar: 'JT', avatarColor: '#14b8a6', date: 'Nov 16, 2024', amount: 8900, status: 'paid' },
+    { id: 'INV-008', customer: 'Patricia Brown', avatar: 'PB', avatarColor: '#a855f7', date: 'Nov 17, 2024', amount: 3400, status: 'draft' },
+    { id: 'INV-009', customer: 'David Martinez', avatar: 'DM', avatarColor: '#22c55e', date: 'Nov 18, 2024', amount: 6700, status: 'pending' },
+    { id: 'INV-010', customer: 'Jennifer Garcia', avatar: 'JG', avatarColor: '#f97316', date: 'Nov 19, 2024', amount: 5100, status: 'paid' }
+];
+
+function renderInvoiceTable() {
+    const tbody = document.querySelector('.invoices-table tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = invoices.map(invoice => `
+        <tr>
+            <td class="td-checkbox">
+                <input type="checkbox" class="table-checkbox" data-invoice-id="${invoice.id}">
+            </td>
+            <td>
+                <div class="invoice-name">Invoice ${invoice.id}</div>
+                <div class="invoice-number">${invoice.id}</div>
+            </td>
+            <td class="customer-cell">
+                <div class="customer-info">
+                    <div class="customer-avatar" style="background: ${invoice.avatarColor}">
+                        ${invoice.avatar}
+                    </div>
+                    <span class="customer-name">${invoice.customer}</span>
+                </div>
+            </td>
+            <td>
+                <span class="issue-date">${invoice.date}</span>
+            </td>
+            <td>
+                <span class="amount">₹${invoice.amount.toLocaleString()}</span>
+            </td>
+            <td>
+                <span class="status-badge status-${invoice.status}">${invoice.status}</span>
+            </td>
+            <td class="td-actions">
+                <button class="action-btn" onclick="deleteInvoice('${invoice.id}')">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+
+    updateInvoiceStats();
+}
+
+function updateInvoiceStats() {
+    const stats = {
+        draft: { count: 0, amount: 0 },
+        overdue: { count: 0, amount: 0 },
+        pending: { count: 0, amount: 0 },
+        paid: { count: 0, amount: 0 }
+    };
+
+    invoices.forEach(invoice => {
+        if (stats[invoice.status]) {
+            stats[invoice.status].count++;
+            stats[invoice.status].amount += invoice.amount;
+        }
+    });
+
+    // Update stat cards
+    const statCards = document.querySelectorAll('.stat-card');
+    if (statCards.length >= 4) {
+        statCards[0].querySelector('.stat-label').textContent = `${stats.draft.count} Invoice(s) in Draft`;
+        statCards[0].querySelector('.stat-value').textContent = `₹${(stats.draft.amount / 1000).toFixed(1)}k`;
+
+        statCards[1].querySelector('.stat-label').textContent = `${stats.overdue.count} Overdue`;
+        statCards[1].querySelector('.stat-value').textContent = `₹${(stats.overdue.amount / 1000).toFixed(1)}k`;
+
+        statCards[2].querySelector('.stat-label').textContent = `${stats.pending.count} Awaiting Payment`;
+        statCards[2].querySelector('.stat-value').textContent = `₹${(stats.pending.amount / 1000).toFixed(1)}k`;
+
+        statCards[3].querySelector('.stat-label').textContent = `${stats.paid.count} Paid`;
+        statCards[3].querySelector('.stat-value').textContent = `₹${(stats.paid.amount / 1000).toFixed(1)}k`;
+    }
+}
+
+function addNewInvoice() {
+    const newInvoiceNumber = invoices.length + 1;
+    const customerNames = ['Alex Thompson', 'Maria Rodriguez', 'John Smith', 'Anna Lee', 'Chris Johnson', 'Emma Wilson'];
+    const randomCustomer = customerNames[Math.floor(Math.random() * customerNames.length)];
+    const initials = randomCustomer.split(' ').map(n => n[0]).join('');
+    const colors = ['#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#3b82f6', '#ec4899'];
+    const statuses = ['draft', 'pending', 'overdue', 'paid'];
+
+    const newInvoice = {
+        id: `INV-${String(newInvoiceNumber).padStart(3, '0')}`,
+        customer: randomCustomer,
+        avatar: initials,
+        avatarColor: colors[Math.floor(Math.random() * colors.length)],
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        amount: Math.floor(Math.random() * 8000) + 2000,
+        status: statuses[Math.floor(Math.random() * statuses.length)]
+    };
+
+    invoices.unshift(newInvoice);
+    renderInvoiceTable();
+}
+
+function deleteInvoice(invoiceId) {
+    invoices = invoices.filter(inv => inv.id !== invoiceId);
+    renderInvoiceTable();
+}
+
+function markRandomAsPaid() {
+    const unpaidInvoices = invoices.filter(inv => inv.status !== 'paid');
+    if (unpaidInvoices.length > 0) {
+        const randomInvoice = unpaidInvoices[Math.floor(Math.random() * unpaidInvoices.length)];
+        const index = invoices.findIndex(inv => inv.id === randomInvoice.id);
+        if (index !== -1) {
+            invoices[index].status = 'paid';
+            renderInvoiceTable();
+        }
+    }
+}
+
+function markRandomAsOverdue() {
+    const eligibleInvoices = invoices.filter(inv => inv.status === 'pending' || inv.status === 'draft');
+    if (eligibleInvoices.length > 0) {
+        const randomInvoice = eligibleInvoices[Math.floor(Math.random() * eligibleInvoices.length)];
+        const index = invoices.findIndex(inv => inv.id === randomInvoice.id);
+        if (index !== -1) {
+            invoices[index].status = 'overdue';
+            renderInvoiceTable();
+        }
+    }
+}
+
+function generateBulkInvoices() {
+    const count = 5;
+    for (let i = 0; i < count; i++) {
+        addNewInvoice();
+    }
+}
+
+function clearAllInvoices() {
+    invoices = [];
+    renderInvoiceTable();
+}
+
+function resetInvoicesToDefault() {
+    invoices = [
+        { id: 'INV-001', customer: 'Alfredo Marco', avatar: 'AM', avatarColor: '#10b981', date: 'Nov 5, 2024', amount: 4500, status: 'overdue' },
+        { id: 'INV-002', customer: 'Sarah Johnson', avatar: 'SJ', avatarColor: '#f59e0b', date: 'Nov 8, 2024', amount: 3200, status: 'paid' },
+        { id: 'INV-003', customer: 'Michael Chen', avatar: 'MC', avatarColor: '#8b5cf6', date: 'Nov 10, 2024', amount: 7800, status: 'draft' },
+        { id: 'INV-004', customer: 'Emily Davis', avatar: 'ED', avatarColor: '#ef4444', date: 'Nov 12, 2024', amount: 2100, status: 'pending' },
+        { id: 'INV-005', customer: 'Robert Wilson', avatar: 'RW', avatarColor: '#3b82f6', date: 'Nov 14, 2024', amount: 5600, status: 'paid' },
+        { id: 'INV-006', customer: 'Lisa Anderson', avatar: 'LA', avatarColor: '#ec4899', date: 'Nov 15, 2024', amount: 4200, status: 'overdue' },
+        { id: 'INV-007', customer: 'James Taylor', avatar: 'JT', avatarColor: '#14b8a6', date: 'Nov 16, 2024', amount: 8900, status: 'paid' },
+        { id: 'INV-008', customer: 'Patricia Brown', avatar: 'PB', avatarColor: '#a855f7', date: 'Nov 17, 2024', amount: 3400, status: 'draft' },
+        { id: 'INV-009', customer: 'David Martinez', avatar: 'DM', avatarColor: '#22c55e', date: 'Nov 18, 2024', amount: 6700, status: 'pending' },
+        { id: 'INV-010', customer: 'Jennifer Garcia', avatar: 'JG', avatarColor: '#f97316', date: 'Nov 19, 2024', amount: 5100, status: 'paid' }
+    ];
+    renderInvoiceTable();
+}
+
+// Initialize invoice table on page load
+document.addEventListener('DOMContentLoaded', function() {
+    renderInvoiceTable();
+});
 

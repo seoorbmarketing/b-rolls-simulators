@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="forms-complete.css">
+    <link rel="stylesheet" href="payments-styles.css">
 </head>
 <body>
     <div class="container">
@@ -96,7 +97,7 @@
                     <i class="fas fa-wpforms"></i>
                     <span>Forms</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="#" class="nav-item" data-screen="payments">
                     <i class="fas fa-credit-card"></i>
                     <span>Payments</span>
                 </a>
@@ -1311,6 +1312,7 @@
                     <button class="screen-switch-btn" data-panel="opportunities" onclick="switchToScreen('opportunities')">Opportunities</button>
                     <button class="screen-switch-btn" data-panel="automation" onclick="switchToScreen('automation')">Automation</button>
                     <button class="screen-switch-btn" data-panel="forms" onclick="switchToScreen('forms')">Forms</button>
+                    <button class="screen-switch-btn" data-panel="payments" onclick="switchToScreen('payments')">Payments</button>
                 </div>
             </div>
             
@@ -1895,8 +1897,315 @@
                         </button>
                     </div>
                 </div><!-- End forms-controls -->
+
+                <!-- Payments Controls -->
+                <div class="control-panel-screen" id="payments-controls" style="display: none;">
+                    <!-- Invoice Settings -->
+                    <div class="control-section">
+                        <h3>💳 Invoice Settings</h3>
+                        <div class="control-input-group">
+                            <label>Default Currency</label>
+                            <select class="control-select" id="currencySelect">
+                                <option value="₹">₹ INR (Rupees)</option>
+                                <option value="$">$ USD (Dollars)</option>
+                                <option value="€">€ EUR (Euro)</option>
+                                <option value="£">£ GBP (Pound)</option>
+                            </select>
+                        </div>
+                        <div class="control-input-group">
+                            <label>Invoice Prefix</label>
+                            <input type="text" class="control-input" id="invoicePrefix" value="INV-" placeholder="e.g., INV-">
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="control-section">
+                        <h3>🚀 Quick Actions</h3>
+                        <button class="control-btn" onclick="addNewInvoice()">
+                            <i class="fas fa-plus"></i>
+                            Add Sample Invoice
+                        </button>
+                        <button class="control-btn" onclick="markRandomAsPaid()">
+                            <i class="fas fa-check-circle"></i>
+                            Mark Random as Paid
+                        </button>
+                        <button class="control-btn" onclick="markRandomAsOverdue()">
+                            <i class="fas fa-exclamation-circle"></i>
+                            Mark Random as Overdue
+                        </button>
+                    </div>
+
+                    <!-- Statistics Update -->
+                    <div class="control-section">
+                        <h3>📊 Update Statistics</h3>
+                        <div class="control-input-group">
+                            <label>Draft Invoices</label>
+                            <input type="number" class="control-input" id="draftCount" value="4" min="0" max="99">
+                        </div>
+                        <div class="control-input-group">
+                            <label>Paid Invoices</label>
+                            <input type="number" class="control-input" id="paidCount" value="19" min="0" max="99">
+                        </div>
+                        <div class="control-input-group">
+                            <label>Overdue Invoices</label>
+                            <input type="number" class="control-input" id="overdueCount" value="3" min="0" max="99">
+                        </div>
+                        <button class="control-btn" onclick="updateInvoiceStats()">
+                            <i class="fas fa-sync-alt"></i>
+                            Update Statistics
+                        </button>
+                    </div>
+
+                    <!-- Bulk Operations -->
+                    <div class="control-section">
+                        <h3>📦 Bulk Operations</h3>
+                        <button class="control-btn" onclick="generateBulkInvoices()">
+                            <i class="fas fa-copy"></i>
+                            Generate 5 Invoices
+                        </button>
+                        <button class="control-btn" onclick="clearAllInvoices()">
+                            <i class="fas fa-trash-alt"></i>
+                            Clear All Invoices
+                        </button>
+                        <button class="control-btn" onclick="resetInvoicesToDefault()">
+                            <i class="fas fa-undo"></i>
+                            Reset to Default
+                        </button>
+                    </div>
+                </div><!-- End payments-controls -->
             </div>
         </div>
+
+        <!-- Payments/Invoices Content -->
+        <div class="payments-content screen-content" id="payments-screen" style="display: none;">
+            <div class="payments-container">
+                <!-- Payments Header -->
+                <div class="payments-header">
+                    <!-- Top Navigation Tabs -->
+                    <div class="payments-nav-tabs">
+                        <div class="payments-tab-group">
+                            <a href="#" class="payments-tab">Payments</a>
+                            <a href="#" class="payments-tab active">Invoices & Estimates</a>
+                            <a href="#" class="payments-tab">Documents & Contracts</a>
+                            <a href="#" class="payments-tab">Orders</a>
+                            <a href="#" class="payments-tab">Subscriptions</a>
+                            <a href="#" class="payments-tab">Payment Links</a>
+                            <a href="#" class="payments-tab">Transactions</a>
+                            <a href="#" class="payments-tab">Products</a>
+                            <a href="#" class="payments-tab">Coupons</a>
+                            <a href="#" class="payments-tab">Settings</a>
+                            <a href="#" class="payments-tab">Integrations</a>
+                        </div>
+                    </div>
+
+                    <!-- Main Header Section -->
+                    <div class="invoices-header-main">
+                        <div class="invoices-title-section">
+                            <h1 class="invoices-title">Invoices</h1>
+                            <p class="invoices-subtitle">Create and manage all invoices generated for your business</p>
+                        </div>
+                        <div class="invoices-header-actions">
+                            <button class="settings-btn">
+                                <i class="fas fa-cog"></i>
+                                Settings
+                            </button>
+                            <button class="new-invoice-btn">
+                                <i class="fas fa-plus"></i>
+                                New
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <div class="invoices-stats">
+                        <div class="stat-card">
+                            <div class="stat-label">4 Invoice(s) in Draft</div>
+                            <div class="stat-value">₹154.65k</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">0 Invoice(s) In Due</div>
+                            <div class="stat-value">₹0.00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">19 Invoice(s) received</div>
+                            <div class="stat-value">₹1.32M</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">3 Invoice(s) Overdue</div>
+                            <div class="stat-value">₹97,628.15</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invoices Table Section -->
+                <div class="invoices-table-section">
+                    <!-- Search and Filter Bar -->
+                    <div class="invoices-controls">
+                        <div class="date-filters">
+                            <div class="date-input-group">
+                                <input type="text" placeholder="Start Date" class="date-input">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="date-input-group">
+                                <input type="text" placeholder="End Date" class="date-input">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                        </div>
+                        <div class="search-filter-group">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Search" class="search-input">
+                            </div>
+                            <button class="filter-btn">
+                                <i class="fas fa-filter"></i>
+                                Filters
+                            </button>
+                            <button class="export-btn">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Invoices Table -->
+                    <div class="invoices-table-wrapper">
+                        <table class="invoices-table">
+                            <thead>
+                                <tr>
+                                    <th class="th-checkbox">
+                                        <input type="checkbox" class="table-checkbox">
+                                    </th>
+                                    <th>Invoice Name</th>
+                                    <th>Invoice Number</th>
+                                    <th>Customer</th>
+                                    <th>Issue Date <i class="fas fa-sort"></i></th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th class="th-actions"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="td-checkbox">
+                                        <input type="checkbox" class="table-checkbox">
+                                    </td>
+                                    <td class="invoice-name">Test</td>
+                                    <td class="invoice-number">INV-000057</td>
+                                    <td class="customer-cell">
+                                        <div class="customer-info">
+                                            <div class="customer-avatar" style="background: #7dd3c0;">PA</div>
+                                            <span class="customer-name">Piyush Agarwak</span>
+                                        </div>
+                                    </td>
+                                    <td class="issue-date">Sep 12, 2025</td>
+                                    <td class="amount">$1.00</td>
+                                    <td>
+                                        <span class="status-badge status-overdue">Overdue</span>
+                                    </td>
+                                    <td class="td-actions">
+                                        <button class="action-btn">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="td-checkbox">
+                                        <input type="checkbox" class="table-checkbox">
+                                    </td>
+                                    <td class="invoice-name">Amanda One Time - Sep</td>
+                                    <td class="invoice-number">INV-000058</td>
+                                    <td class="customer-cell">
+                                        <div class="customer-info">
+                                            <div class="customer-avatar" style="background: #a3e635;">AC</div>
+                                            <span class="customer-name">Amanda Contreras</span>
+                                        </div>
+                                    </td>
+                                    <td class="issue-date">Sep 12, 2025</td>
+                                    <td class="amount">$147.00</td>
+                                    <td>
+                                        <span class="status-badge status-paid">Paid</span>
+                                    </td>
+                                    <td class="td-actions">
+                                        <button class="action-btn">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="td-checkbox">
+                                        <input type="checkbox" class="table-checkbox">
+                                    </td>
+                                    <td class="invoice-name">$100 AI Workforce Wallet Top UP</td>
+                                    <td class="invoice-number">INV-000056</td>
+                                    <td class="customer-cell">
+                                        <div class="customer-info">
+                                            <div class="customer-avatar" style="background: #a3e635;">AC</div>
+                                            <span class="customer-name">Amanda Contreras</span>
+                                        </div>
+                                    </td>
+                                    <td class="issue-date">Sep 3, 2025</td>
+                                    <td class="amount">$100.00</td>
+                                    <td>
+                                        <span class="status-badge status-paid">Paid</span>
+                                    </td>
+                                    <td class="td-actions">
+                                        <button class="action-btn">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="td-checkbox">
+                                        <input type="checkbox" class="table-checkbox">
+                                    </td>
+                                    <td class="invoice-name">Email Marketing - 2nd Payment</td>
+                                    <td class="invoice-number">INV-000055</td>
+                                    <td class="customer-cell">
+                                        <div class="customer-info">
+                                            <div class="customer-avatar" style="background: #60a5fa;">BV</div>
+                                            <span class="customer-name">BARRERE VICTOR</span>
+                                        </div>
+                                    </td>
+                                    <td class="issue-date">Aug 5, 2025</td>
+                                    <td class="amount">$600.00</td>
+                                    <td>
+                                        <span class="status-badge status-paid">Paid</span>
+                                    </td>
+                                    <td class="td-actions">
+                                        <button class="action-btn">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="td-checkbox">
+                                        <input type="checkbox" class="table-checkbox">
+                                    </td>
+                                    <td class="invoice-name">Sagar Test 4</td>
+                                    <td class="invoice-number">INV-000053</td>
+                                    <td class="customer-cell">
+                                        <div class="customer-info">
+                                            <div class="customer-avatar" style="background: #f472b6;">YW</div>
+                                            <span class="customer-name">Yogita Wadhawan</span>
+                                        </div>
+                                    </td>
+                                    <td class="issue-date">Jul 2, 2025</td>
+                                    <td class="amount">$1.00</td>
+                                    <td>
+                                        <span class="status-badge status-paid">Paid</span>
+                                    </td>
+                                    <td class="td-actions">
+                                        <button class="action-btn">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div><!-- End container -->
 
     <!-- Booking Modal -->
